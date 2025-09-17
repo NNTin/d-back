@@ -2,9 +2,17 @@
 name = "d_back"
 version = "0.0.1"
 description = "WebSocket server project."
-authors = ["Tin Nguyen <nguyen.ngoctindaniel@gmail.com>"]
+authors = [
+    { name = "Tin Nguyen", email = "nguyen.ngoctindaniel@gmail.com" }
+]
 readme = "README.md"
 requires-python = ">=3.8"
+dependencies = [
+    "websockets==15.0.1"
+]
+
+[project.scripts]
+d_back = "d_back.server:main_sync"
 
 [build-system]
 requires = ["setuptools", "wheel"]
