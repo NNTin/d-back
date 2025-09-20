@@ -58,5 +58,4 @@ coverage.xml
 .mypy_cache/
 .dmypy.json
 
-# VS Code
-.vscode/
+/.venv
