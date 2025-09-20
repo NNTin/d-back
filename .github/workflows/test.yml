@@ -1,0 +1,210 @@
+name: Test
+
+on:
+  push:
+    branches: [ main, master, develop, feature/*, fix/* ]
+  pull_request:
+    branches: [ main, master, develop ]
+
+jobs:
+  # Minimal test matrix for pushes - only test latest websockets version per Python version
+  test-push:
+    if: github.event_name == 'push'
+    name: Test Python ${{ matrix.python-version }} with websockets ${{ matrix.websockets-version }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          # Each Python version with its latest supported websockets version
+          - python-version: "3.8"
+            websockets-version: "13"
+            tox-env: "py38-websockets13"
+          - python-version: "3.9"
+            websockets-version: "13"
+            tox-env: "py39-websockets13"
+          - python-version: "3.10"
+            websockets-version: "15"
+            tox-env: "py310-websockets15"
+          - python-version: "3.11"
+            websockets-version: "15"
+            tox-env: "py311-websockets15"
+          - python-version: "3.12"
+            websockets-version: "15"
+            tox-env: "py312-websockets15"
+          - python-version: "3.13"
+            websockets-version: "15"
+            tox-env: "py313-websockets15"
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          allow-prereleases: true
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install tox
+
+      - name: Run tests with tox
+        run: |
+          tox -e ${{ matrix.tox-env }}
+
+      - name: Upload coverage reports (if available)
+        if: always()
+        continue-on-error: true
+        run: |
+          if [ -f .coverage ]; then
+            pip install coverage
+            coverage report
+          fi
+
+  # Full test matrix for pull requests
+  test-pr:
+    if: github.event_name == 'pull_request'
+    name: Test Python ${{ matrix.python-version }} with websockets ${{ matrix.websockets-version }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          # Python 3.8 with websockets 10-13
+          - python-version: "3.8"
+            websockets-version: "10"
+            tox-env: "py38-websockets10"
+          - python-version: "3.8"
+            websockets-version: "11"
+            tox-env: "py38-websockets11"
+          - python-version: "3.8"
+            websockets-version: "12"
+            tox-env: "py38-websockets12"
+          - python-version: "3.8"
+            websockets-version: "13"
+            tox-env: "py38-websockets13"
+          
+          # Python 3.9 with websockets 10-13
+          - python-version: "3.9"
+            websockets-version: "10"
+            tox-env: "py39-websockets10"
+          - python-version: "3.9"
+            websockets-version: "11"
+            tox-env: "py39-websockets11"
+          - python-version: "3.9"
+            websockets-version: "12"
+            tox-env: "py39-websockets12"
+          - python-version: "3.9"
+            websockets-version: "13"
+            tox-env: "py39-websockets13"
+          
+          # Python 3.10 with websockets 10-15
+          - python-version: "3.10"
+            websockets-version: "10"
+            tox-env: "py310-websockets10"
+          - python-version: "3.10"
+            websockets-version: "11"
+            tox-env: "py310-websockets11"
+          - python-version: "3.10"
+            websockets-version: "12"
+            tox-env: "py310-websockets12"
+          - python-version: "3.10"
+            websockets-version: "13"
+            tox-env: "py310-websockets13"
+          - python-version: "3.10"
+            websockets-version: "14"
+            tox-env: "py310-websockets14"
+          - python-version: "3.10"
+            websockets-version: "15"
+            tox-env: "py310-websockets15"
+          
+          # Python 3.11 with websockets 10-15
+          - python-version: "3.11"
+            websockets-version: "10"
+            tox-env: "py311-websockets10"
+          - python-version: "3.11"
+            websockets-version: "11"
+            tox-env: "py311-websockets11"
+          - python-version: "3.11"
+            websockets-version: "12"
+            tox-env: "py311-websockets12"
+          - python-version: "3.11"
+            websockets-version: "13"
+            tox-env: "py311-websockets13"
+          - python-version: "3.11"
+            websockets-version: "14"
+            tox-env: "py311-websockets14"
+          - python-version: "3.11"
+            websockets-version: "15"
+            tox-env: "py311-websockets15"
+          
+          # Python 3.12 with websockets 10-15
+          - python-version: "3.12"
+            websockets-version: "10"
+            tox-env: "py312-websockets10"
+          - python-version: "3.12"
+            websockets-version: "11"
+            tox-env: "py312-websockets11"
+          - python-version: "3.12"
+            websockets-version: "12"
+            tox-env: "py312-websockets12"
+          - python-version: "3.12"
+            websockets-version: "13"
+            tox-env: "py312-websockets13"
+          - python-version: "3.12"
+            websockets-version: "14"
+            tox-env: "py312-websockets14"
+          - python-version: "3.12"
+            websockets-version: "15"
+            tox-env: "py312-websockets15"
+          
+          # Python 3.13 with websockets 10-15
+          - python-version: "3.13"
+            websockets-version: "10"
+            tox-env: "py313-websockets10"
+          - python-version: "3.13"
+            websockets-version: "11"
+            tox-env: "py313-websockets11"
+          - python-version: "3.13"
+            websockets-version: "12"
+            tox-env: "py313-websockets12"
+          - python-version: "3.13"
+            websockets-version: "13"
+            tox-env: "py313-websockets13"
+          - python-version: "3.13"
+            websockets-version: "14"
+            tox-env: "py313-websockets14"
+          - python-version: "3.13"
+            websockets-version: "15"
+            tox-env: "py313-websockets15"
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          allow-prereleases: true
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install tox
+
+      - name: Run tests with tox
+        run: |
+          tox -e ${{ matrix.tox-env }}
+
+      - name: Upload coverage reports (if available)
+        if: always()
+        continue-on-error: true
+        run: |
+          if [ -f .coverage ]; then
+            pip install coverage
+            coverage report
+          fi
