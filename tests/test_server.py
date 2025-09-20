@@ -12,11 +12,11 @@ def test_server_and_client_communication():
         text=True,
         bufsize=1  # line buffered
     )
-    time.sleep(5)  # Give server more time to start
+    time.sleep(1)  # Give server more time to start
 
     # Start the client and capture output
     client_proc = subprocess.Popen(
-        [sys.executable, "mock_websocket_client.py"],
+        [sys.executable, os.path.join("helpers", "mock_websocket_client.py")],
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE,
         cwd=os.path.dirname(__file__),  # Ensure working directory is tests/
