@@ -13,6 +13,7 @@ class WebSocketServer:
         self.port = port
         self.host = host
         self.connection_paths: Dict[str, str] = {}
+        self.connections: set = set()  # Store active connections
         self.server = None
         
     def get_server_list(self) -> Dict[str, Any]:
@@ -88,14 +89,16 @@ class WebSocketServer:
     async def process_request(self, path: str, request_headers) -> Optional[Any]:
         """Process incoming WebSocket connection requests."""
         print(f"[PROCESS_REQUEST] Incoming connection to path: {path}")
-        # Optionally store or use the path for later
-        # self.connection_paths[...] = path
-        # Returning None means accept the connection
+        # Store the path for later use
+        # Note: websocket connection will be stored in handler method
         return None
 
     async def handler(self, websocket) -> None:
         """Handle WebSocket connections and messages."""
         print("[CONNECT] Client connected")
+        # Store the connection
+        self.connections.add(websocket)
+        
         try:
             # Send server list on connect
             print("[SEND] server-list")
@@ -139,6 +142,9 @@ class WebSocketServer:
         except Exception as e:
             print(f"[FATAL ERROR] {e}")
             traceback.print_exc()
+        finally:
+            # Remove the connection when it's closed
+            self.connections.discard(websocket)
 
     async def _handle_connect(self, websocket, data: Dict[str, Any]) -> None:
         """Handle client connect requests."""
@@ -212,6 +218,39 @@ class WebSocketServer:
                 await websocket.send(json.dumps(msg))
         except websockets.ConnectionClosed:
             print("[INFO] Periodic message task stopped: connection closed")
+
+    async def broadcast_message(self, server: str, uid: str, message: str, channel: str) -> None:
+        """Broadcast a message to all connected clients."""
+        if not self.connections:
+            print("[INFO] No connections to broadcast to")
+            return
+            
+        msg = {
+            "type": "message",
+            "server": server,
+            "data": {
+                "uid": uid,
+                "message": message,
+                "channel": channel
+            }
+        }
+        
+        print(f"[BROADCAST] Sending message to {len(self.connections)} connections: {message}")
+        
+        # Create a copy of connections to avoid modification during iteration
+        connections_copy = self.connections.copy()
+        
+        for websocket in connections_copy:
+            try:
+                await websocket.send(json.dumps(msg))
+            except websockets.ConnectionClosed:
+                # Remove closed connections
+                self.connections.discard(websocket)
+                print("[INFO] Removed closed connection during broadcast")
+            except Exception as e:
+                print(f"[ERROR] Failed to send message to connection: {e}")
+                # Optionally remove problematic connections
+                self.connections.discard(websocket)
 
     async def start(self) -> None:
         """Start the WebSocket server."""
