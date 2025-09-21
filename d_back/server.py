@@ -270,7 +270,9 @@ class WebSocketServer:
 
     async def broadcast_message(self, server: str, uid: str, message: str, channel: str) -> None:
         """Broadcast a message to all connected clients."""
-        if not self.connections:
+        # TODO: broadcast only to clients connected to the specified server
+        server_connections = [ws for ws in self.connections if ws.server == server]
+        if not server_connections:
             print("[INFO] No connections to broadcast to")
             return
             
@@ -283,13 +285,10 @@ class WebSocketServer:
                 "channel": channel
             }
         }
+
+        print(f"[BROADCAST] Sending message to {len(server_connections)} connections: {message}")
         
-        print(f"[BROADCAST] Sending message to {len(self.connections)} connections: {message}")
-        
-        # Create a copy of connections to avoid modification during iteration
-        connections_copy = self.connections.copy()
-        
-        for websocket in connections_copy:
+        for websocket in server_connections:
             try:
                 await websocket.send(json.dumps(msg))
             except websockets.ConnectionClosed:
