@@ -272,11 +272,12 @@ class WebSocketServer:
 
     async def _periodic_status_updates(self, websocket) -> None:
         """Send periodic status updates to the client."""
-        uid = random.choice(list(self._get_mock_user_data().keys()))
+        uids = list(self._get_mock_user_data().keys())
         try:
             while True:
                 await asyncio.sleep(4)
                 status = self._random_status()
+                uid = random.choice(uids)
                 presence_msg = {
                     "type": "presence",
                     "server": "482241773318701056",
@@ -295,7 +296,7 @@ class WebSocketServer:
 
     async def _periodic_messages(self, websocket) -> None:
         """Send periodic messages to the client."""
-        uid = random.choice(list(self._get_mock_user_data().keys()))
+        uids = list(self._get_mock_user_data().keys())
         messages = [
             "hello",
             "how are you?",
@@ -306,6 +307,7 @@ class WebSocketServer:
         try:
             while True:
                 await asyncio.sleep(2.5)
+                uid = random.choice(uids)
                 msg_text = random.choice(messages)
                 msg = {
                     "type": "message",
