@@ -9,57 +9,68 @@ from typing import Dict, Any, Optional
 class WebSocketServer:
     """WebSocket server to manage connections and broadcast messages."""
     
-    def __init__(self, port: int = 3000, host: str = "localhost"):
+    def __init__(self, port: int = 3000, host: str = "localhost", send_mock_data: bool = True):
         self.port = port
         self.host = host
         self.connection_paths: Dict[str, str] = {}
         self.connections: set = set()  # Store active connections
         self.server = None
+        self.send_mock_data = send_mock_data
         
     def get_server_list(self) -> Dict[str, Any]:
-        """Get the mock server list with users."""
+        """Get the mock server list with users. Override this method with real discord data."""
         users_data = {
             "77488778255540224": {
                 "id": "77488778255540224",
                 "username": "b6d",
                 "status": "online",
-                "roleColor": "#9b59b6"
+                "roleColor": "#ffffff"
             },
             "235148962103951360": {
                 "id": "235148962103951360",
                 "username": "Carl-bot",
                 "status": "online",
-                "roleColor": "#e67e22"
+                "roleColor": "#2c2f33"
             },
             "301022161391452160": {
                 "id": "301022161391452160",
                 "username": "Music",
-                "roleColor": "#3498db"
+                "roleColor": "#7289da"
             },
             "484294583505649664": {
                 "id": "484294583505649664",
                 "username": "MeepoDev",
-                "roleColor": "#2ecc71"
+                "roleColor": "#ffffff"
             },
             "492349095365705738": {
                 "id": "492349095365705738",
                 "username": "Dissentin",
                 "status": "online",
-                "roleColor": self._random_color()
+                "roleColor": "#2c2f33"
             },
             "506432803173433344": {
                 "id": "506432803173433344",
-                "username": "Soundboard"
+                "username": "Soundboard",
+                "roleColor": "#7289da"
             },
             "518858360142168085": {
                 "id": "518858360142168085",
                 "username": "Red-kun",
-                "roleColor": "#f11d1d"
+                "roleColor": "#ffffff"
             },
             "620253379083370516": {
                 "id": "620253379083370516",
-                "username": "Pastecord"
+                "username": "Pastecord",
+                "roleColor": "#7289da"
             }
+        }
+        
+        users_with_random_color = {
+            user_id: {
+                **data,
+                "roleColor": self._random_color()
+            }
+            for user_id, data in users_data.items()
         }
         
         return {
@@ -74,9 +85,15 @@ class WebSocketServer:
                 "name": "test",
                 "default": True,
                 "passworded": False,
-                "users": users_data
+                "users": users_with_random_color
             },
-            "users": users_data  # Global users list for backward compatibility
+            "default": {
+                "id": "t",
+                "name": "test",
+                "default": True,
+                "passworded": False,
+                "users": users_with_random_color
+            }
         }
 
     def _random_color(self) -> str:
@@ -87,9 +104,9 @@ class WebSocketServer:
         """Get a random user status."""
         return random.choice(["online", "idle", "dnd", "offline"])
 
-    def _get_users(self) -> Dict[str, Any]:
+    def _get_users(self, server_id="default") -> Dict[str, Any]:
         """Get the user list."""
-        return self.get_server_list()["users"]
+        return self.get_server_list()[server_id]["users"]
 
     def _get_server_list_for_client(self) -> Dict[str, Any]:
         """Get the server list without users (for client communication)."""
@@ -177,19 +194,20 @@ class WebSocketServer:
             "type": "server-join",
             "data": {
                 "request": {"server": server_id, "password": password},
-                "users": self._get_users()
+                "users": self._get_users(server_id),
             }
         }))
         
-        print("[SEND] presence")
-        await websocket.send(json.dumps({
-            "type": "presence",
-            "data": {"uid": "77488778255540224", "status": "online"}
-        }))
-        
-        # Start background tasks
-        asyncio.create_task(self._periodic_messages(websocket))
-        asyncio.create_task(self._periodic_status_updates(websocket))
+        if self.send_mock_data:
+            print("[SEND] presence")
+            await websocket.send(json.dumps({
+                "type": "presence",
+                "data": {"uid": "77488778255540224", "status": "online"}
+            }))
+            
+            # Start background tasks
+            asyncio.create_task(self._periodic_messages(websocket))
+            asyncio.create_task(self._periodic_status_updates(websocket))
 
     async def _periodic_status_updates(self, websocket) -> None:
         """Send periodic status updates to the client."""
@@ -208,6 +226,12 @@ class WebSocketServer:
                 await websocket.send(json.dumps(presence_msg))
         except websockets.ConnectionClosed:
             print("[INFO] Presence update task stopped: connection closed")
+            # Remove closed connections
+            self.connections.discard(websocket)
+        except Exception as e:
+            print(f"[ERROR] Failed to send message to connection: {e}")
+            # Optionally remove problematic connections
+            self.connections.discard(websocket)
 
     async def _periodic_messages(self, websocket) -> None:
         """Send periodic messages to the client."""
@@ -237,6 +261,12 @@ class WebSocketServer:
                 await websocket.send(json.dumps(msg))
         except websockets.ConnectionClosed:
             print("[INFO] Periodic message task stopped: connection closed")
+            # Remove closed connections
+            self.connections.discard(websocket)
+        except Exception as e:
+            print(f"[ERROR] Failed to send message to connection: {e}")
+            # Optionally remove problematic connections
+            self.connections.discard(websocket)
 
     async def broadcast_message(self, server: str, uid: str, message: str, channel: str) -> None:
         """Broadcast a message to all connected clients."""
@@ -263,9 +293,9 @@ class WebSocketServer:
             try:
                 await websocket.send(json.dumps(msg))
             except websockets.ConnectionClosed:
+                print("[INFO] Removed closed connection during broadcast")
                 # Remove closed connections
                 self.connections.discard(websocket)
-                print("[INFO] Removed closed connection during broadcast")
             except Exception as e:
                 print(f"[ERROR] Failed to send message to connection: {e}")
                 # Optionally remove problematic connections
