@@ -9,16 +9,17 @@ from typing import Dict, Any, Optional
 class WebSocketServer:
     """WebSocket server to manage connections and broadcast messages."""
     
-    def __init__(self, port: int = 3000, host: str = "localhost", send_mock_data: bool = True):
+    def __init__(self, port: int = 3000, host: str = "localhost"):
         self.port = port
         self.host = host
-        self.connection_paths: Dict[str, str] = {}
+        self.server = None  # WebSocket server instance
         self.connections: set = set()  # Store active connections
-        self.server = None
-        self.send_mock_data = send_mock_data
+        self.send_mock_data = False  # Whether to send mock data periodically
         
     def get_server_list(self) -> Dict[str, Any]:
         """Get the mock server list with users. Override this method with real discord data."""
+        self.send_mock_data = True  # Enable sending mock data periodically
+        
         users_data = {
             "77488778255540224": {
                 "id": "77488778255540224",
@@ -73,6 +74,22 @@ class WebSocketServer:
             for user_id, data in users_data.items()
         }
         
+        users_all_online = {
+            user_id: {
+                **data,
+                "status": "online"
+            }
+            for user_id, data in users_data.items()
+        }
+        
+        users_all_offline = {
+            user_id: {
+                **data,
+                "status": "offline"
+            }
+            for user_id, data in users_data.items()
+        }
+        
         return {
             "232769614004748288": {
                 "id": "D",
@@ -82,10 +99,24 @@ class WebSocketServer:
             },
             "482241773318701056": {
                 "id": "T",
-                "name": "Mock Server with random colors",
+                "name": "Mock with random colors",
                 "default": True,
                 "passworded": False,
                 "users": users_with_random_color
+            },
+            "123": {
+                "id": "On",
+                "name": "Mock with all online",
+                "default": True,
+                "passworded": False,
+                "users": users_all_online
+            },
+            "456": {
+                "id": "Off",
+                "name": "Mock with all offline",
+                "default": True,
+                "passworded": False,
+                "users": users_all_offline
             }
         }
 
