@@ -17,32 +17,8 @@ class WebSocketServer:
         self.server = None
         
     def get_server_list(self) -> Dict[str, Any]:
-        """Get the mock server list."""
-        return {
-            "232769614004748288": {
-                "id": "DS",
-                "name": "Dev Server",
-                "passworded": False
-            },
-            "482241773318701056": {
-                "id": "t",
-                "name": "test",
-                "default": True,
-                "passworded": False
-            }
-        }
-
-    def random_color(self) -> str:
-        """Generate a random color hex code."""
-        return '#{:06x}'.format(random.randint(0, 0xFFFFFF))
-
-    def random_status(self) -> str:
-        """Get a random user status."""
-        return random.choice(["online", "idle", "dnd", "offline"])
-
-    def get_users(self) -> Dict[str, Any]:
-        """Get the mock user list."""
-        return {
+        """Get the mock server list with users."""
+        users_data = {
             "77488778255540224": {
                 "id": "77488778255540224",
                 "username": "b6d",
@@ -69,7 +45,7 @@ class WebSocketServer:
                 "id": "492349095365705738",
                 "username": "Dissentin",
                 "status": "online",
-                "roleColor": self.random_color()
+                "roleColor": self._random_color()
             },
             "506432803173433344": {
                 "id": "506432803173433344",
@@ -85,15 +61,58 @@ class WebSocketServer:
                 "username": "Pastecord"
             }
         }
+        
+        return {
+            "232769614004748288": {
+                "id": "DS",
+                "name": "Dev Server",
+                "passworded": False,
+                "users": users_data
+            },
+            "482241773318701056": {
+                "id": "t",
+                "name": "test",
+                "default": True,
+                "passworded": False,
+                "users": users_data
+            },
+            "users": users_data  # Global users list for backward compatibility
+        }
+
+    def _random_color(self) -> str:
+        """Generate a random color hex code."""
+        return '#{:06x}'.format(random.randint(0, 0xFFFFFF))
+
+    def _random_status(self) -> str:
+        """Get a random user status."""
+        return random.choice(["online", "idle", "dnd", "offline"])
+
+    def _get_users(self) -> Dict[str, Any]:
+        """Get the user list."""
+        return self.get_server_list()["users"]
+
+    def _get_server_list_for_client(self) -> Dict[str, Any]:
+        """Get the server list without users (for client communication)."""
+        full_server_list = self.get_server_list()
+        # Remove the users field from each server and the global users key
+        client_server_list = {}
+        for server_id, server_data in full_server_list.items():
+            if server_id != "users":  # Skip the global users key
+                # Create a copy without the users field
+                client_server_list[server_id] = {
+                    key: value for key, value in server_data.items() 
+                    if key != "users"
+                }
+        return client_server_list
 
     async def process_request(self, path: str, request_headers) -> Optional[Any]:
         """Process incoming WebSocket connection requests."""
         print(f"[PROCESS_REQUEST] Incoming connection to path: {path}")
-        # Store the path for later use
         # Note: websocket connection will be stored in handler method
+        # TODO: Validate discord oauth token, depends on https://github.com/NNTin/d-zone/issues/4
         return None
 
-    async def handler(self, websocket) -> None:
+    async def _handler(self, websocket) -> None:
         """Handle WebSocket connections and messages."""
         print("[CONNECT] Client connected")
         # Store the connection
@@ -104,7 +123,7 @@ class WebSocketServer:
             print("[SEND] server-list")
             await websocket.send(json.dumps({
                 "type": "server-list",
-                "data": self.get_server_list()
+                "data": self._get_server_list_for_client()
             }))
             
             # Wait for connect message
@@ -158,7 +177,7 @@ class WebSocketServer:
             "type": "server-join",
             "data": {
                 "request": {"server": server_id, "password": password},
-                "users": self.get_users()
+                "users": self._get_users()
             }
         }))
         
@@ -174,12 +193,12 @@ class WebSocketServer:
 
     async def _periodic_status_updates(self, websocket) -> None:
         """Send periodic status updates to the client."""
-        user_ids = list(self.get_users().keys())
+        user_ids = list(self._get_users().keys())
         try:
             while True:
                 await asyncio.sleep(4)
                 uid = random.choice(user_ids)
-                status = self.random_status()
+                status = self._random_status()
                 presence_msg = {
                     "type": "presence",
                     "server": "482241773318701056",
@@ -255,7 +274,7 @@ class WebSocketServer:
     async def start(self) -> None:
         """Start the WebSocket server."""
         self.server = await websockets.serve(
-            self.handler, 
+            self._handler, 
             self.host, 
             self.port, 
             process_request=self.process_request
@@ -266,7 +285,7 @@ class WebSocketServer:
     async def run_forever(self) -> None:
         """Run the server forever."""
         async with websockets.serve(
-            self.handler, 
+            self._handler, 
             self.host, 
             self.port, 
             process_request=self.process_request
