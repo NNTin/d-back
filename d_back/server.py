@@ -9,17 +9,96 @@ from typing import Dict, Any, Optional
 class WebSocketServer:
     """WebSocket server to manage connections and broadcast messages."""
     
-    def __init__(self, port: int = 3000, host: str = "localhost", send_mock_data: bool = True):
+    def __init__(self, port: int = 3000, host: str = "localhost"):
         self.port = port
         self.host = host
-        self.connection_paths: Dict[str, str] = {}
+        self.server = None  # WebSocket server instance
         self.connections: set = set()  # Store active connections
-        self.server = None
-        self.send_mock_data = send_mock_data
+        self.send_mock_data = False  # Whether to send mock data periodically
+        self._on_get_server_data = None  # Callback for getting server data
+        self._on_get_user_data = None  # Callback for getting user data
+    
+    async def start(self) -> None:
+        """Start the WebSocket server."""
+        self.server = await websockets.serve(
+            self._handler, 
+            self.host, 
+            self.port, 
+            process_request=self._process_request
+        )
+        print(f"WebSocket server started on ws://{self.host}:{self.port}")
+        await self.server.wait_closed()
+  
+    async def stop(self) -> None:
+        """Stop the WebSocket server."""
+        if self.server:
+            self.server.close()
+            await self.server.wait_closed()
+            print("WebSocket server stopped")
+
+    async def broadcast_message(self, server: str, uid: str, message: str, channel: str) -> None:
+        """Broadcast a message to all connected clients on the specified server."""
+        # Filter connections to only include those connected to the specified server
+        server_connections = [ws for ws in self.connections if hasattr(ws, 'server_id') and ws.server_id == server]
         
-    def get_server_list(self) -> Dict[str, Any]:
-        """Get the mock server list with users. Override this method with real discord data."""
-        users_data = {
+        if not server_connections:
+            print(f"[INFO] No connections to broadcast to for server: {server}")
+            return
+            
+        msg = {
+            "type": "message",
+            "server": server,
+            "data": {
+                "uid": uid,
+                "message": message,
+                "channel": channel
+            }
+        }
+
+        print(f"[BROADCAST] Sending message to {len(server_connections)} connections on server {server}: {message}")
+        
+        # Create a copy to avoid modification during iteration
+        connections_copy = server_connections.copy()
+        
+        for websocket in connections_copy:
+            try:
+                await websocket.send(json.dumps(msg))
+            except websockets.ConnectionClosed:
+                print("[INFO] Removed closed connection during broadcast")
+                # Remove closed connections
+                self.connections.discard(websocket)
+            except Exception as e:
+                print(f"[ERROR] Failed to send message to connection: {e}")
+                # Optionally remove problematic connections
+                self.connections.discard(websocket)
+
+    def on_get_server_data(self, callback):
+        """Allow external code to register a callback"""
+        self._on_get_server_data = callback
+    
+    def on_get_user_data(self, callback):
+        """Allow external code to register a callback"""
+        self._on_get_user_data = callback
+
+    async def run_forever(self) -> None:
+        """Run the server forever."""
+        async with websockets.serve(
+            self._handler, 
+            self.host, 
+            self.port, 
+            process_request=self._process_request
+        ):
+            print(f"Mock WebSocket server running on ws://{self.host}:{self.port}")
+            await asyncio.Future()  # run forever
+
+    def run_sync(self) -> None:
+        """Run the server synchronously."""
+        asyncio.run(self.run_forever())
+
+    def _get_mock_user_data(self) -> Dict[str, Any]:
+        """Get the mock user list."""
+        self.send_mock_data = True
+        return {
             "77488778255540224": {
                 "id": "77488778255540224",
                 "username": "b6d",
@@ -65,37 +144,22 @@ class WebSocketServer:
             }
         }
         
-        users_with_random_color = {
-            user_id: {
-                **data,
-                "roleColor": self._random_color()
-            }
-            for user_id, data in users_data.items()
-        }
-        
+    def _get_mock_server_data(self) -> Dict[str, Any]:
+        """Get the mock server list."""
         return {
             "232769614004748288": {
-                "id": "DS",
-                "name": "Dev Server",
-                "passworded": False,
-                "users": users_data
+                "id": "D",
+                "name": "Mock Server",
+                "passworded": False
             },
             "482241773318701056": {
-                "id": "t",
-                "name": "test",
+                "id": "T",
+                "name": "Mock with random colors",
                 "default": True,
-                "passworded": False,
-                "users": users_with_random_color
-            },
-            "default": {
-                "id": "t",
-                "name": "test",
-                "default": True,
-                "passworded": False,
-                "users": users_with_random_color
+                "passworded": False
             }
         }
-
+    
     def _random_color(self) -> str:
         """Generate a random color hex code."""
         return '#{:06x}'.format(random.randint(0, 0xFFFFFF))
@@ -104,25 +168,7 @@ class WebSocketServer:
         """Get a random user status."""
         return random.choice(["online", "idle", "dnd", "offline"])
 
-    def _get_users(self, server_id="default") -> Dict[str, Any]:
-        """Get the user list."""
-        return self.get_server_list()[server_id]["users"]
-
-    def _get_server_list_for_client(self) -> Dict[str, Any]:
-        """Get the server list without users (for client communication)."""
-        full_server_list = self.get_server_list()
-        # Remove the users field from each server and the global users key
-        client_server_list = {}
-        for server_id, server_data in full_server_list.items():
-            if server_id != "users":  # Skip the global users key
-                # Create a copy without the users field
-                client_server_list[server_id] = {
-                    key: value for key, value in server_data.items() 
-                    if key != "users"
-                }
-        return client_server_list
-
-    async def process_request(self, path: str, request_headers) -> Optional[Any]:
+    async def _process_request(self, path: str, request_headers) -> Optional[Any]:
         """Process incoming WebSocket connection requests."""
         print(f"[PROCESS_REQUEST] Incoming connection to path: {path}")
         # Note: websocket connection will be stored in handler method
@@ -138,9 +184,16 @@ class WebSocketServer:
         try:
             # Send server list on connect
             print("[SEND] server-list")
+            
+            if self._on_get_server_data:
+                server_data = self._on_get_server_data()
+            else:
+                # simulate getting server data
+                server_data = self._get_mock_server_data()
+
             await websocket.send(json.dumps({
                 "type": "server-list",
-                "data": self._get_server_list_for_client()
+                "data": server_data
             }))
             
             # Wait for connect message
@@ -188,13 +241,21 @@ class WebSocketServer:
         password = data["data"].get("password", None)
         print(f"[EVENT] Client requests connect to server: {server_id} with password: {password}")
         
-        # Simulate server join
+        # Store the server_id in the websocket connection
+        websocket.server_id = server_id
+        
+        if self._on_get_user_data:
+            user_data = self._on_get_user_data(server_id)
+        else:
+            # simulate getting user data
+            user_data = self._get_mock_user_data()
+        
         print("[SEND] server-join")
         await websocket.send(json.dumps({
             "type": "server-join",
             "data": {
                 "request": {"server": server_id, "password": password},
-                "users": self._get_users(server_id),
+                "users": user_data
             }
         }))
         
@@ -211,12 +272,12 @@ class WebSocketServer:
 
     async def _periodic_status_updates(self, websocket) -> None:
         """Send periodic status updates to the client."""
-        user_ids = list(self._get_users().keys())
+        uids = list(self._get_mock_user_data().keys())
         try:
             while True:
                 await asyncio.sleep(4)
-                uid = random.choice(user_ids)
                 status = self._random_status()
+                uid = random.choice(uids)
                 presence_msg = {
                     "type": "presence",
                     "server": "482241773318701056",
@@ -235,7 +296,7 @@ class WebSocketServer:
 
     async def _periodic_messages(self, websocket) -> None:
         """Send periodic messages to the client."""
-        user_ids = list(self._get_users().keys())
+        uids = list(self._get_mock_user_data().keys())
         messages = [
             "hello",
             "how are you?",
@@ -246,7 +307,7 @@ class WebSocketServer:
         try:
             while True:
                 await asyncio.sleep(2.5)
-                uid = random.choice(user_ids)
+                uid = random.choice(uids)
                 msg_text = random.choice(messages)
                 msg = {
                     "type": "message",
@@ -267,72 +328,6 @@ class WebSocketServer:
             print(f"[ERROR] Failed to send message to connection: {e}")
             # Optionally remove problematic connections
             self.connections.discard(websocket)
-
-    async def broadcast_message(self, server: str, uid: str, message: str, channel: str) -> None:
-        """Broadcast a message to all connected clients."""
-        if not self.connections:
-            print("[INFO] No connections to broadcast to")
-            return
-            
-        msg = {
-            "type": "message",
-            "server": server,
-            "data": {
-                "uid": uid,
-                "message": message,
-                "channel": channel
-            }
-        }
-        
-        print(f"[BROADCAST] Sending message to {len(self.connections)} connections: {message}")
-        
-        # Create a copy of connections to avoid modification during iteration
-        connections_copy = self.connections.copy()
-        
-        for websocket in connections_copy:
-            try:
-                await websocket.send(json.dumps(msg))
-            except websockets.ConnectionClosed:
-                print("[INFO] Removed closed connection during broadcast")
-                # Remove closed connections
-                self.connections.discard(websocket)
-            except Exception as e:
-                print(f"[ERROR] Failed to send message to connection: {e}")
-                # Optionally remove problematic connections
-                self.connections.discard(websocket)
-
-    async def start(self) -> None:
-        """Start the WebSocket server."""
-        self.server = await websockets.serve(
-            self._handler, 
-            self.host, 
-            self.port, 
-            process_request=self.process_request
-        )
-        print(f"WebSocket server started on ws://{self.host}:{self.port}")
-        await self.server.wait_closed()
-
-    async def run_forever(self) -> None:
-        """Run the server forever."""
-        async with websockets.serve(
-            self._handler, 
-            self.host, 
-            self.port, 
-            process_request=self.process_request
-        ):
-            print(f"Mock WebSocket server running on ws://{self.host}:{self.port}")
-            await asyncio.Future()  # run forever
-
-    def run_sync(self) -> None:
-        """Run the server synchronously."""
-        asyncio.run(self.run_forever())
-
-    async def stop(self) -> None:
-        """Stop the WebSocket server."""
-        if self.server:
-            self.server.close()
-            await self.server.wait_closed()
-            print("WebSocket server stopped")
 
 PORT = 3000
 
