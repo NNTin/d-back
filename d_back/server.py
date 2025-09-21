@@ -86,13 +86,6 @@ class WebSocketServer:
                 "default": True,
                 "passworded": False,
                 "users": users_with_random_color
-            },
-            "default": {
-                "id": "T",
-                "name": "Mock Server with random colors",
-                "default": True,
-                "passworded": False,
-                "users": users_with_random_color
             }
         }
 
@@ -104,9 +97,24 @@ class WebSocketServer:
         """Get a random user status."""
         return random.choice(["online", "idle", "dnd", "offline"])
 
-    def _get_users(self, server_id="default") -> Dict[str, Any]:
+    def _get_users(self, server_id="") -> Dict[str, Any]:
         """Get the user list."""
-        return self.get_server_list()[server_id]["users"]
+        server_list = self.get_server_list()
+        
+        # If server_id is empty string, find the default server
+        if server_id == "":
+            for sid, server_data in server_list.items():
+                if server_data.get("default", False):
+                    return server_data["users"]
+        else:        
+            # If server_id has a value, look for matching id in the dictionary
+            for sid, server_data in server_list.items():
+                if server_data.get("id") == server_id:
+                    return server_data["users"]
+        
+        # If no matching server found, return empty dict or raise exception
+        print(f"[WARNING] Server ID '{server_id}' not found, returning empty users dict")
+        return {}
 
     def _get_server_list_for_client(self) -> Dict[str, Any]:
         """Get the server list without users (for client communication)."""
