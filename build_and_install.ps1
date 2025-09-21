@@ -4,7 +4,7 @@
 Write-Host "=== Building and Installing d_back Module ===" -ForegroundColor Green
 
 $venvName = "dissentinenv"
-#ä used for testing python module in develop discord bot
+# used for testing python module in develop discord bot
 $venvActivatePath = Join-Path -Path $env:USERPROFILE -ChildPath "$venvName\Scripts\Activate.ps1"
 # used for testing python module directly
 $localVenvPath = ".\.venv\Scripts\Activate.ps1"
@@ -13,7 +13,8 @@ $localVenvPath = ".\.venv\Scripts\Activate.ps1"
 Write-Host "Activating virtual environment..." -ForegroundColor Yellow
 & $localVenvPath
 
-if ($LASTEXITCODE -ne 0) {
+# Check if virtual environment is active
+if (-not (Test-Path env:VIRTUAL_ENV)) {
     Write-Host "Failed to activate virtual environment" -ForegroundColor Red
     exit 1
 }
