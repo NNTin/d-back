@@ -75,21 +75,21 @@ class WebSocketServer:
         
         return {
             "232769614004748288": {
-                "id": "DS",
-                "name": "Dev Server",
+                "id": "D",
+                "name": "Mock Server",
                 "passworded": False,
                 "users": users_data
             },
             "482241773318701056": {
-                "id": "t",
-                "name": "test",
+                "id": "T",
+                "name": "Mock Server with random colors",
                 "default": True,
                 "passworded": False,
                 "users": users_with_random_color
             },
             "default": {
-                "id": "t",
-                "name": "test",
+                "id": "T",
+                "name": "Mock Server with random colors",
                 "default": True,
                 "passworded": False,
                 "users": users_with_random_color
@@ -188,6 +188,9 @@ class WebSocketServer:
         password = data["data"].get("password", None)
         print(f"[EVENT] Client requests connect to server: {server_id} with password: {password}")
         
+        # Store the server_id in the websocket connection
+        websocket.server_id = server_id
+        
         # Simulate server join
         print("[SEND] server-join")
         await websocket.send(json.dumps({
@@ -269,11 +272,12 @@ class WebSocketServer:
             self.connections.discard(websocket)
 
     async def broadcast_message(self, server: str, uid: str, message: str, channel: str) -> None:
-        """Broadcast a message to all connected clients."""
-        # TODO: broadcast only to clients connected to the specified server
-        server_connections = [ws for ws in self.connections if ws.server == server]
+        """Broadcast a message to all connected clients on the specified server."""
+        # Filter connections to only include those connected to the specified server
+        server_connections = [ws for ws in self.connections if hasattr(ws, 'server_id') and ws.server_id == server]
+        
         if not server_connections:
-            print("[INFO] No connections to broadcast to")
+            print(f"[INFO] No connections to broadcast to for server: {server}")
             return
             
         msg = {
@@ -286,9 +290,12 @@ class WebSocketServer:
             }
         }
 
-        print(f"[BROADCAST] Sending message to {len(server_connections)} connections: {message}")
+        print(f"[BROADCAST] Sending message to {len(server_connections)} connections on server {server}: {message}")
         
-        for websocket in server_connections:
+        # Create a copy to avoid modification during iteration
+        connections_copy = server_connections.copy()
+        
+        for websocket in connections_copy:
             try:
                 await websocket.send(json.dumps(msg))
             except websockets.ConnectionClosed:
