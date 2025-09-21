@@ -235,7 +235,7 @@ class WebSocketServer:
 
     async def _periodic_messages(self, websocket) -> None:
         """Send periodic messages to the client."""
-        user_ids = list(self.get_users().keys())
+        user_ids = list(self._get_users().keys())
         messages = [
             "hello",
             "how are you?",

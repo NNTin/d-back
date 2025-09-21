@@ -1,23 +1,50 @@
 #!/usr/bin/env pwsh
-# Build and install d_back module in virtual environment
+# Build and install d_back module in specified virtual environment
+param(
+    [Parameter(Mandatory=$false)]
+    [ValidateSet("local", "dissentin")]
+    [string]$Environment = "local"
+)
 
 Write-Host "=== Building and Installing d_back Module ===" -ForegroundColor Green
 
+# Define environment paths
 $venvName = "dissentinenv"
-# used for testing python module in develop discord bot
-$venvActivatePath = Join-Path -Path $env:USERPROFILE -ChildPath "$venvName\Scripts\Activate.ps1"
-# used for testing python module directly
 $localVenvPath = ".\.venv\Scripts\Activate.ps1"
+$dissentinVenvPath = Join-Path -Path $env:USERPROFILE -ChildPath "$venvName\Scripts\Activate.ps1"
 
-# Activate virtual environment
-Write-Host "Activating virtual environment..." -ForegroundColor Yellow
-& $localVenvPath
+# Select the appropriate environment
+if ($Environment -eq "local") {
+    $venvPath = $localVenvPath
+    $envDisplayName = "LOCAL .venv"
+    Write-Host "Target environment: LOCAL .venv" -ForegroundColor Cyan
+} elseif ($Environment -eq "dissentin") {
+    $venvPath = $dissentinVenvPath
+    $envDisplayName = "DISSENTIN ($venvName)"
+    Write-Host "Target environment: DISSENTIN ($venvName)" -ForegroundColor Cyan
+    
+    # Check if the dissentin environment exists
+    if (-not (Test-Path $venvPath)) {
+        Write-Host "Dissentin environment not found at: $venvPath" -ForegroundColor Red
+        Write-Host "Please create the environment first or check the path." -ForegroundColor Yellow
+        exit 1
+    }
+} else {
+    Write-Host "Invalid environment specified. Use 'local' or 'dissentin'." -ForegroundColor Red
+    exit 1
+}
+
+# Activate the selected virtual environment
+Write-Host "Activating $envDisplayName environment..." -ForegroundColor Yellow
+& $venvPath
 
 # Check if virtual environment is active
 if (-not (Test-Path env:VIRTUAL_ENV)) {
-    Write-Host "Failed to activate virtual environment" -ForegroundColor Red
+    Write-Host "Failed to activate $envDisplayName virtual environment" -ForegroundColor Red
     exit 1
 }
+
+Write-Host "Active virtual environment: $env:VIRTUAL_ENV" -ForegroundColor Cyan
 
 # Uninstall existing version if present
 Write-Host "Uninstalling existing d_back module (if present)..." -ForegroundColor Yellow
@@ -39,12 +66,12 @@ if ($LASTEXITCODE -ne 0) {
 }
 
 # Install the built package
-Write-Host "Installing the built package..." -ForegroundColor Yellow
+Write-Host "Installing the built package to $envDisplayName..." -ForegroundColor Yellow
 $wheelFile = Get-ChildItem -Path "dist" -Filter "*.whl" | Select-Object -First 1
 if ($wheelFile) {
     pip install "$($wheelFile.FullName)" --force-reinstall
     if ($LASTEXITCODE -eq 0) {
-        Write-Host "Successfully built and installed d_back module!" -ForegroundColor Green
+        Write-Host "Successfully built and installed d_back module in $envDisplayName!" -ForegroundColor Green
         Write-Host "You can now import it with: from d_back.server import WebSocketServer" -ForegroundColor Cyan
     } else {
         Write-Host "Installation failed!" -ForegroundColor Red

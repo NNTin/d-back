@@ -18,14 +18,42 @@
       "problemMatcher": []
     },
     {
-      "label": "Build and Install d_back Module",
+      "label": "Build and Install d_back Module (Local .venv)",
       "type": "shell",
       "command": "pwsh.exe",
       "args": [
         "-ExecutionPolicy",
         "Bypass",
         "-File",
-        "${workspaceFolder}/build_and_install.ps1"
+        "${workspaceFolder}/build_and_install.ps1",
+        "-Environment",
+        "local"
+      ],
+      "group": "build",
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared",
+        "clear": false,
+        "showReuseMessage": true
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Build and Install d_back Module (Dissentin Env)",
+      "type": "shell",
+      "command": "pwsh.exe",
+      "args": [
+        "-ExecutionPolicy",
+        "Bypass",
+        "-File",
+        "${workspaceFolder}/build_and_install.ps1",
+        "-Environment",
+        "dissentin"
       ],
       "group": "build",
       "options": {
