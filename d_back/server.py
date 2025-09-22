@@ -100,46 +100,51 @@ class WebSocketServer:
         self.send_mock_data = True
         return {
             "77488778255540224": {
-                "id": "77488778255540224",
+                "uid": "77488778255540224",
                 "username": "b6d",
                 "status": "online",
                 "roleColor": "#ffffff"
             },
             "235148962103951360": {
-                "id": "235148962103951360",
+                "uid": "235148962103951360",
                 "username": "Carl-bot",
                 "status": "online",
                 "roleColor": "#2c2f33"
             },
             "301022161391452160": {
-                "id": "301022161391452160",
+                "uid": "301022161391452160",
                 "username": "Music",
+                "status": "online",
                 "roleColor": "#7289da"
             },
             "484294583505649664": {
-                "id": "484294583505649664",
+                "uid": "484294583505649664",
                 "username": "MeepoDev",
+                "status": "online",
                 "roleColor": "#ffffff"
             },
             "492349095365705738": {
-                "id": "492349095365705738",
+                "uid": "492349095365705738",
                 "username": "Dissentin",
                 "status": "online",
                 "roleColor": "#2c2f33"
             },
             "506432803173433344": {
-                "id": "506432803173433344",
+                "uid": "506432803173433344",
                 "username": "Soundboard",
+                "status": "online",
                 "roleColor": "#7289da"
             },
             "518858360142168085": {
-                "id": "518858360142168085",
+                "uid": "518858360142168085",
                 "username": "Red-kun",
+                "status": "online",
                 "roleColor": "#ffffff"
             },
             "620253379083370516": {
-                "id": "620253379083370516",
+                "uid": "620253379083370516",
                 "username": "Pastecord",
+                "status": "online",
                 "roleColor": "#7289da"
             }
         }
@@ -263,6 +268,7 @@ class WebSocketServer:
             print("[SEND] presence")
             await websocket.send(json.dumps({
                 "type": "presence",
+                "server": server_id,
                 "data": {"uid": "77488778255540224", "status": "online"}
             }))
             
@@ -280,8 +286,11 @@ class WebSocketServer:
                 uid = random.choice(uids)
                 presence_msg = {
                     "type": "presence",
-                    "server": "482241773318701056",
-                    "data": {"uid": uid, "status": status}
+                    "server": websocket.server_id,
+                    "data": {
+                        "uid": uid,
+                        "status": status
+                    }
                 }
                 print(f"[SEND] presence update for {uid}: {status}")
                 await websocket.send(json.dumps(presence_msg))
@@ -311,7 +320,7 @@ class WebSocketServer:
                 msg_text = random.choice(messages)
                 msg = {
                     "type": "message",
-                    "server": "482241773318701056",
+                    "server": websocket.server_id,
                     "data": {
                         "uid": uid,
                         "message": msg_text,
