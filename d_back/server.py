@@ -14,7 +14,6 @@ class WebSocketServer:
         self.host = host
         self.server = None  # WebSocket server instance
         self.connections: set = set()  # Store active connections
-        self.send_mock_data = False  # Whether to send mock data periodically
         self._on_get_server_data = None  # Callback for getting server data
         self._on_get_user_data = None  # Callback for getting user data
     
@@ -39,7 +38,8 @@ class WebSocketServer:
     async def broadcast_message(self, server: str, uid: str, message: str, channel: str) -> None:
         """Broadcast a message to all connected clients on the specified server."""
         # Filter connections to only include those connected to the specified server
-        server_connections = [ws for ws in self.connections if hasattr(ws, 'server_id') and ws.server_id == server]
+        # Use discordServer like the original implementation
+        server_connections = [ws for ws in self.connections if hasattr(ws, 'discordServer') and ws.discordServer == server]
         
         if not server_connections:
             print(f"[INFO] No connections to broadcast to for server: {server}")
@@ -95,10 +95,9 @@ class WebSocketServer:
         """Run the server synchronously."""
         asyncio.run(self.run_forever())
 
-    def _get_mock_user_data(self) -> Dict[str, Any]:
+    def _get_mock_user_data(self, discord_server_id: str = None) -> Dict[str, Any]:
         """Get the mock user list."""
-        self.send_mock_data = True
-        return {
+        base_users = {
             "77488778255540224": {
                 "uid": "77488778255540224",
                 "username": "b6d",
@@ -149,6 +148,13 @@ class WebSocketServer:
             }
         }
         
+        # If this is the "Mock with random colors" server, generate random colors
+        if discord_server_id == "482241773318701056":
+            for user in base_users.values():
+                user["roleColor"] = self._random_color()
+        
+        return base_users
+        
     def _get_mock_server_data(self) -> Dict[str, Any]:
         """Get the mock server list."""
         return {
@@ -158,7 +164,7 @@ class WebSocketServer:
                 "passworded": False
             },
             "482241773318701056": {
-                "id": "T",
+                "id": "T", 
                 "name": "Mock with random colors",
                 "default": True,
                 "passworded": False
@@ -187,7 +193,7 @@ class WebSocketServer:
         self.connections.add(websocket)
         
         try:
-            # Send server list on connect
+            # Send server list immediately on connect (like the original)
             print("[SEND] server-list")
             
             if self._on_get_server_data:
@@ -201,7 +207,7 @@ class WebSocketServer:
                 "data": server_data
             }))
             
-            # Wait for connect message
+            # Wait for messages from client
             async for message in websocket:
                 # Accept both text and binary messages
                 if isinstance(message, bytes):
@@ -246,39 +252,69 @@ class WebSocketServer:
         password = data["data"].get("password", None)
         print(f"[EVENT] Client requests connect to server: {server_id} with password: {password}")
         
-        # Store the server_id in the websocket connection
-        websocket.server_id = server_id
-        
-        if self._on_get_user_data:
-            user_data = self._on_get_user_data(server_id)
+        # Get server and user data using callbacks or mock data
+        if self._on_get_server_data:
+            server_data = self._on_get_server_data()
         else:
-            # simulate getting user data
-            user_data = self._get_mock_user_data()
+            server_data = self._get_mock_server_data()
+            
+        # Find the server (similar to inbox.js getUsers logic)
+        server_info = None
+        discord_server_id = None
         
+        # Look for exact server ID match or default server
+        for discord_id, server in server_data.items():
+            if server["id"] == server_id or (server.get("default") and server_id == "default"):
+                server_info = server
+                discord_server_id = discord_id
+                break
+        
+        if not server_info:
+            print(f"[ERROR] Unknown server: {server_id}")
+            await websocket.send(json.dumps({
+                "type": "error", 
+                "data": {"message": "Sorry, couldn't connect to that Discord server."}
+            }))
+            return
+            
+        # Check password if required
+        if server_info.get("passworded") and server_info.get("password") != password:
+            print(f"[ERROR] Bad password for server {server_id}")
+            await websocket.send(json.dumps({
+                "type": "error", 
+                "data": {"message": "Sorry, wrong password for that Discord server."}
+            }))
+            return
+        
+        # Store the Discord server ID in the websocket connection (like original)
+        websocket.discordServer = discord_server_id
+        websocket.server_id = server_id  # Keep for compatibility
+        
+        # Get user data for this server
+        if self._on_get_user_data:
+            user_data = self._on_get_user_data(discord_server_id)
+        else:
+            user_data = self._get_mock_user_data(discord_server_id)
+        
+        print(f"[SUCCESS] Client joined server {server_info['name']}")
         print("[SEND] server-join")
         await websocket.send(json.dumps({
             "type": "server-join",
             "data": {
-                "request": {"server": server_id, "password": password},
-                "users": user_data
+                "users": user_data,
+                "request": {"server": server_id, "password": password}
             }
         }))
         
-        if self.send_mock_data:
-            print("[SEND] presence")
-            await websocket.send(json.dumps({
-                "type": "presence",
-                "server": server_id,
-                "data": {"uid": "77488778255540224", "status": "online"}
-            }))
-            
-            # Start background tasks
+        # Only start mock data if using mock data (not when using real callbacks)
+        if not self._on_get_user_data and not self._on_get_server_data:
+            # Start background tasks for mock data
             asyncio.create_task(self._periodic_messages(websocket))
             asyncio.create_task(self._periodic_status_updates(websocket))
 
     async def _periodic_status_updates(self, websocket) -> None:
         """Send periodic status updates to the client."""
-        uids = list(self._get_mock_user_data().keys())
+        uids = list(self._get_mock_user_data(websocket.discordServer).keys())
         try:
             while True:
                 await asyncio.sleep(4)
@@ -286,7 +322,7 @@ class WebSocketServer:
                 uid = random.choice(uids)
                 presence_msg = {
                     "type": "presence",
-                    "server": websocket.server_id,
+                    "server": websocket.discordServer,
                     "data": {
                         "uid": uid,
                         "status": status
@@ -305,7 +341,7 @@ class WebSocketServer:
 
     async def _periodic_messages(self, websocket) -> None:
         """Send periodic messages to the client."""
-        uids = list(self._get_mock_user_data().keys())
+        uids = list(self._get_mock_user_data(websocket.discordServer).keys())
         messages = [
             "hello",
             "how are you?",
@@ -320,7 +356,7 @@ class WebSocketServer:
                 msg_text = random.choice(messages)
                 msg = {
                     "type": "message",
-                    "server": websocket.server_id,
+                    "server": websocket.discordServer,
                     "data": {
                         "uid": uid,
                         "message": msg_text,
@@ -337,6 +373,50 @@ class WebSocketServer:
             print(f"[ERROR] Failed to send message to connection: {e}")
             # Optionally remove problematic connections
             self.connections.discard(websocket)
+
+    async def broadcast_presence(self, server: str, uid: str, status: str, username: str = None, role_color: str = None, delete: bool = False) -> None:
+        """Broadcast a presence update to all connected clients on the specified server."""
+        # Filter connections to only include those connected to the specified server
+        server_connections = [ws for ws in self.connections if hasattr(ws, 'discordServer') and ws.discordServer == server]
+        
+        if not server_connections:
+            print(f"[INFO] No connections to broadcast presence to for server: {server}")
+            return
+            
+        presence_data = {
+            "uid": uid,
+            "status": status
+        }
+        
+        if username:
+            presence_data["username"] = username
+        if role_color:
+            presence_data["roleColor"] = role_color
+        if delete:
+            presence_data["delete"] = True
+            
+        msg = {
+            "type": "presence",
+            "server": server,
+            "data": presence_data
+        }
+
+        print(f"[BROADCAST] Sending presence update to {len(server_connections)} connections on server {server}: {uid} -> {status}")
+        
+        # Create a copy to avoid modification during iteration
+        connections_copy = server_connections.copy()
+        
+        for websocket in connections_copy:
+            try:
+                await websocket.send(json.dumps(msg))
+            except websockets.ConnectionClosed:
+                print("[INFO] Removed closed connection during presence broadcast")
+                # Remove closed connections
+                self.connections.discard(websocket)
+            except Exception as e:
+                print(f"[ERROR] Failed to send presence update to connection: {e}")
+                # Optionally remove problematic connections
+                self.connections.discard(websocket)
 
 PORT = 3000
 
