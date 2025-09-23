@@ -16,6 +16,7 @@ class WebSocketServer:
         self.connections: set = set()  # Store active connections
         self._on_get_server_data = None  # Callback for getting server data
         self._on_get_user_data = None  # Callback for getting user data
+        self._on_validate_discord_user = None  # Callback for validating Discord OAuth users
     
     async def start(self) -> None:
         """Start the WebSocket server."""
@@ -79,6 +80,10 @@ class WebSocketServer:
     def on_get_user_data(self, callback):
         """Allow external code to register a callback"""
         self._on_get_user_data = callback
+
+    def on_validate_discord_user(self, callback):
+        """Allow external code to register a Discord user validation callback"""
+        self._on_validate_discord_user = callback
 
     async def run_forever(self) -> None:
         """Run the server forever."""
@@ -152,6 +157,17 @@ class WebSocketServer:
         if discord_server_id == "482241773318701056":
             for user in base_users.values():
                 user["roleColor"] = self._random_color()
+                
+        if discord_server_id == "123456789012345678":
+            # Simulate a larger server with more users
+            for i in range(20):
+                uid = str(600000000000000000 + i)
+                base_users[uid] = {
+                    "uid": uid,
+                    "username": f"User{i}",
+                    "status": self._random_status(),
+                    "roleColor": self._random_color()
+                }
         
         return base_users
         
@@ -168,6 +184,11 @@ class WebSocketServer:
                 "name": "Mock with random colors",
                 "default": True,
                 "passworded": False
+            },
+            "123456789012345678": {
+                "id": "P",
+                "name": "OAuth Protected Server",
+                "passworded": True
             }
         }
     
@@ -249,8 +270,15 @@ class WebSocketServer:
     async def _handle_connect(self, websocket, data: Dict[str, Any]) -> None:
         """Handle client connect requests."""
         server_id = data["data"].get("server", "default")
-        password = data["data"].get("password", None)
-        print(f"[EVENT] Client requests connect to server: {server_id} with password: {password}")
+        password = data["data"].get("password", None)  # Legacy password support
+        discord_token = data["data"].get("discordToken", None)  # OAuth2 token
+        discord_user = data["data"].get("discordUser", None)    # OAuth2 user info
+        
+        print(f"[EVENT] Client requests connect to server: {server_id}")
+        if password:
+            print(f"[AUTH] Using legacy password authentication")
+        elif discord_token:
+            print(f"[AUTH] Using Discord OAuth2 authentication for user: {discord_user.get('username') if discord_user else 'unknown'}")
         
         # Get server and user data using callbacks or mock data
         if self._on_get_server_data:
@@ -262,11 +290,16 @@ class WebSocketServer:
         server_info = None
         discord_server_id = None
         
+        print(f"[DEBUG] Looking for server with ID: {server_id}")
+        print(f"[DEBUG] Available servers: {server_data}")
+        
         # Look for exact server ID match or default server
         for discord_id, server in server_data.items():
+            print(f"[DEBUG] Checking server {discord_id}: {server}")
             if server["id"] == server_id or (server.get("default") and server_id == "default"):
                 server_info = server
                 discord_server_id = discord_id
+                print(f"[DEBUG] Found matching server: {server_info} with Discord ID: {discord_server_id}")
                 break
         
         if not server_info:
@@ -277,14 +310,38 @@ class WebSocketServer:
             }))
             return
             
-        # Check password if required
-        if server_info.get("passworded") and server_info.get("password") != password:
-            print(f"[ERROR] Bad password for server {server_id}")
-            await websocket.send(json.dumps({
-                "type": "error", 
-                "data": {"message": "Sorry, wrong password for that Discord server."}
-            }))
-            return
+        # Check authentication for passworded servers
+        if server_info.get("passworded"):
+            auth_valid = False
+            
+            # Try Discord OAuth2 first (preferred method)
+            if discord_token and discord_user:
+                print(f"[AUTH] Attempting OAuth2 validation for user: {discord_user.get('username')} ({discord_user.get('id')}) on server {discord_server_id}")
+                auth_valid = await self._validate_discord_oauth(discord_token, discord_user, discord_server_id)
+                if not auth_valid:
+                    print(f"[ERROR] Discord OAuth2 validation failed for server {server_id}")
+                    await websocket.send(json.dumps({
+                        "type": "error", 
+                        "data": {"message": "Discord authentication failed. Please try logging in again."}
+                    }))
+                    return
+                else:
+                    print(f"[AUTH] Discord OAuth2 validation successful for user {discord_user.get('username')}")
+            # Fallback to legacy password (for backward compatibility)
+            elif password and server_info.get("password") == password:
+                auth_valid = True
+                print(f"[AUTH] Legacy password authentication successful")
+            
+            if not auth_valid:
+                print(f"[ERROR] Authentication failed for passworded server {server_id}")
+                print(f"[DEBUG] discord_token present: {bool(discord_token)}")
+                print(f"[DEBUG] discord_user present: {bool(discord_user)}")
+                print(f"[DEBUG] password present: {bool(password)}")
+                await websocket.send(json.dumps({
+                    "type": "error", 
+                    "data": {"message": "This server requires Discord authentication. Please login with Discord."}
+                }))
+                return
         
         # Store the Discord server ID in the websocket connection (like original)
         websocket.discordServer = discord_server_id
@@ -298,11 +355,17 @@ class WebSocketServer:
         
         print(f"[SUCCESS] Client joined server {server_info['name']}")
         print("[SEND] server-join")
+        
+        # Prepare request data for response (don't include sensitive auth info)
+        request_data = {"server": server_id}
+        if password:  # Only include password for legacy compatibility
+            request_data["password"] = password
+            
         await websocket.send(json.dumps({
             "type": "server-join",
             "data": {
                 "users": user_data,
-                "request": {"server": server_id, "password": password}
+                "request": request_data
             }
         }))
         
@@ -373,6 +436,39 @@ class WebSocketServer:
             print(f"[ERROR] Failed to send message to connection: {e}")
             # Optionally remove problematic connections
             self.connections.discard(websocket)
+
+    async def _validate_discord_oauth(self, token: str, user_info: Dict[str, Any], discord_server_id: str) -> bool:
+        """Validate Discord OAuth2 token and check if user has access to the server."""
+        try:
+            # In a real implementation, you would:
+            # 1. Validate the token with Discord API
+            # 2. Check if the user is a member of the Discord server
+            # 3. Verify the token hasn't expired
+            
+            # For now, we'll do a basic validation
+            if not token or not user_info:
+                return False
+                
+            # Check if user_info has required fields
+            if not user_info.get('id') or not user_info.get('username'):
+                return False
+            
+            # Special case: if this is the mock OAuth protected server, allow any valid OAuth user
+            if discord_server_id == "123456789012345678":
+                print(f"[AUTH] Mock OAuth server: accepting user {user_info.get('username')} ({user_info.get('id')})")
+                return True
+                
+            # If we have callbacks (real Discord bot), we can validate the user
+            if self._on_validate_discord_user:
+                return await self._on_validate_discord_user(token, user_info, discord_server_id)
+            
+            # For other mock/testing purposes, accept any valid-looking token and user
+            print(f"[AUTH] Mock validation: accepting user {user_info.get('username')} ({user_info.get('id')})")
+            return True
+            
+        except Exception as e:
+            print(f"[ERROR] OAuth validation error: {e}")
+            return False
 
     async def broadcast_presence(self, server: str, uid: str, status: str, username: str = None, role_color: str = None, delete: bool = False) -> None:
         """Broadcast a presence update to all connected clients on the specified server."""
