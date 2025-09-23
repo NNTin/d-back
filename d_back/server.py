@@ -17,6 +17,7 @@ class WebSocketServer:
         self._on_get_server_data = None  # Callback for getting server data
         self._on_get_user_data = None  # Callback for getting user data
         self._on_validate_discord_user = None  # Callback for validating Discord OAuth users
+        self._on_get_client_id = None  # Callback for getting OAuth2 client ID
     
     async def start(self) -> None:
         """Start the WebSocket server."""
@@ -84,6 +85,10 @@ class WebSocketServer:
     def on_validate_discord_user(self, callback):
         """Allow external code to register a Discord user validation callback"""
         self._on_validate_discord_user = callback
+
+    def on_get_client_id(self, callback):
+        """Allow external code to register a callback to get OAuth2 client ID"""
+        self._on_get_client_id = callback
 
     async def run_forever(self) -> None:
         """Run the server forever."""
@@ -360,13 +365,28 @@ class WebSocketServer:
         request_data = {"server": server_id}
         if password:  # Only include password for legacy compatibility
             request_data["password"] = password
+        
+        # Get the client ID for this server
+        client_id = None
+        if self._on_get_client_id:
+            try:
+                client_id = await self._on_get_client_id(discord_server_id)
+                print(f"[DEBUG] Got client ID for server {discord_server_id}: {client_id}")
+            except Exception as e:
+                print(f"[ERROR] Failed to get client ID: {e}")
+        
+        response_data = {
+            "users": user_data,
+            "request": request_data
+        }
+        
+        # Include client ID if available
+        if client_id:
+            response_data["clientId"] = client_id
             
         await websocket.send(json.dumps({
             "type": "server-join",
-            "data": {
-                "users": user_data,
-                "request": request_data
-            }
+            "data": response_data
         }))
         
         # Only start mock data if using mock data (not when using real callbacks)
@@ -511,6 +531,40 @@ class WebSocketServer:
                 self.connections.discard(websocket)
             except Exception as e:
                 print(f"[ERROR] Failed to send presence update to connection: {e}")
+                # Optionally remove problematic connections
+                self.connections.discard(websocket)
+
+    async def broadcast_client_id_update(self, server: str, client_id: str) -> None:
+        """Broadcast a client ID update to all connected clients on the specified server."""
+        # Filter connections to only include those connected to the specified server
+        server_connections = [ws for ws in self.connections if hasattr(ws, 'discordServer') and ws.discordServer == server]
+        
+        if not server_connections:
+            print(f"[INFO] No connections to broadcast client ID update to for server: {server}")
+            return
+            
+        msg = {
+            "type": "update-clientid",
+            "server": server,
+            "data": {
+                "clientId": client_id
+            }
+        }
+
+        print(f"[BROADCAST] Sending client ID update to {len(server_connections)} connections on server {server}: {client_id}")
+        
+        # Create a copy to avoid modification during iteration
+        connections_copy = server_connections.copy()
+        
+        for websocket in connections_copy:
+            try:
+                await websocket.send(json.dumps(msg))
+            except websockets.ConnectionClosed:
+                print("[INFO] Removed closed connection during client ID broadcast")
+                # Remove closed connections
+                self.connections.discard(websocket)
+            except Exception as e:
+                print(f"[ERROR] Failed to send client ID update to connection: {e}")
                 # Optionally remove problematic connections
                 self.connections.discard(websocket)
 
