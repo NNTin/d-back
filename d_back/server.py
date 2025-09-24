@@ -223,7 +223,7 @@ class WebSocketServer:
             print("[SEND] server-list")
             
             if self._on_get_server_data:
-                server_data = self._on_get_server_data()
+                server_data = await self._on_get_server_data()
             else:
                 # simulate getting server data
                 server_data = self._get_mock_server_data()
@@ -287,7 +287,7 @@ class WebSocketServer:
         
         # Get server and user data using callbacks or mock data
         if self._on_get_server_data:
-            server_data = self._on_get_server_data()
+            server_data = await self._on_get_server_data()
         else:
             server_data = self._get_mock_server_data()
             
@@ -354,7 +354,7 @@ class WebSocketServer:
         
         # Get user data for this server
         if self._on_get_user_data:
-            user_data = self._on_get_user_data(discord_server_id)
+            user_data = await self._on_get_user_data(discord_server_id)
         else:
             user_data = self._get_mock_user_data(discord_server_id)
         
