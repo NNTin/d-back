@@ -122,7 +122,7 @@ class WebSocketServer:
             import sys
             python_version = sys.version_info[:2]
             
-            if python_version >= (3, 10) and websockets_version >= (11, 0):
+            if python_version >= (3, 10) and websockets_version >= (10, 0):
                 try:
                     # Quick test of HTTP imports
                     from websockets.http11 import Response  # noqa: F401
@@ -136,10 +136,8 @@ class WebSocketServer:
                         print("[DEBUG] HTTP support enabled with fallback imports")
                     except ImportError:
                         print("[DEBUG] HTTP imports not available, using WebSocket-only mode")
-            elif python_version >= (3, 10) and websockets_version >= (10, 0):
-                print(f"[DEBUG] WebSocket-only mode (websockets {websockets.__version__} has incompatible HTTP support)")
             else:
-                print(f"[DEBUG] Using WebSocket-only mode (Python {python_version}, websockets {websockets.__version__})")
+                print(f"[DEBUG] WebSocket-only mode (Python {python_version}, websockets {websockets.__version__} - version too old for HTTP)")
                 
         except Exception as e:
             print(f"[WARNING] Error checking HTTP support, falling back to WebSocket-only: {e}")
@@ -187,42 +185,108 @@ class WebSocketServer:
             import websockets
             websockets_version = tuple(map(int, websockets.__version__.split('.')[:2]))
             
-            # Try to import the newer HTTP classes (websockets 11+)
-            try:
-                from websockets.http11 import Response
-                from websockets.http import Headers
-                return True, Response, Headers, websockets_version
-            except ImportError:
-                # Fallback for older websockets versions
+            # HTTP support is available from websockets 10.0+
+            if websockets_version >= (10, 0):
+                # For websockets 10-13, we use tuple format, so Response class is not needed
+                # For websockets 14+, we try to get Response class
+                Response = None
+                Headers = None
+                
+                if websockets_version >= (14, 0):
+                    # Try to import Response class for websockets 14+
+                    try:
+                        from websockets.http11 import Response
+                        print(f"[DEBUG] Found http11.Response for websockets {websockets.__version__}")
+                    except ImportError:
+                        try:
+                            from websockets.http import Response
+                            print(f"[DEBUG] Found http.Response for websockets {websockets.__version__}")
+                        except ImportError:
+                            print(f"[DEBUG] No Response class found for websockets {websockets.__version__}")
+                            Response = None
+                
+                # Try to get Headers class for all versions 10+
                 try:
-                    from websockets.http import Response, Headers
-                    return True, Response, Headers, websockets_version
+                    from websockets.http import Headers
+                    print(f"[DEBUG] Found http.Headers for websockets {websockets.__version__}")
                 except ImportError:
-                    # For very old versions, we'll create a simple response
-                    return False, None, None, websockets_version
-        except Exception:
+                    try:
+                        from websockets.datastructures import Headers
+                        print(f"[DEBUG] Found datastructures.Headers for websockets {websockets.__version__}")
+                    except ImportError:
+                        print(f"[DEBUG] No Headers class found for websockets {websockets.__version__}")
+                        Headers = None
+                
+                print(f"[DEBUG] HTTP support enabled (websockets {websockets.__version__})")
+                return True, Response, Headers, websockets_version
+            else:
+                # Very old versions without HTTP support
+                print(f"[DEBUG] HTTP support disabled (websockets {websockets.__version__} < 10.0)")
+                return False, None, None, websockets_version
+        except Exception as e:
+            print(f"[ERROR] Error detecting websockets version: {e}")
             return False, None, None, (0, 0)
 
     def _create_http_response(self, status_code, reason, content_type, body, use_new_http, Response, Headers, websockets_version):
         """Create an HTTP response compatible with different websockets versions."""
         try:
+            print(f"[DEBUG] Creating HTTP response for websockets {websockets_version}, use_new_http={use_new_http}")
+            
             if not use_new_http:
                 # For very old versions without HTTP support
-                return (status_code, [("Content-Type", content_type)], body)
-            
-            # For websockets 10.x, we need to use a different approach
-            if websockets_version < (11, 0):
-                # Websockets 10.x expects different return format
-                # Return None to let websocket continue, or raise an exception
-                # For HTTP requests in websockets 10, we should return None and let it fail gracefully
+                print("[DEBUG] No HTTP support available, returning None")
                 return None
-            else:
-                # Websockets 11+ with proper HTTP support
+            
+            import http
+            status = http.HTTPStatus(status_code)
+            body_bytes = body if isinstance(body, bytes) else body.encode('utf-8')
+            
+            # Create headers - try different approaches
+            if Headers is not None:
                 headers = Headers([("Content-Type", content_type)])
-                return Response(status_code, reason, headers, body)
+                print(f"[DEBUG] Using Headers class: {headers}")
+            else:
+                # Fallback to list of tuples
+                headers = [("Content-Type", content_type)]
+                print(f"[DEBUG] Using list of tuples for headers: {headers}")
+            
+            # For websockets 10-13, always use tuple format (HTTPResponse) 
+            # because AbortHandshake expects individual arguments, not Response objects
+            if websockets_version[0] <= 13:
+                print(f"[DEBUG] Using tuple format (HTTPResponse) for websockets {websockets_version[0]}.x")
+                # Return tuple format: (HTTPStatus, HeadersLike, bytes)
+                response_tuple = (status, headers, body_bytes)
+                print(f"[DEBUG] Created tuple response: status={status}, headers={len(headers) if hasattr(headers, '__len__') else 'N/A'}, body_len={len(body_bytes)}")
+                return response_tuple
+            
+            # For websockets 14+, try to use Response class
+            elif websockets_version >= (14, 0):
+                print("[DEBUG] Using Response object for websockets 14+")
+                
+                if Response is not None:
+                    try:
+                        # For websockets 14+, Response constructor expects:
+                        # Response(status_code: int, reason_phrase: str, headers: Headers, body: bytes)
+                        status_code = status.value  # Convert HTTPStatus to int
+                        reason_phrase = status.phrase  # Get reason phrase string
+                        response = Response(status_code, reason_phrase, headers, body_bytes)
+                        print(f"[DEBUG] Successfully created Response: status={status_code}, reason='{reason_phrase}', headers={headers}, body_len={len(body_bytes)}")
+                        return response
+                    except Exception as e:
+                        print(f"[DEBUG] Response creation failed: {e}")
+                        # Fallback to tuple format
+                        print("[DEBUG] Falling back to tuple format")
+                        return (status, headers, body_bytes)
+                else:
+                    print("[DEBUG] No Response class available, using tuple format")
+                    return (status, headers, body_bytes)
+            else:
+                print("[DEBUG] Using basic format for older websockets")
+                return None
                 
         except Exception as e:
             print(f"[ERROR] Failed to create HTTP response: {e}")
+            traceback.print_exc()
             return None
 
     async def _process_request(self, connection, request):
@@ -239,6 +303,8 @@ class WebSocketServer:
             request_path = '/'
             
         print(f"[PROCESS_REQUEST] Incoming request to path: {request_path}")
+        print(f"[DEBUG] Request object type: {type(request)}")
+        print(f"[DEBUG] Request attributes: {[attr for attr in dir(request) if not attr.startswith('_')]}")
         
         # Check if this is a WebSocket upgrade request by checking headers
         try:
@@ -258,6 +324,8 @@ class WebSocketServer:
                         elif header_name.lower() == "connection":
                             conn_header = header_value.lower()
             
+            print(f"[DEBUG] Upgrade header: '{upgrade}', Connection header: '{conn_header}'")
+            
             # If this has WebSocket upgrade headers, let it proceed as WebSocket
             if upgrade == "websocket" and "upgrade" in conn_header:
                 print("[PROCESS_REQUEST] WebSocket upgrade request detected")
@@ -265,13 +333,17 @@ class WebSocketServer:
             
             # Otherwise, serve as HTTP static file
             print(f"[HTTP] Serving static content for path: {request_path}")
-            return await self._serve_static_file(request_path)
+            http_response = await self._serve_static_file(request_path)
+            print(f"[DEBUG] HTTP response created: {type(http_response)}, value: {http_response}")
+            return http_response
             
         except Exception as e:
             print(f"[ERROR] Error in _process_request: {e}")
             traceback.print_exc()
             # If something goes wrong, serve as static file
-            return await self._serve_static_file(request_path)
+            http_response = await self._serve_static_file(request_path)
+            print(f"[DEBUG] Fallback HTTP response: {type(http_response)}")
+            return http_response
 
     async def _serve_static_file(self, path: str):
         """Serve static files for HTTP requests."""
