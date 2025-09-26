@@ -3,7 +3,9 @@ import websockets
 import json
 import traceback
 import random
-from typing import Dict, Any, Optional
+import mimetypes
+from pathlib import Path
+from typing import Dict, Any
 
 
 class WebSocketServer:
@@ -16,6 +18,8 @@ class WebSocketServer:
         self.connections: set = set()  # Store active connections
         self._on_get_server_data = None  # Callback for getting server data
         self._on_get_user_data = None  # Callback for getting user data
+        self._on_static_request = None  # Callback for custom static file handling
+        self.static_dir = Path(__file__).parent / "dist"  # Default static directory
         self._on_validate_discord_user = None  # Callback for validating Discord OAuth users
         self._on_get_client_id = None  # Callback for getting OAuth2 client ID
     
@@ -82,6 +86,15 @@ class WebSocketServer:
         """Allow external code to register a callback"""
         self._on_get_user_data = callback
 
+    def on_static_request(self, callback):
+        """Allow external code to register a callback for custom static file handling.
+        
+        The callback should take a path parameter and return either:
+        - None: Let default handler process the request
+        - (content_type, content): Return custom content
+        """
+        self._on_static_request = callback
+
     def on_validate_discord_user(self, callback):
         """Allow external code to register a Discord user validation callback"""
         self._on_validate_discord_user = callback
@@ -103,7 +116,10 @@ class WebSocketServer:
 
     def run_sync(self) -> None:
         """Run the server synchronously."""
-        asyncio.run(self.run_forever())
+        try:
+            asyncio.run(self.run_forever())
+        except KeyboardInterrupt:
+            print("\n[INFO] Server stopped by user")
 
     def _get_mock_user_data(self, discord_server_id: str = None) -> Dict[str, Any]:
         """Get the mock user list."""
@@ -205,12 +221,106 @@ class WebSocketServer:
         """Get a random user status."""
         return random.choice(["online", "idle", "dnd", "offline"])
 
-    async def _process_request(self, path: str, request_headers) -> Optional[Any]:
-        """Process incoming WebSocket connection requests."""
-        print(f"[PROCESS_REQUEST] Incoming connection to path: {path}")
-        # Note: websocket connection will be stored in handler method
-        # TODO: Validate discord oauth token, depends on https://github.com/NNTin/d-zone/issues/4
-        return None
+    async def _process_request(self, connection, request):
+        """Process incoming WebSocket connection requests and HTTP requests for static files."""
+        print(f"[PROCESS_REQUEST] Incoming request to path: {request.path}")
+        
+        # Check if this is a WebSocket upgrade request by checking headers
+        try:
+            upgrade = request.headers.get("Upgrade", "").lower()
+            conn_header = request.headers.get("Connection", "").lower()
+            
+            # If this has WebSocket upgrade headers, let it proceed as WebSocket
+            if upgrade == "websocket" and "upgrade" in conn_header:
+                print("[PROCESS_REQUEST] WebSocket upgrade request detected")
+                return None  # Let websocket handshake proceed
+            
+            # Otherwise, serve as HTTP static file
+            print(f"[HTTP] Serving static content for path: {request.path}")
+            return await self._serve_static_file(request.path)
+            
+        except Exception as e:
+            print(f"[ERROR] Error in _process_request: {e}")
+            traceback.print_exc()
+            # If something goes wrong, serve as static file
+            return await self._serve_static_file(request.path)
+
+    async def _serve_static_file(self, path: str):
+        """Serve static files for HTTP requests."""
+        from websockets.http11 import Response
+        from websockets.http import Headers
+        
+        try:
+            # Remove query parameters from path for routing
+            clean_path = path.split('?')[0]
+            
+            # Handle custom static request callback first
+            if self._on_static_request:
+                result = self._on_static_request(clean_path)
+                if result is not None:
+                    content_type, content = result
+                    headers = Headers([("Content-Type", content_type)])
+                    return Response(200, "OK", headers, content.encode())
+            
+            # Handle special API endpoints
+            if clean_path == "/api/version":
+                return await self._serve_version_api()
+            
+            # Default file serving
+            if clean_path == "/" or clean_path == "":
+                clean_path = "/index.html"
+            
+            # Remove leading slash and resolve file path
+            file_path = self.static_dir / clean_path.lstrip("/")
+            
+            # Security check - ensure we're not serving files outside static_dir
+            try:
+                file_path = file_path.resolve()
+                self.static_dir.resolve()
+                if not str(file_path).startswith(str(self.static_dir.resolve())):
+                    headers = Headers([("Content-Type", "text/plain")])
+                    return Response(403, "Forbidden", headers, b"Forbidden")
+            except (OSError, ValueError):
+                headers = Headers([("Content-Type", "text/plain")])
+                return Response(403, "Forbidden", headers, b"Forbidden")
+            
+            # Check if file exists
+            if not file_path.exists() or not file_path.is_file():
+                headers = Headers([("Content-Type", "text/html")])
+                return Response(404, "Not Found", headers, b"<h1>404 Not Found</h1><p>The requested file was not found.</p>")
+            
+            # Determine content type
+            content_type, _ = mimetypes.guess_type(str(file_path))
+            if content_type is None:
+                content_type = "application/octet-stream"
+            
+            # Read and return file
+            with open(file_path, "rb") as f:
+                content = f.read()
+            
+            headers = Headers([("Content-Type", content_type)])
+            return Response(200, "OK", headers, content)
+            
+        except Exception as e:
+            print(f"[ERROR] Failed to serve static file {path}: {e}")
+            traceback.print_exc()
+            headers = Headers([("Content-Type", "text/plain")])
+            return Response(500, "Internal Server Error", headers, b"Internal Server Error")
+
+    async def _serve_version_api(self):
+        """Serve version information as JSON API."""
+        from websockets.http11 import Response
+        from websockets.http import Headers
+        
+        try:
+            from . import __version__
+            version_data = {"version": __version__}
+        except ImportError as e:
+            print(f"[WARNING] Could not import version: {e}")
+            version_data = {"version": "unknown"}
+        
+        headers = Headers([("Content-Type", "application/json")])
+        return Response(200, "OK", headers, json.dumps(version_data).encode())
 
     async def _handler(self, websocket) -> None:
         """Handle WebSocket connections and messages."""
@@ -281,7 +391,7 @@ class WebSocketServer:
         
         print(f"[EVENT] Client requests connect to server: {server_id}")
         if password:
-            print(f"[AUTH] Using legacy password authentication")
+            print("[AUTH] Using legacy password authentication")
         elif discord_token:
             print(f"[AUTH] Using Discord OAuth2 authentication for user: {discord_user.get('username') if discord_user else 'unknown'}")
         
@@ -335,7 +445,7 @@ class WebSocketServer:
             # Fallback to legacy password (for backward compatibility)
             elif password and server_info.get("password") == password:
                 auth_valid = True
-                print(f"[AUTH] Legacy password authentication successful")
+                print("[AUTH] Legacy password authentication successful")
             
             if not auth_valid:
                 print(f"[ERROR] Authentication failed for passworded server {server_id}")

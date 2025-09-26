@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>D-Back WebSocket Server</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            border-bottom: 3px solid #007acc;
+            padding-bottom: 10px;
+        }
+        h2 {
+            color: #555;
+            margin-top: 30px;
+        }
+        .version {
+            background: #007acc;
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            display: inline-block;
+            margin-left: 10px;
+        }
+        .code {
+            background: #f8f8f8;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 15px;
+            font-family: 'Consolas', 'Monaco', monospace;
+            overflow-x: auto;
+            margin: 10px 0;
+            white-space: pre-wrap;
+        }
+        .highlight {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 5px;
+            padding: 10px;
+            margin: 10px 0;
+        }
+        ul {
+            padding-left: 20px;
+        }
+        li {
+            margin: 8px 0;
+        }
+        .status {
+            color: #28a745;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>D-Back WebSocket Server <span class="version" id="version">Loading...</span></h1>
+        
+        <div class="highlight">
+            <p><strong>Status:</strong> <span class="status">Server is running and serving static files!</span></p>
+            <p><strong>WebSocket URL:</strong> <code>ws://localhost:3000</code></p>
+        </div>
+
+        <h2>🚀 How to Run This Module</h2>
+        
+        <h3>Method 1: Command Line</h3>
+        <div class="code">pip install d_back
+d_back</div>
+
+        <h3>Method 2: Python Script</h3>
+        <div class="code">from d_back.server import WebSocketServer
+import asyncio
+
+# Basic usage
+server = WebSocketServer(port=3000)
+server.run_sync()
+
+# Or with custom callbacks
+async def main():
+    server = WebSocketServer(port=3000)
+    
+    # Custom server data callback
+    def get_servers():
+        return {"your_server_id": {"id": "custom", "name": "My Server"}}
+    
+    # Custom user data callback  
+    def get_users(server_id):
+        return {"user123": {"uid": "user123", "username": "TestUser"}}
+    
+    server.on_get_server_data(get_servers)
+    server.on_get_user_data(get_users)
+    
+    await server.run_forever()
+
+asyncio.run(main())</div>
+
+        <h3>Method 3: With Custom Static Files</h3>
+        <div class="code">from d_back.server import WebSocketServer
+
+def custom_static_handler(path):
+    if path == "/custom":
+        return "text/html", "&lt;h1&gt;Custom Page&lt;/h1&gt;"
+    return None  # Let default handler take over
+
+server = WebSocketServer(port=3000)
+server.on_static_request(custom_static_handler)
+server.run_sync()</div>
+
+        <h2>📡 WebSocket API</h2>
+        
+        <h3>Connect to Server</h3>
+        <div class="code">// JavaScript WebSocket client example
+const ws = new WebSocket('ws://localhost:3000');
+
+ws.onopen = function() {
+    // Connect to a server
+    ws.send(JSON.stringify({
+        type: 'connect',
+        data: {
+            server: 'default',  // or specific server ID
+            password: null      // if server requires password
+        }
+    }));
+};
+
+ws.onmessage = function(event) {
+    const data = JSON.parse(event.data);
+    console.log('Received:', data);
+    
+    // Handle different message types:
+    // - server-list: List of available servers
+    // - server-join: Successfully joined server + user list
+    // - message: Chat message from another user
+    // - presence: User status update
+    // - error: Error message
+};</div>
+
+        <h2>🔧 Features</h2>
+        <ul>
+            <li><strong>WebSocket Server:</strong> Real-time bidirectional communication</li>
+            <li><strong>Static File Serving:</strong> Serve web pages on the same port</li>
+            <li><strong>Multi-Server Support:</strong> Connect to different Discord-like servers</li>
+            <li><strong>User Management:</strong> Track online users and their status</li>
+            <li><strong>Message Broadcasting:</strong> Send messages to all connected clients</li>
+            <li><strong>Presence Updates:</strong> Real-time user status changes</li>
+            <li><strong>Custom Callbacks:</strong> Override default behavior with your own logic</li>
+            <li><strong>Mock Data:</strong> Built-in test data for development</li>
+        </ul>
+
+        <h2>📦 Package Information</h2>
+        <ul>
+            <li><strong>Package:</strong> d_back</li>
+            <li><strong>Version:</strong> <span id="version-text">Loading...</span></li>
+            <li><strong>Author:</strong> Tin Nguyen</li>
+            <li><strong>Python:</strong> >=3.8</li>
+            <li><strong>Dependencies:</strong> websockets</li>
+        </ul>
+
+        <div class="highlight">
+            <p><strong>Note:</strong> This server combines WebSocket and HTTP functionality on the same port. 
+            WebSocket connections are handled at the root path, while static files are served for regular HTTP requests.</p>
+        </div>
+    </div>
+
+    <script>
+        // Try to get version from the server
+        fetch('/api/version')
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('version').textContent = 'v' + data.version;
+                document.getElementById('version-text').textContent = data.version;
+            })
+            .catch(() => {
+                document.getElementById('version').textContent = 'Unknown';
+                document.getElementById('version-text').textContent = 'Unknown';
+            });
+    </script>
+</body>
+</html>
