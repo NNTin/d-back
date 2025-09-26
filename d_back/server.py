@@ -109,14 +109,63 @@ class WebSocketServer:
 
     async def run_forever(self) -> None:
         """Run the server forever."""
-        async with websockets.serve(
-            self._handler, 
-            self.host, 
-            self.port, 
-            process_request=self._process_request
-        ):
-            print(f"Mock WebSocket server running on ws://{self.host}:{self.port}")
-            await asyncio.Future()  # run forever
+        # For Python 3.8/3.9 compatibility, start with WebSocket-only mode
+        # and only try HTTP if we're confident it will work
+        has_http_support = False
+        
+        try:
+            import websockets
+            # Check websockets version
+            websockets_version = tuple(map(int, websockets.__version__.split('.')[:2]))
+            
+            # Only try HTTP support on Python 3.10+ with newer websockets
+            import sys
+            python_version = sys.version_info[:2]
+            
+            if python_version >= (3, 10) and websockets_version >= (10, 4):
+                try:
+                    # Quick test of HTTP imports
+                    from websockets.http11 import Response  # noqa: F401
+                    from websockets.http import Headers  # noqa: F401
+                    has_http_support = True
+                    print(f"[DEBUG] HTTP support enabled (Python {python_version}, websockets {websockets.__version__})")
+                except ImportError:
+                    try:
+                        from websockets.http import Response, Headers  # noqa: F401
+                        has_http_support = True
+                        print("[DEBUG] HTTP support enabled with fallback imports")
+                    except ImportError:
+                        print("[DEBUG] HTTP imports not available, using WebSocket-only mode")
+            else:
+                print(f"[DEBUG] Using WebSocket-only mode (Python {python_version}, websockets {websockets.__version__})")
+                
+        except Exception as e:
+            print(f"[WARNING] Error checking HTTP support, falling back to WebSocket-only: {e}")
+            has_http_support = False
+            
+        if has_http_support:
+            try:
+                async with websockets.serve(
+                    self._handler, 
+                    self.host, 
+                    self.port, 
+                    process_request=self._process_request
+                ):
+                    print(f"Mock WebSocket server running on ws://{self.host}:{self.port} (with HTTP support)")
+                    await asyncio.Future()  # run forever
+            except Exception as e:
+                print(f"[WARNING] Failed to start with HTTP support: {e}")
+                print("[INFO] Falling back to WebSocket-only mode")
+                has_http_support = False
+        
+        if not has_http_support:
+            async with websockets.serve(
+                self._handler, 
+                self.host, 
+                self.port
+            ):
+                print(f"Mock WebSocket server running on ws://{self.host}:{self.port} (WebSocket-only mode)")
+                await asyncio.Future()  # run forever
 
     def _random_color(self) -> str:
         """Generate a random color hex code."""
@@ -152,10 +201,21 @@ class WebSocketServer:
 
     async def _serve_static_file(self, path: str):
         """Serve static files for HTTP requests."""
-        from websockets.http11 import Response
-        from websockets.http import Headers
-        
         try:
+            # Try to import the newer HTTP classes (websockets 11+)
+            try:
+                from websockets.http11 import Response
+                from websockets.http import Headers
+                use_new_http = True
+            except ImportError:
+                # Fallback for older websockets versions
+                try:
+                    from websockets.http import Response, Headers
+                    use_new_http = True
+                except ImportError:
+                    # For very old versions, we'll create a simple response
+                    use_new_http = False
+            
             # Remove query parameters from path for routing
             clean_path = path.split('?')[0]
             
@@ -164,8 +224,12 @@ class WebSocketServer:
                 result = self._on_static_request(clean_path)
                 if result is not None:
                     content_type, content = result
-                    headers = Headers([("Content-Type", content_type)])
-                    return Response(200, "OK", headers, content.encode())
+                    if use_new_http:
+                        headers = Headers([("Content-Type", content_type)])
+                        return Response(200, "OK", headers, content.encode())
+                    else:
+                        # For older versions, return a simple response tuple
+                        return (200, [("Content-Type", content_type)], content.encode())
             
             # Handle special API endpoints
             if clean_path == "/api/version":
@@ -183,16 +247,25 @@ class WebSocketServer:
                 file_path = file_path.resolve()
                 self.static_dir.resolve()
                 if not str(file_path).startswith(str(self.static_dir.resolve())):
+                    if use_new_http:
+                        headers = Headers([("Content-Type", "text/plain")])
+                        return Response(403, "Forbidden", headers, b"Forbidden")
+                    else:
+                        return (403, [("Content-Type", "text/plain")], b"Forbidden")
+            except (OSError, ValueError):
+                if use_new_http:
                     headers = Headers([("Content-Type", "text/plain")])
                     return Response(403, "Forbidden", headers, b"Forbidden")
-            except (OSError, ValueError):
-                headers = Headers([("Content-Type", "text/plain")])
-                return Response(403, "Forbidden", headers, b"Forbidden")
+                else:
+                    return (403, [("Content-Type", "text/plain")], b"Forbidden")
             
             # Check if file exists
             if not file_path.exists() or not file_path.is_file():
-                headers = Headers([("Content-Type", "text/html")])
-                return Response(404, "Not Found", headers, b"<h1>404 Not Found</h1><p>The requested file was not found.</p>")
+                if use_new_http:
+                    headers = Headers([("Content-Type", "text/html")])
+                    return Response(404, "Not Found", headers, b"<h1>404 Not Found</h1><p>The requested file was not found.</p>")
+                else:
+                    return (404, [("Content-Type", "text/html")], b"<h1>404 Not Found</h1><p>The requested file was not found.</p>")
             
             # Determine content type
             content_type, _ = mimetypes.guess_type(str(file_path))
@@ -203,29 +276,65 @@ class WebSocketServer:
             with open(file_path, "rb") as f:
                 content = f.read()
             
-            headers = Headers([("Content-Type", content_type)])
-            return Response(200, "OK", headers, content)
+            if use_new_http:
+                headers = Headers([("Content-Type", content_type)])
+                return Response(200, "OK", headers, content)
+            else:
+                return (200, [("Content-Type", content_type)], content)
             
         except Exception as e:
             print(f"[ERROR] Failed to serve static file {path}: {e}")
             traceback.print_exc()
-            headers = Headers([("Content-Type", "text/plain")])
-            return Response(500, "Internal Server Error", headers, b"Internal Server Error")
+            try:
+                if use_new_http:
+                    headers = Headers([("Content-Type", "text/plain")])
+                    return Response(500, "Internal Server Error", headers, b"Internal Server Error")
+                else:
+                    return (500, [("Content-Type", "text/plain")], b"Internal Server Error")
+            except Exception:
+                # Ultimate fallback
+                return (500, [("Content-Type", "text/plain")], b"Internal Server Error")
 
     async def _serve_version_api(self):
         """Serve version information as JSON API."""
-        from websockets.http11 import Response
-        from websockets.http import Headers
-        
         try:
-            from . import __version__
-            version_data = {"version": __version__}
-        except ImportError as e:
-            print(f"[WARNING] Could not import version: {e}")
-            version_data = {"version": "unknown"}
+            # Try to import the newer HTTP classes (websockets 11+)
+            try:
+                from websockets.http11 import Response
+                from websockets.http import Headers
+                use_new_http = True
+            except ImportError:
+                # Fallback for older websockets versions
+                try:
+                    from websockets.http import Response, Headers
+                    use_new_http = True
+                except ImportError:
+                    # For very old versions, we'll create a simple response
+                    use_new_http = False
+            
+            try:
+                from . import __version__
+                version_data = {"version": __version__}
+            except ImportError as e:
+                print(f"[WARNING] Could not import version: {e}")
+                version_data = {"version": "unknown"}
+            
+            if use_new_http:
+                headers = Headers([("Content-Type", "application/json")])
+                return Response(200, "OK", headers, json.dumps(version_data).encode())
+            else:
+                return (200, [("Content-Type", "application/json")], json.dumps(version_data).encode())
         
-        headers = Headers([("Content-Type", "application/json")])
-        return Response(200, "OK", headers, json.dumps(version_data).encode())
+        except Exception as e:
+            print(f"[ERROR] Failed to serve version API: {e}")
+            try:
+                if use_new_http:
+                    headers = Headers([("Content-Type", "text/plain")])
+                    return Response(500, "Internal Server Error", headers, b"Internal Server Error")
+                else:
+                    return (500, [("Content-Type", "text/plain")], b"Internal Server Error")
+            except Exception:
+                return (500, [("Content-Type", "text/plain")], b"Internal Server Error")
 
     async def _handler(self, websocket) -> None:
         """Handle WebSocket connections and messages."""
