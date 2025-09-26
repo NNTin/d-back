@@ -22,6 +22,7 @@ addopts = [
     "--strict-config", 
     "--verbose",
     "-ra",  # show summary of all test results
+    "--timeout=60",  # global timeout of 60 seconds per test
 ]
 testpaths = ["tests"]
 python_files = ["test_*.py", "*_test.py"]
@@ -31,12 +32,15 @@ markers = [
     "asyncio: marks tests as async",
     "slow: marks tests as slow (deselect with '-m \"not slow\"')",
     "integration: marks tests as integration tests",
+    "timeout: marks tests that may need longer timeout",
 ]
 asyncio_mode = "auto"
 log_cli = true
 log_cli_level = "INFO"
 log_cli_format = "%(asctime)s [%(levelname)8s] %(name)s: %(message)s"
 log_cli_date_format = "%Y-%m-%d %H:%M:%S"
+timeout = 60
+timeout_method = "thread"
 
 [tool.bumpversion]
 current_version = "0.0.11"

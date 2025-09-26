@@ -26,29 +26,61 @@ class TestWebSocketServer:
         )
         time.sleep(2)  # Give server time to start
         
+        # Verify server is still running
+        if server_proc.poll() is not None:
+            # Server has already exited, get the error output
+            stdout, stderr = server_proc.communicate()
+            raise RuntimeError(f"Server failed to start. stdout: {stdout}, stderr: {stderr}")
+        
         yield server_proc
         
-        # Cleanup
-        server_proc.terminate()
-        try:
-            server_proc.wait(timeout=5)
-        except subprocess.TimeoutExpired:
-            server_proc.kill()
+        # Cleanup with proper timeout handling
+        if server_proc.poll() is None:  # Still running
+            server_proc.terminate()
+            try:
+                server_proc.wait(timeout=5)
+            except subprocess.TimeoutExpired:
+                server_proc.kill()
+                try:
+                    server_proc.wait(timeout=2)
+                except subprocess.TimeoutExpired:
+                    pass  # Process might be stuck, but we tried
 
     @pytest.mark.asyncio
     async def test_websocket_connection(self, server_process):
         """Test basic WebSocket connection."""
         import websockets
         
-        async with websockets.connect('ws://localhost:3000') as websocket:
-            assert websocket.open
+        try:
+            # Add timeout to connection itself
+            websocket = await asyncio.wait_for(
+                websockets.connect('ws://localhost:3000'),
+                timeout=10.0
+            )
             
-            # Should receive initial server-list message
-            message = await asyncio.wait_for(websocket.recv(), timeout=5)
-            data = json.loads(message)
-            assert data.get('type') == 'server-list'
-            assert 'data' in data
-            assert isinstance(data['data'], dict)
+            async with websocket:
+                # Check if connection is established (different methods for different versions)
+                is_open = True
+                try:
+                    is_open = websocket.open
+                except AttributeError:
+                    # websockets >= 11.0 doesn't have .open, try ping instead
+                    try:
+                        await asyncio.wait_for(websocket.ping(), timeout=2.0)
+                        is_open = True
+                    except Exception:
+                        is_open = False
+                
+                assert is_open, "WebSocket connection should be established"
+                
+                # Should receive initial server-list message
+                message = await asyncio.wait_for(websocket.recv(), timeout=5)
+                data = json.loads(message)
+                assert data.get('type') == 'server-list'
+                assert 'data' in data
+                assert isinstance(data['data'], dict)
+        except asyncio.TimeoutError:
+            pytest.fail("WebSocket connection or operations timed out")
 
     @pytest.mark.asyncio
     async def test_websocket_server_list(self, server_process):
@@ -78,33 +110,42 @@ class TestWebSocketServer:
         """Test connecting to a specific server."""
         import websockets
         
-        async with websockets.connect('ws://localhost:3000') as websocket:
-            # Receive initial server-list message
-            server_list_msg = await asyncio.wait_for(websocket.recv(), timeout=5)
-            server_list_data = json.loads(server_list_msg)
+        try:
+            # Add timeout to connection
+            websocket = await asyncio.wait_for(
+                websockets.connect('ws://localhost:3000'),
+                timeout=10.0
+            )
             
-            # Get first available server
-            servers = server_list_data['data']
-            first_server_id = next(iter(servers.values()))['id']
-            
-            # Send connect message
-            connect_msg = {
-                "type": "connect",
-                "data": {"server": first_server_id}
-            }
-            await websocket.send(json.dumps(connect_msg))
-            
-            # Should receive server-join message
-            response = await asyncio.wait_for(websocket.recv(), timeout=5)
-            data = json.loads(response)
-            
-            assert data.get('type') == 'server-join'
-            assert 'data' in data
-            
-            join_data = data['data']
-            assert 'server' in join_data
-            assert 'users' in join_data
-            assert join_data['server']['id'] == first_server_id
+            async with websocket:
+                # Receive initial server-list message
+                server_list_msg = await asyncio.wait_for(websocket.recv(), timeout=5)
+                server_list_data = json.loads(server_list_msg)
+                
+                # Get first available server
+                servers = server_list_data['data']
+                first_server_id = next(iter(servers.values()))['id']
+                
+                # Send connect message
+                connect_msg = {
+                    "type": "connect",
+                    "data": {"server": first_server_id}
+                }
+                await websocket.send(json.dumps(connect_msg))
+                
+                # Should receive server-join message
+                response = await asyncio.wait_for(websocket.recv(), timeout=5)
+                data = json.loads(response)
+                
+                assert data.get('type') == 'server-join'
+                assert 'data' in data
+                
+                join_data = data['data']
+                assert 'server' in join_data
+                assert 'users' in join_data
+                assert join_data['server']['id'] == first_server_id
+        except asyncio.TimeoutError:
+            pytest.fail("WebSocket operations timed out")
 
     @pytest.mark.asyncio
     async def test_websocket_invalid_server_connection(self, server_process):

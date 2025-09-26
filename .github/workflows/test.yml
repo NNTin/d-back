@@ -200,6 +200,14 @@ jobs:
         run: |
           tox -e ${{ matrix.tox-env }}
 
+      - name: Upload allure results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: allure-results-${{ matrix.tox-env }}
+          path: allure-results/
+          retention-days: 7
+
       - name: Upload coverage reports (if available)
         if: always()
         continue-on-error: true
@@ -208,3 +216,53 @@ jobs:
             pip install coverage
             coverage report
           fi
+
+  # Generate and deploy allure report
+  allure-report:
+    if: github.event_name == 'pull_request'
+    name: Generate and Deploy Allure Report
+    runs-on: ubuntu-latest
+    needs: test-pr
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Download all allure results
+        uses: actions/download-artifact@v4
+        with:
+          pattern: allure-results-*
+          path: allure-results/
+          merge-multiple: true
+
+      - name: List downloaded artifacts
+        run: |
+          find allure-results/ -type f -name "*.json" | head -10
+          find allure-results/ -type f | wc -l
+
+      - name: Install Allure
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y openjdk-11-jdk
+          curl -o allure-2.24.0.tgz -Ls https://github.com/allure-framework/allure2/releases/download/2.24.0/allure-2.24.0.tgz
+          sudo tar -zxvf allure-2.24.0.tgz -C /opt/
+          sudo ln -s /opt/allure-2.24.0/bin/allure /usr/bin/allure
+
+      - name: Generate Allure Report
+        run: |
+          allure generate allure-results/ --clean -o allure-report/
+          
+      - name: Install Vercel CLI
+        run: npm install -g vercel@latest
+
+      - name: Deploy to Vercel
+        run: |
+          cd allure-report/
+          vercel --token ${{ secrets.VERCEL_TOKEN }} --prod --yes
+        env:
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}

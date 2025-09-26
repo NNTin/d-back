@@ -108,7 +108,13 @@ class SimpleTestRunner:
             try:
                 import websockets
                 
-                async with websockets.connect('ws://localhost:3000') as websocket:
+                # Add timeout to connection itself
+                websocket = await asyncio.wait_for(
+                    websockets.connect('ws://localhost:3000'),
+                    timeout=10.0
+                )
+                
+                async with websocket:
                     # Check if connection is established (different methods for different versions)
                     is_open = True
                     try:
@@ -116,7 +122,7 @@ class SimpleTestRunner:
                     except AttributeError:
                         # websockets >= 11.0 doesn't have .open, check if we can send/receive
                         try:
-                            await websocket.ping()
+                            await asyncio.wait_for(websocket.ping(), timeout=2.0)
                             is_open = True
                         except Exception:
                             is_open = False
@@ -146,7 +152,9 @@ class SimpleTestRunner:
                     
             except ImportError:
                 print("websockets not available, skipping WebSocket tests")
-                
+        except asyncio.TimeoutError:
+            print("WebSocket test timed out")
+            raise
         except Exception as e:
             print(f"WebSocket test error: {e}")
             raise

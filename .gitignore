@@ -67,3 +67,5 @@ coverage.xml
 /.venv312/
 /.venv313/
 
+
+/allure-results/
