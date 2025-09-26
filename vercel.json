@@ -1,19 +1,5 @@
 {
   "version": 2,
   "name": "d-back-test-reports",
-  "builds": [
-    {
-      "src": "**",
-      "use": "@vercel/static"
-    }
-  ],
-  "routes": [
-    {
-      "src": "/(.*)",
-      "dest": "/$1"
-    }
-  ],
-  "functions": {},
-  "regions": ["iad1"],
   "public": true
 }
