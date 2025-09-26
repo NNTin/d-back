@@ -7,6 +7,8 @@ import mimetypes
 from pathlib import Path
 from typing import Dict, Any
 
+from .mock import MockDataProvider
+
 
 class WebSocketServer:
     """WebSocket server to manage connections and broadcast messages."""
@@ -22,6 +24,7 @@ class WebSocketServer:
         self.static_dir = Path(__file__).parent / "dist"  # Default static directory
         self._on_validate_discord_user = None  # Callback for validating Discord OAuth users
         self._on_get_client_id = None  # Callback for getting OAuth2 client ID
+        self.mock_provider = MockDataProvider(self)  # Mock data provider
     
     async def start(self) -> None:
         """Start the WebSocket server."""
@@ -121,98 +124,6 @@ class WebSocketServer:
         except KeyboardInterrupt:
             print("\n[INFO] Server stopped by user")
 
-    def _get_mock_user_data(self, discord_server_id: str = None) -> Dict[str, Any]:
-        """Get the mock user list."""
-        base_users = {
-            "77488778255540224": {
-                "uid": "77488778255540224",
-                "username": "b6d",
-                "status": "online",
-                "roleColor": "#ffffff"
-            },
-            "235148962103951360": {
-                "uid": "235148962103951360",
-                "username": "Carl-bot",
-                "status": "online",
-                "roleColor": "#2c2f33"
-            },
-            "301022161391452160": {
-                "uid": "301022161391452160",
-                "username": "Music",
-                "status": "online",
-                "roleColor": "#7289da"
-            },
-            "484294583505649664": {
-                "uid": "484294583505649664",
-                "username": "MeepoDev",
-                "status": "online",
-                "roleColor": "#ffffff"
-            },
-            "492349095365705738": {
-                "uid": "492349095365705738",
-                "username": "Dissentin",
-                "status": "online",
-                "roleColor": "#2c2f33"
-            },
-            "506432803173433344": {
-                "uid": "506432803173433344",
-                "username": "Soundboard",
-                "status": "online",
-                "roleColor": "#7289da"
-            },
-            "518858360142168085": {
-                "uid": "518858360142168085",
-                "username": "Red-kun",
-                "status": "online",
-                "roleColor": "#ffffff"
-            },
-            "620253379083370516": {
-                "uid": "620253379083370516",
-                "username": "Pastecord",
-                "status": "online",
-                "roleColor": "#7289da"
-            }
-        }
-        
-        # If this is the "Mock with random colors" server, generate random colors
-        if discord_server_id == "482241773318701056":
-            for user in base_users.values():
-                user["roleColor"] = self._random_color()
-                
-        if discord_server_id == "123456789012345678":
-            # Simulate a larger server with more users
-            for i in range(20):
-                uid = str(600000000000000000 + i)
-                base_users[uid] = {
-                    "uid": uid,
-                    "username": f"User{i}",
-                    "status": self._random_status(),
-                    "roleColor": self._random_color()
-                }
-        
-        return base_users
-        
-    def _get_mock_server_data(self) -> Dict[str, Any]:
-        """Get the mock server list."""
-        return {
-            "232769614004748288": {
-                "id": "D",
-                "name": "Mock Server",
-                "passworded": False
-            },
-            "482241773318701056": {
-                "id": "T", 
-                "name": "Mock with random colors",
-                "default": True,
-                "passworded": False
-            },
-            "123456789012345678": {
-                "id": "P",
-                "name": "OAuth Protected Server",
-                "passworded": True
-            }
-        }
-    
     def _random_color(self) -> str:
         """Generate a random color hex code."""
         return '#{:06x}'.format(random.randint(0, 0xFFFFFF))
@@ -336,7 +247,7 @@ class WebSocketServer:
                 server_data = await self._on_get_server_data()
             else:
                 # simulate getting server data
-                server_data = self._get_mock_server_data()
+                server_data = self.mock_provider.get_mock_server_data()
 
             await websocket.send(json.dumps({
                 "type": "server-list",
@@ -399,7 +310,7 @@ class WebSocketServer:
         if self._on_get_server_data:
             server_data = await self._on_get_server_data()
         else:
-            server_data = self._get_mock_server_data()
+            server_data = self.mock_provider.get_mock_server_data()
             
         # Find the server (similar to inbox.js getUsers logic)
         server_info = None
@@ -466,7 +377,7 @@ class WebSocketServer:
         if self._on_get_user_data:
             user_data = await self._on_get_user_data(discord_server_id)
         else:
-            user_data = self._get_mock_user_data(discord_server_id)
+            user_data = self.mock_provider.get_mock_user_data(discord_server_id)
         
         print(f"[SUCCESS] Client joined server {server_info['name']}")
         print("[SEND] server-join")
@@ -502,70 +413,8 @@ class WebSocketServer:
         # Only start mock data if using mock data (not when using real callbacks)
         if not self._on_get_user_data and not self._on_get_server_data:
             # Start background tasks for mock data
-            asyncio.create_task(self._periodic_messages(websocket))
-            asyncio.create_task(self._periodic_status_updates(websocket))
-
-    async def _periodic_status_updates(self, websocket) -> None:
-        """Send periodic status updates to the client."""
-        uids = list(self._get_mock_user_data(websocket.discordServer).keys())
-        try:
-            while True:
-                await asyncio.sleep(4)
-                status = self._random_status()
-                uid = random.choice(uids)
-                presence_msg = {
-                    "type": "presence",
-                    "server": websocket.discordServer,
-                    "data": {
-                        "uid": uid,
-                        "status": status
-                    }
-                }
-                print(f"[SEND] presence update for {uid}: {status}")
-                await websocket.send(json.dumps(presence_msg))
-        except websockets.ConnectionClosed:
-            print("[INFO] Presence update task stopped: connection closed")
-            # Remove closed connections
-            self.connections.discard(websocket)
-        except Exception as e:
-            print(f"[ERROR] Failed to send message to connection: {e}")
-            # Optionally remove problematic connections
-            self.connections.discard(websocket)
-
-    async def _periodic_messages(self, websocket) -> None:
-        """Send periodic messages to the client."""
-        uids = list(self._get_mock_user_data(websocket.discordServer).keys())
-        messages = [
-            "hello",
-            "how are you?",
-            "this is a test message",
-            "D-Zone rocks!",
-            "what's up?"
-        ]
-        try:
-            while True:
-                await asyncio.sleep(2.5)
-                uid = random.choice(uids)
-                msg_text = random.choice(messages)
-                msg = {
-                    "type": "message",
-                    "server": websocket.discordServer,
-                    "data": {
-                        "uid": uid,
-                        "message": msg_text,
-                        "channel": "527964146659229701"
-                    }
-                }
-                print(f"[SEND] periodic message from {uid}: {msg_text}")
-                await websocket.send(json.dumps(msg))
-        except websockets.ConnectionClosed:
-            print("[INFO] Periodic message task stopped: connection closed")
-            # Remove closed connections
-            self.connections.discard(websocket)
-        except Exception as e:
-            print(f"[ERROR] Failed to send message to connection: {e}")
-            # Optionally remove problematic connections
-            self.connections.discard(websocket)
+            asyncio.create_task(self.mock_provider.periodic_messages(websocket))
+            asyncio.create_task(self.mock_provider.periodic_status_updates(websocket))
 
     async def _validate_discord_oauth(self, token: str, user_info: Dict[str, Any], discord_server_id: str) -> bool:
         """Validate Discord OAuth2 token and check if user has access to the server."""
