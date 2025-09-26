@@ -36,3 +36,32 @@ jobs:
         uses: pypa/gh-action-pypi-publish@v1.8.10
         with:
           password: ${{ secrets.PYPI_TOKEN }}
+
+      - name: Wait for PyPI propagation
+        run: |
+          echo "⏳ Waiting for PyPI to propagate the new package..."
+          echo "This usually takes 1-2 minutes for the package to be available via pip install"
+          sleep 120
+
+      - name: Trigger Deployment
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            // Extract version from tag (remove 'v' prefix if present)
+            const tag = '${{ github.event.inputs.tag }}';
+            const version = tag.startsWith('v') ? tag.slice(1) : tag;
+            
+            console.log(`Triggering deployment for version: ${version}`);
+            
+            await github.rest.actions.createWorkflowDispatch({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              workflow_id: 'deploy.yml',
+              ref: 'main',
+              inputs: {
+                version: version
+              }
+            });
+            
+            console.log('✅ Deployment workflow triggered successfully!');

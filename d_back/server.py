@@ -4,6 +4,7 @@ import json
 import traceback
 import random
 import mimetypes
+import argparse
 from pathlib import Path
 from typing import Dict, Any
 
@@ -116,13 +117,6 @@ class WebSocketServer:
         ):
             print(f"Mock WebSocket server running on ws://{self.host}:{self.port}")
             await asyncio.Future()  # run forever
-
-    def run_sync(self) -> None:
-        """Run the server synchronously."""
-        try:
-            asyncio.run(self.run_forever())
-        except KeyboardInterrupt:
-            print("\n[INFO] Server stopped by user")
 
     def _random_color(self) -> str:
         """Generate a random color hex code."""
@@ -527,15 +521,76 @@ class WebSocketServer:
                 # Optionally remove problematic connections
                 self.connections.discard(websocket)
 
-PORT = 3000
+
+def parse_args():
+    """Parse command-line arguments."""
+    parser = argparse.ArgumentParser(
+        description='D-Back WebSocket Server',
+        formatter_class=argparse.ArgumentDefaultsHelpFormatter
+    )
+    parser.add_argument(
+        '--port', 
+        type=int, 
+        default=3000, 
+        help='Port to run the WebSocket server on'
+    )
+    parser.add_argument(
+        '--host', 
+        type=str, 
+        default='localhost', 
+        help='Host to bind the WebSocket server to'
+    )
+    parser.add_argument(
+        '--static-dir',
+        type=str,
+        default=None,
+        help='Directory to serve static files from (default: built-in dist directory)'
+    )
+    parser.add_argument(
+        '--version',
+        action='version',
+        version=f'%(prog)s {get_version()}'
+    )
+    return parser.parse_args()
+
+def get_version():
+    """Get the current version of d_back."""
+    try:
+        from . import __version__
+        return __version__
+    except ImportError:
+        return "unknown"
 
 async def main():
-    server = WebSocketServer(port=PORT)
+    """Main async entry point."""
+    args = parse_args()
+    
+    print(f"Starting D-Back WebSocket Server v{get_version()}")
+    print(f"Host: {args.host}")
+    print(f"Port: {args.port}")
+    
+    server = WebSocketServer(port=args.port, host=args.host)
+    
+    # Set custom static directory if provided
+    if args.static_dir:
+        static_path = Path(args.static_dir)
+        if static_path.exists() and static_path.is_dir():
+            server.static_dir = static_path
+            print(f"Static directory: {static_path}")
+        else:
+            print(f"Warning: Static directory '{args.static_dir}' does not exist or is not a directory")
+            print(f"Using default static directory: {server.static_dir}")
+    else:
+        print(f"Static directory: {server.static_dir}")
+    
     await server.run_forever()
 
 def main_sync():
-    server = WebSocketServer(port=PORT)
-    server.run_sync()
+    """Synchronous entry point for the server."""
+    try:
+        asyncio.run(main())
+    except KeyboardInterrupt:
+        print("\n[INFO] Server stopped by user")
 
 if __name__ == "__main__":
     main_sync()

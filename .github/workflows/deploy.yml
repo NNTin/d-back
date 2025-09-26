@@ -1,0 +1,137 @@
+name: Deploy to VPS
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version to deploy'
+        required: false
+        default: 'latest'
+        type: string
+
+jobs:
+  deploy:
+    name: Deploy d_back to VPS
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Deploy to VPS
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USERNAME || 'root' }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          port: ${{ secrets.VPS_PORT || 22 }}
+          script: |
+            echo "🚀 Starting deployment of d_back..."
+            
+            # Activate the virtual environment
+            echo "🔄 Activating dbackenv virtual environment..."
+            source ~/dbackenv/bin/activate
+            
+            # Stop the d_back service
+            echo "⏹️  Stopping d_back service..."
+            sudo systemctl stop d_back || echo "d_back service was not running"
+            
+            # Wait a moment for the service to fully stop
+            sleep 2
+            
+            # Update pip to latest version in the virtual environment
+            echo "⬆️  Updating pip in virtual environment..."
+            pip install --upgrade pip
+            
+            # Install or upgrade d_back package in the virtual environment
+            if [ "${{ github.event.inputs.version }}" = "latest" ]; then
+              echo "📦 Installing latest version of d_back in virtual environment..."
+              pip install --upgrade d_back
+            else
+              echo "📦 Installing d_back version ${{ github.event.inputs.version }} in virtual environment..."
+              pip install d_back==${{ github.event.inputs.version }}
+            fi
+            
+            # Verify installation in the virtual environment
+            echo "✅ Verifying d_back installation in virtual environment..."
+            python -c "import d_back; print(f'd_back version: {d_back.__version__}')"
+            
+            # Start the d_back service
+            echo "▶️  Starting d_back service..."
+            sudo systemctl start d_back
+            
+            # Enable service to start on boot (if not already enabled)
+            sudo systemctl enable d_back
+            
+            # Check service status
+            echo "🔍 Checking d_back service status..."
+            sudo systemctl status d_back --no-pager
+            
+            # Restart nginx to clear any cached connections and reload config
+            echo "🔄 Restarting nginx..."
+            sudo systemctl restart nginx
+            
+            # Check nginx status
+            echo "🔍 Checking nginx status..."
+            sudo systemctl status nginx --no-pager
+            
+            # Wait a moment and test if services are responding
+            sleep 3
+            
+            echo "🎉 Deployment completed successfully!"
+            echo "📊 Service status summary:"
+            sudo systemctl is-active d_back
+            sudo systemctl is-active nginx
+
+      - name: Verify Deployment
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USERNAME || 'root' }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          port: ${{ secrets.VPS_PORT || 22 }}
+          script: |
+            echo "🔍 Running post-deployment verification..."
+            
+            # Activate the virtual environment for verification
+            echo "🔄 Activating dbackenv virtual environment for verification..."
+            source ~/dbackenv/bin/activate
+            
+            # Check if d_back service is running
+            if sudo systemctl is-active --quiet d_back; then
+              echo "✅ d_back service is running"
+            else
+              echo "❌ d_back service is not running"
+              sudo systemctl status d_back --no-pager
+              exit 1
+            fi
+            
+            # Check if nginx is running
+            if sudo systemctl is-active --quiet nginx; then
+              echo "✅ nginx service is running"
+            else
+              echo "❌ nginx service is not running"
+              sudo systemctl status nginx --no-pager
+              exit 1
+            fi
+            
+            # Get the installed version from the virtual environment
+            INSTALLED_VERSION=$(python -c "import d_back; print(d_back.__version__)" 2>/dev/null || echo "unknown")
+            echo "📦 Deployed d_back version: $INSTALLED_VERSION"
+            
+            echo "✅ Deployment verification completed successfully!"
+
+      - name: Deployment Summary
+        if: always()
+        run: |
+          echo "## Deployment Summary 📋" >> $GITHUB_STEP_SUMMARY
+          echo "- **Version Deployed**: ${{ github.event.inputs.version }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **VPS Host**: ${{ secrets.VPS_HOST }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Deployment Status**: ${{ job.status }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Services Restarted**: d_back, nginx" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          if [ "${{ job.status }}" = "success" ]; then
+            echo "✅ Deployment completed successfully!" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "❌ Deployment failed. Check the logs above for details." >> $GITHUB_STEP_SUMMARY
+          fi
