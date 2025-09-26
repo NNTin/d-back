@@ -3,6 +3,7 @@ End-to-end browser tests using headless Chrome.
 Tests the d_back server's web interface functionality.
 """
 
+import os
 import subprocess
 import sys
 import time
@@ -27,6 +28,44 @@ try:
 except ImportError:
     SELENIUM_AVAILABLE = False
     WEBDRIVER_MANAGER_AVAILABLE = False
+
+try:
+    import allure
+    ALLURE_AVAILABLE = True
+except ImportError:
+    ALLURE_AVAILABLE = False
+
+
+def get_websockets_version():
+    """Get websockets version from environment or actual package."""
+    # First try environment variable set by tox
+    env_version = os.environ.get('WEBSOCKETS_VERSION')
+    if env_version:
+        return env_version
+    
+    # Fallback to checking actual installed version
+    try:
+        import websockets
+        return websockets.version
+    except ImportError:
+        return "unknown"
+
+
+def get_python_version():
+    """Get Python version from environment or sys.version_info."""
+    # First try environment variable set by tox
+    env_version = os.environ.get('PYTHON_VERSION')
+    if env_version:
+        return env_version
+    
+    # Fallback to actual Python version
+    import sys
+    return f"{sys.version_info.major}.{sys.version_info.minor}"
+
+
+def get_test_env_name():
+    """Get test environment name from tox."""
+    return os.environ.get('TEST_ENV_NAME', 'unknown')
 
 
 class TestBrowserIntegration:
@@ -108,13 +147,30 @@ class TestBrowserIntegration:
                 pass
 
     @pytest.mark.timeout(60)
+    @allure.feature("Browser Integration") if ALLURE_AVAILABLE else lambda x: x
+    @allure.story("Homepage Loading") if ALLURE_AVAILABLE else lambda x: x
+    @allure.title("Test that homepage loads successfully in Chrome") if ALLURE_AVAILABLE else lambda x: x
     def test_homepage_loads(self, server_process, chrome_driver):
         """Test that the homepage loads successfully in Chrome."""
+        websockets_version = get_websockets_version()
+        python_version = get_python_version()
+        test_env = get_test_env_name()
+        
+        if ALLURE_AVAILABLE:
+            allure.dynamic.parameter("websockets_version", websockets_version)
+            allure.dynamic.parameter("python_version", python_version)
+            allure.dynamic.parameter("test_environment", test_env)
+            allure.attach(f"Testing homepage with Python {python_version}, websockets {websockets_version} in environment {test_env}", 
+                         "Test Configuration", allure.attachment_type.TEXT)
+        
         driver = chrome_driver
         
         try:
             # Navigate to the homepage
             driver.get("http://localhost:3000")
+            
+            if ALLURE_AVAILABLE:
+                allure.attach(driver.get_screenshot_as_png(), "Homepage Screenshot", allure.attachment_type.PNG)
             
             # Wait for the page title to contain expected text
             WebDriverWait(driver, 20).until(
