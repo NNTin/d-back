@@ -64,6 +64,17 @@
             color: #28a745;
             font-weight: bold;
         }
+        a {
+            color: #007acc;
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+        small {
+            color: #666;
+            font-style: italic;
+        }
     </style>
 </head>
 <body>
@@ -168,6 +179,16 @@ ws.onmessage = function(event) {
             <li><strong>Author:</strong> Tin Nguyen</li>
             <li><strong>Python:</strong> >=3.8</li>
             <li><strong>Dependencies:</strong> websockets</li>
+        </ul>
+
+        <h2>🔗 Related Projects</h2>
+        <ul>
+            <li><strong>d-back</strong> <a href="https://github.com/nntin/d-back" target="_blank">https://github.com/nntin/d-back</a>
+                <br><small>The WebSocket server source code (this project)</small></li>
+            <li><strong>d-cogs</strong> <a href="https://github.com/nntin/d-cogs" target="_blank">https://github.com/nntin/d-cogs</a>
+                <br><small>The Red-DiscordBot implementation that overrides d-back functionalities</small></li>
+            <li><strong>d-zone</strong> <a href="https://github.com/nntin/d-zone" target="_blank">https://github.com/nntin/d-zone</a>
+                <br><small>The WebSocket frontend implementation</small></li>
         </ul>
 
         <div class="highlight">

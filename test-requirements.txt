@@ -1,0 +1,9 @@
+# Test requirements for d_back
+pytest>=7.0.0
+pytest-asyncio>=0.21.0
+aiohttp>=3.8.0
+packaging>=21.0
+
+# Optional: for better test output
+pytest-cov>=4.0.0
+pytest-xdist>=3.0.0
