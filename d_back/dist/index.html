@@ -199,7 +199,8 @@ ws.onmessage = function(event) {
 
     <script>
         // Try to get version from the server
-        fetch('/api/version')
+        // Use relative path to work correctly with subpaths
+        fetch('api/version')
             .then(response => response.json())
             .then(data => {
                 document.getElementById('version').textContent = 'v' + data.version;
