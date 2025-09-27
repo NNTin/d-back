@@ -8,6 +8,8 @@ on:
         required: false
         default: 'latest'
         type: string
+  repository_dispatch:
+    types: [deploy]
 
 jobs:
   deploy:
@@ -18,6 +20,18 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Determine version to deploy
+        id: version
+        run: |
+          if [ "${{ github.event_name }}" = "repository_dispatch" ]; then
+            VERSION="${{ github.event.client_payload.version }}"
+            echo "Using version from repository dispatch: $VERSION"
+          else
+            VERSION="${{ github.event.inputs.version || 'latest' }}"
+            echo "Using version from workflow dispatch: $VERSION"
+          fi
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+
       - name: Deploy to VPS
         uses: appleboy/ssh-action@v1.0.3
         with:
@@ -27,6 +41,8 @@ jobs:
           port: ${{ secrets.VPS_PORT || 22 }}
           script: |
             echo "🚀 Starting deployment of d_back..."
+            echo "📝 Event: ${{ github.event_name }}"
+            echo "🏷️  Version: ${{ steps.version.outputs.version }}"
             
             # Activate the virtual environment
             echo "🔄 Activating dbackenv virtual environment..."
@@ -44,12 +60,12 @@ jobs:
             pip install --upgrade pip
             
             # Install or upgrade d_back package in the virtual environment
-            if [ "${{ github.event.inputs.version }}" = "latest" ]; then
+            if [ "${{ steps.version.outputs.version }}" = "latest" ]; then
               echo "📦 Installing latest version of d_back in virtual environment..."
               pip install --upgrade d_back
             else
-              echo "📦 Installing d_back version ${{ github.event.inputs.version }} in virtual environment..."
-              pip install d_back==${{ github.event.inputs.version }}
+              echo "📦 Installing d_back version ${{ steps.version.outputs.version }} in virtual environment..."
+              pip install d_back==${{ steps.version.outputs.version }}
             fi
             
             # Verify installation in the virtual environment

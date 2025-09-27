@@ -12,6 +12,9 @@ jobs:
   build-and-publish:
     name: Build and publish to PyPI
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      actions: write
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -54,14 +57,34 @@ jobs:
             
             console.log(`Triggering deployment for version: ${version}`);
             
-            await github.rest.actions.createWorkflowDispatch({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              workflow_id: 'deploy.yml',
-              ref: 'main',
-              inputs: {
-                version: version
-              }
-            });
-            
-            console.log('✅ Deployment workflow triggered successfully!');
+            try {
+              // Try workflow dispatch first
+              await github.rest.actions.createWorkflowDispatch({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                workflow_id: 'deploy.yml',
+                ref: 'main',
+                inputs: {
+                  version: version
+                }
+              });
+              
+              console.log('✅ Deployment workflow triggered successfully via workflow dispatch!');
+              
+            } catch (error) {
+              console.log('⚠️ Workflow dispatch failed, trying repository dispatch instead...');
+              console.log('Error:', error.message);
+              
+              // Fallback to repository dispatch
+              await github.rest.repos.createDispatchEvent({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                event_type: 'deploy',
+                client_payload: {
+                  version: version,
+                  tag: tag
+                }
+              });
+              
+              console.log('✅ Deployment triggered successfully via repository dispatch!');
+            }
