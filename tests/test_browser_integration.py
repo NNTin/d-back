@@ -68,6 +68,15 @@ def get_test_env_name():
     return os.environ.get('TEST_ENV_NAME', 'unknown')
 
 
+def _apply_allure_decorators_homepage(func):
+    """Apply allure decorators for homepage test if available."""
+    if ALLURE_AVAILABLE:
+        func = allure.feature("Browser Integration")(func)
+        func = allure.story("Homepage Loading")(func)
+        func = allure.title("Test that homepage loads successfully in Chrome")(func)
+    return func
+
+
 class TestBrowserIntegration:
     """Browser integration tests for d_back server."""
     
@@ -147,9 +156,7 @@ class TestBrowserIntegration:
                 pass
 
     @pytest.mark.timeout(60)
-    @allure.feature("Browser Integration") if ALLURE_AVAILABLE else lambda x: x
-    @allure.story("Homepage Loading") if ALLURE_AVAILABLE else lambda x: x
-    @allure.title("Test that homepage loads successfully in Chrome") if ALLURE_AVAILABLE else lambda x: x
+    @_apply_allure_decorators_homepage
     def test_homepage_loads(self, server_process, chrome_driver):
         """Test that the homepage loads successfully in Chrome."""
         websockets_version = get_websockets_version()

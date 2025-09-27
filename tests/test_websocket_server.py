@@ -42,9 +42,16 @@ def get_test_env_name():
     return os.environ.get('TEST_ENV_NAME', 'unknown')
 
 
-@allure.feature("WebSocket Server") if ALLURE_AVAILABLE else lambda x: x
-@allure.story("Server-Client Communication") if ALLURE_AVAILABLE else lambda x: x
-@allure.title("Test WebSocket server and client communication") if ALLURE_AVAILABLE else lambda x: x
+def _apply_allure_decorators(func):
+    """Apply allure decorators if available."""
+    if ALLURE_AVAILABLE:
+        func = allure.feature("WebSocket Server")(func)
+        func = allure.story("Server-Client Communication")(func)
+        func = allure.title("Test WebSocket server and client communication")(func)
+    return func
+
+
+@_apply_allure_decorators
 def test_server_and_client_communication():
     websockets_version = get_websockets_version()
     python_version = get_python_version()
