@@ -42,6 +42,22 @@ def get_test_env_name():
     return os.environ.get('TEST_ENV_NAME', 'unknown')
 
 
+def setup_allure_test_info():
+    """Setup allure test information with environment details."""
+    if not ALLURE_AVAILABLE:
+        return
+    
+    websockets_version = get_websockets_version()
+    python_version = get_python_version()
+    test_env = get_test_env_name()
+    
+    allure.dynamic.parameter("websockets_version", websockets_version)
+    allure.dynamic.parameter("python_version", python_version)
+    allure.dynamic.parameter("test_environment", test_env)
+    allure.attach(f"Testing with Python {python_version}, websockets {websockets_version} in environment {test_env}", 
+                 "Test Configuration", allure.attachment_type.TEXT)
+
+
 def _apply_allure_decorators(func):
     """Apply allure decorators if available."""
     if ALLURE_AVAILABLE:
@@ -53,16 +69,7 @@ def _apply_allure_decorators(func):
 
 @_apply_allure_decorators
 def test_server_and_client_communication():
-    websockets_version = get_websockets_version()
-    python_version = get_python_version()
-    test_env = get_test_env_name()
-    
-    if ALLURE_AVAILABLE:
-        allure.dynamic.parameter("websockets_version", websockets_version)
-        allure.dynamic.parameter("python_version", python_version)
-        allure.dynamic.parameter("test_environment", test_env)
-        allure.attach(f"Testing with Python {python_version}, websockets {websockets_version} in environment {test_env}", 
-                     "Test Configuration", allure.attachment_type.TEXT)
+    setup_allure_test_info()
     
     # Start the server using module execution
     server_proc = subprocess.Popen(

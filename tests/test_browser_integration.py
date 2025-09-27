@@ -68,12 +68,55 @@ def get_test_env_name():
     return os.environ.get('TEST_ENV_NAME', 'unknown')
 
 
+def setup_allure_test_info():
+    """Setup allure test information with environment details."""
+    if not ALLURE_AVAILABLE:
+        return
+    
+    websockets_version = get_websockets_version()
+    python_version = get_python_version()
+    test_env = get_test_env_name()
+    
+    allure.dynamic.parameter("websockets_version", websockets_version)
+    allure.dynamic.parameter("python_version", python_version)
+    allure.dynamic.parameter("test_environment", test_env)
+    allure.attach(f"Testing with Python {python_version}, websockets {websockets_version} in environment {test_env}", 
+                 "Test Configuration", allure.attachment_type.TEXT)
+
+
 def _apply_allure_decorators_homepage(func):
     """Apply allure decorators for homepage test if available."""
     if ALLURE_AVAILABLE:
         func = allure.feature("Browser Integration")(func)
         func = allure.story("Homepage Loading")(func)
         func = allure.title("Test that homepage loads successfully in Chrome")(func)
+    return func
+
+
+def _apply_allure_decorators_content(func):
+    """Apply allure decorators for content test if available."""
+    if ALLURE_AVAILABLE:
+        func = allure.feature("Browser Integration")(func)
+        func = allure.story("Page Content")(func)
+        func = allure.title("Test that page content displays correctly")(func)
+    return func
+
+
+def _apply_allure_decorators_version_api(func):
+    """Apply allure decorators for version API test if available."""
+    if ALLURE_AVAILABLE:
+        func = allure.feature("Browser Integration")(func)
+        func = allure.story("JavaScript API")(func)
+        func = allure.title("Test that JavaScript version API call works")(func)
+    return func
+
+
+def _apply_allure_decorators_styling(func):
+    """Apply allure decorators for styling test if available."""
+    if ALLURE_AVAILABLE:
+        func = allure.feature("Browser Integration")(func)
+        func = allure.story("Page Styling")(func)
+        func = allure.title("Test that page has proper styling and layout")(func)
     return func
 
 
@@ -159,16 +202,7 @@ class TestBrowserIntegration:
     @_apply_allure_decorators_homepage
     def test_homepage_loads(self, server_process, chrome_driver):
         """Test that the homepage loads successfully in Chrome."""
-        websockets_version = get_websockets_version()
-        python_version = get_python_version()
-        test_env = get_test_env_name()
-        
-        if ALLURE_AVAILABLE:
-            allure.dynamic.parameter("websockets_version", websockets_version)
-            allure.dynamic.parameter("python_version", python_version)
-            allure.dynamic.parameter("test_environment", test_env)
-            allure.attach(f"Testing homepage with Python {python_version}, websockets {websockets_version} in environment {test_env}", 
-                         "Test Configuration", allure.attachment_type.TEXT)
+        setup_allure_test_info()
         
         driver = chrome_driver
         
@@ -202,8 +236,11 @@ class TestBrowserIntegration:
             pytest.fail(f"Page load timeout. Page source: {page_source}")
 
     @pytest.mark.timeout(60)
+    @_apply_allure_decorators_content
     def test_page_content_displayed(self, server_process, chrome_driver):
         """Test that page content displays correctly."""
+        setup_allure_test_info()
+        
         driver = chrome_driver
         
         try:
@@ -241,8 +278,11 @@ class TestBrowserIntegration:
             pytest.fail(f"Content verification timeout: {e}")
 
     @pytest.mark.timeout(60)
+    @_apply_allure_decorators_version_api
     def test_version_api_call(self, server_process, chrome_driver):
         """Test that the JavaScript version API call works."""
+        setup_allure_test_info()
+        
         driver = chrome_driver
         
         try:
@@ -281,8 +321,11 @@ class TestBrowserIntegration:
                 pytest.fail(f"Version API test timeout and could not find version elements: {e}")
 
     @pytest.mark.timeout(90)
+    @_apply_allure_decorators_styling
     def test_page_styling_and_layout(self, server_process, chrome_driver):
         """Test that the page has proper styling and layout."""
+        setup_allure_test_info()
+        
         driver = chrome_driver
         
         try:
