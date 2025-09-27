@@ -191,6 +191,11 @@ jobs:
           python-version: ${{ matrix.python-version }}
           allow-prereleases: true
 
+      - name: Install Chrome
+        uses: browser-actions/setup-chrome@v1
+        with:
+          chrome-version: stable
+
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
@@ -198,7 +203,54 @@ jobs:
 
       - name: Run tests with tox
         run: |
+          echo "=== Running tests with tox ==="
+          echo "Current working directory: $(pwd)"
+          echo "Tox environment: ${{ matrix.tox-env }}"
           tox -e ${{ matrix.tox-env }}
+          echo "Tox completed with exit code: $?"
+
+      - name: Debug - After test execution
+        run: |
+          echo "=== After Test Execution Debug ==="
+          echo "Current working directory: $(pwd)"
+          echo "Tox environment: ${{ matrix.tox-env }}"
+          echo "Expected allure results path: allure-results/${{ matrix.tox-env }}/"
+          echo "Looking for allure-results directories:"
+          find . -name "allure-results" -type d 2>/dev/null || echo "No allure-results directories found"
+          echo "Contents of allure-results base directory:"
+          ls -la allure-results/ 2>/dev/null || echo "No allure-results base directory"
+          echo "Contents of expected tox env directory:"
+          ls -la allure-results/${{ matrix.tox-env }}/ 2>/dev/null || echo "No allure-results/${{ matrix.tox-env }} directory"
+          echo "JSON files generated in expected directory:"
+          find allure-results/${{ matrix.tox-env }}/ -name "*.json" 2>/dev/null | head -10 || echo "No JSON files in allure-results/${{ matrix.tox-env }}"
+          echo "XML files generated in expected directory:"
+          find allure-results/${{ matrix.tox-env }}/ -name "*.xml" 2>/dev/null | head -10 || echo "No XML files in allure-results/${{ matrix.tox-env }}"
+
+      - name: Upload allure results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: allure-results-${{ matrix.tox-env }}
+          path: allure-results/${{ matrix.tox-env }}/
+          retention-days: 7
+
+      - name: Debug - After artifact upload
+        if: always()
+        run: |
+          echo "=== After Artifact Upload Debug ==="
+          echo "Current working directory: $(pwd)"
+          echo "Artifact name: allure-results-${{ matrix.tox-env }}"
+          echo "Path being uploaded: allure-results/${{ matrix.tox-env }}/"
+          if [ -d "allure-results/${{ matrix.tox-env }}" ]; then
+            echo "Final check of allure-results/${{ matrix.tox-env }} before upload:"
+            find allure-results/${{ matrix.tox-env }}/ -type f | head -10
+            echo "Total files being uploaded:"
+            find allure-results/${{ matrix.tox-env }}/ -type f | wc -l
+          else
+            echo "WARNING: allure-results/${{ matrix.tox-env }} directory does not exist for upload!"
+            echo "Available allure-results subdirectories:"
+            ls -la allure-results/ 2>/dev/null || echo "No allure-results directory at all!"
+          fi
 
       - name: Upload coverage reports (if available)
         if: always()
@@ -208,3 +260,185 @@ jobs:
             pip install coverage
             coverage report
           fi
+
+  # Generate and deploy allure report
+  allure-report:
+    if: github.event_name == 'pull_request' && always()
+    name: Generate and Deploy Allure Report
+    runs-on: ubuntu-latest
+    needs: [test-pr]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Debug - Initial state
+        run: |
+          echo "=== Initial Debug Info ==="
+          echo "Current working directory: $(pwd)"
+          echo "Contents of current directory:"
+          ls -la
+          echo "Environment variables:"
+          env | grep -E "(GITHUB|RUNNER)" | sort
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Debug - Before artifact download
+        run: |
+          echo "=== Before Artifact Download ==="
+          echo "Current working directory: $(pwd)"
+          echo "Contents of current directory:"
+          ls -la
+          echo "Looking for any existing allure-results:"
+          find . -name "allure-results" -type d 2>/dev/null || echo "No allure-results directories found"
+          find . -name "*.json" 2>/dev/null | head -5 || echo "No JSON files found"
+
+      - name: Download all allure results
+        uses: actions/download-artifact@v4
+        with:
+          pattern: allure-results-*
+          path: allure-results/
+          merge-multiple: true
+
+      - name: Debug - After artifact download
+        run: |
+          echo "=== After Artifact Download ==="
+          echo "Current working directory: $(pwd)"
+          echo "Contents of current directory:"
+          ls -la
+          echo "Contents of allure-results directory (if exists):"
+          if [ -d "allure-results" ]; then
+            ls -la allure-results/
+            echo "Total files in allure-results:"
+            find allure-results/ -type f | wc -l
+            echo "JSON files in allure-results:"
+            find allure-results/ -name "*.json" | wc -l
+            echo "First 10 JSON files:"
+            find allure-results/ -name "*.json" | head -10
+            echo "Sample file sizes:"
+            find allure-results/ -name "*.json" -exec ls -lh {} \; | head -5
+          else
+            echo "allure-results directory does not exist!"
+          fi
+
+      - name: List downloaded artifacts
+        run: |
+          echo "=== Artifact Listing ==="
+          echo "JSON files found:"
+          find allure-results/ -type f -name "*.json" | head -10 || echo "No JSON files found"
+          echo "Total file count:"
+          find allure-results/ -type f | wc -l || echo "Could not count files"
+          echo "Directory structure:"
+          find allure-results/ -type d | head -10 || echo "No directories found"
+
+      - name: Install Allure
+        run: |
+          echo "=== Installing Allure ==="
+          echo "Current working directory: $(pwd)"
+          sudo apt-get update
+          sudo apt-get install -y openjdk-11-jdk
+          echo "Java version:"
+          java -version
+          echo "Downloading Allure..."
+          curl -o allure-2.24.0.tgz -Ls https://github.com/allure-framework/allure2/releases/download/2.24.0/allure-2.24.0.tgz
+          echo "Extracting Allure..."
+          sudo tar -zxvf allure-2.24.0.tgz -C /opt/
+          sudo ln -s /opt/allure-2.24.0/bin/allure /usr/bin/allure
+          echo "Allure version:"
+          allure --version
+
+      - name: Debug - Before report generation
+        run: |
+          echo "=== Before Report Generation ==="
+          echo "Current working directory: $(pwd)"
+          echo "Allure results directory structure:"
+          if [ -d "allure-results" ]; then
+            tree allure-results/ || find allure-results/ -type f -exec echo "File: {}" \;
+            echo "Sample content of a JSON file (if any):"
+            find allure-results/ -name "*.json" | head -1 | xargs cat || echo "No JSON files to show content"
+          else
+            echo "No allure-results directory found!"
+          fi
+          echo "Total size of allure-results:"
+          du -sh allure-results/ 2>/dev/null || echo "Could not calculate size"
+
+      - name: Generate Allure Report
+        run: |
+          echo "=== Generating Allure Report ==="
+          echo "Current working directory: $(pwd)"
+          echo "Running allure generate command..."
+          allure generate allure-results/ --clean -o allure-report/
+          echo "Allure generate completed with exit code: $?"
+          echo "Contents of allure-report directory:"
+          if [ -d "allure-report" ]; then
+            ls -la allure-report/
+            echo "Total files in report:"
+            find allure-report/ -type f | wc -l
+            echo "Report size:"
+            du -sh allure-report/
+          else
+            echo "allure-report directory was not created!"
+          fi
+          
+      - name: Debug - After report generation
+        run: |
+          echo "=== After Report Generation ==="
+          echo "Current working directory: $(pwd)"
+          echo "Directory listing:"
+          ls -la
+          if [ -d "allure-report" ]; then
+            echo "Allure report directory contents:"
+            find allure-report/ -name "*.html" | head -5
+            echo "Index.html exists:"
+            [ -f "allure-report/index.html" ] && echo "YES" || echo "NO"
+            if [ -f "allure-report/index.html" ]; then
+              echo "Index.html size:"
+              ls -lh allure-report/index.html
+            fi
+          else
+            echo "No allure-report directory found!"
+          fi
+          
+      - name: Install Vercel CLI
+        run: |
+          echo "=== Installing Vercel CLI ==="
+          echo "Current working directory: $(pwd)"
+          npm install -g vercel@latest
+          echo "Vercel version:"
+          vercel --version
+
+      - name: Debug - Before Vercel deployment
+        run: |
+          echo "=== Before Vercel Deployment ==="
+          echo "Current working directory: $(pwd)"
+          echo "Checking allure-report directory before deployment:"
+          if [ -d "allure-report" ]; then
+            cd allure-report/
+            echo "Contents of allure-report directory:"
+            ls -la
+            echo "Current directory after cd: $(pwd)"
+            echo "Main files check:"
+            [ -f "index.html" ] && echo "index.html: EXISTS" || echo "index.html: MISSING"
+            [ -f "app.js" ] && echo "app.js: EXISTS" || echo "app.js: NOT FOUND"
+            echo "Total file count in report:"
+            find . -type f | wc -l
+            cd ..
+          else
+            echo "allure-report directory does not exist for deployment!"
+          fi
+
+      - name: Deploy to Vercel
+        run: |
+          echo "=== Deploying to Vercel ==="
+          echo "Current working directory: $(pwd)"
+          cd allure-report/
+          echo "Directory contents before deployment:"
+          ls -la
+          echo "Deploying with Vercel..."
+          vercel --token ${{ secrets.VERCEL_TOKEN }} --prod --yes
+          echo "Vercel deployment completed with exit code: $?"
+        env:
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
