@@ -405,10 +405,13 @@ class WebSocketServer:
             
             # Handle custom static request callback first
             if self._on_static_request:
-                result = self._on_static_request(clean_path)
+                result = await self._on_static_request(clean_path)
                 if result is not None:
-                    content_type, content = result
-                    return self._create_http_response(200, "OK", content_type, content.encode(), use_new_http, Response, Headers, websockets_version)
+                    content_type, file_path = result
+                    with open(file_path, "rb") as f:
+                        content = f.read()
+                        
+                    return self._create_http_response(200, "OK", content_type, content, use_new_http, Response, Headers, websockets_version)
             
             # Handle special API endpoints
             if clean_path == "/api/version":
