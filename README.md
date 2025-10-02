@@ -1,4 +1,14 @@
-# d-back 
+# d-back  
+
+![Last Commit](https://img.shields.io/github/last-commit/NNTin/d-back) 
+![Open Pull Requests](https://img.shields.io/github/issues-pr/NNTin/d-back)
+![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)
+![Stars](https://img.shields.io/github/stars/NNTin/d-back)
+![Contributors](https://img.shields.io/github/contributors/NNTin/d-back)
+![Build Status](https://github.com/NNTin/d-back/actions/workflows/test.yml/badge.svg)
+![PyPI](https://img.shields.io/pypi/v/d-back)
+
+
 
 Welcome to **d-back** – the backend service that powers the magical **d-zone** ambient life simulation!
 
@@ -6,7 +16,8 @@ Welcome to **d-back** – the backend service that powers the magical **d-zone**
 
 **d-zone** is an ambient life simulation where the presence and activity of users in a Discord server subtly influence a living digital environment. Think of it as a digital terrarium that reacts to your community's energy!
 
-**d-back** serves as the intelligent bridge between Discord servers and the beautiful [d-zone frontend](https://pixelatomy.com/dzone/). It provides real-time user data through WebSocket connections, creating an immersive experience where every Discord user becomes part of a living, breathing digital ecosystem.
+**d-back** serves as the intelligent bridge between Discord servers and the beautiful [d-zone frontend](https://nntin.github.io/d-zone/).  
+It provides real-time user data through WebSocket connections, creating an immersive experience where every Discord user becomes part of a living, breathing digital ecosystem.
 
 Currently, d-back uses sophisticated mock data to simulate user activity, making it perfect for development, testing, and demonstration purposes.
 
