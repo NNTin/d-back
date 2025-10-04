@@ -17,7 +17,7 @@ If you discover a security vulnerability, **please do not open an issue** on Git
 
 Instead, follow these steps:
 
-1. **Email the maintainer directly**
+1. **Contact the maintainer directly at**  [Discord server](https://discord.gg/red)
 2. Include the following details:
    - Description of the vulnerability
    - Steps to reproduce (if possible)
