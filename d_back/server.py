@@ -408,6 +408,11 @@ class WebSocketServer:
                 result = await self._on_static_request(clean_path)
                 if result is not None:
                     content_type, file_path = result
+                    file_path = Path(file_path).resolve()
+                    # Check if file exists
+                    if not file_path.exists() or not file_path.is_file():
+                        return self._create_http_response(404, "Not Found", "text/html", b"<h1>404 Not Found</h1><p>The requested file was not found.</p>", use_new_http, Response, Headers, websockets_version)
+                    
                     with open(file_path, "rb") as f:
                         content = f.read()
                         
@@ -415,6 +420,7 @@ class WebSocketServer:
             
             # Handle special API endpoints
             if clean_path == "/api/version":
+                
                 return await self._serve_version_api()
             
             # Default file serving
