@@ -56,7 +56,11 @@ plugins:
 nav:
   - Home: index.md
   - Getting Started: getting-started.md
-  - User Guide: user-guide.md
+  - User Guide:
+    - Overview: user-guide/index.md
+    - Configuration: user-guide/configuration.md
+    - Callbacks & Customization: user-guide/callbacks.md
+    - Custom Data Providers: user-guide/custom-data-providers.md
   - API Reference: api-reference.md
   - Developer Guide: developer-guide.md
 
