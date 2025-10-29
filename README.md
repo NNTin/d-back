@@ -7,6 +7,7 @@
 ![Contributors](https://img.shields.io/github/contributors/NNTin/d-back)
 ![Build Status](https://github.com/NNTin/d-back/actions/workflows/test.yml/badge.svg)
 ![PyPI](https://img.shields.io/pypi/v/d-back)
+[![Documentation](https://img.shields.io/badge/docs-mkdocs-blue)](https://nntin.github.io/d-back/)
 
 
 
@@ -33,7 +34,28 @@ Currently, d-back uses sophisticated mock data to simulate user activity, making
 - 🚀 **Easy Configuration**: Simple command-line options and programmatic setup
 - 🧪 **Development Friendly**: Comprehensive mock data for testing and development
 
-## 🛠️ Installation
+## � Documentation
+
+Comprehensive documentation is available online, including API reference, user guides, and examples.
+
+Visit the [full documentation](https://nntin.github.io/d-back/) for detailed information.
+
+Documentation is available in multiple languages (English, Spanish, German).
+
+### Building Documentation Locally
+
+```bash
+# Install documentation dependencies
+pip install -e .[docs]
+
+# Serve documentation locally
+mkdocs serve
+
+# Build documentation
+mkdocs build
+```
+
+## �🛠️ Installation
 
 ### Step-by-Step Setup
 
@@ -157,10 +179,10 @@ socket.onmessage = (event) => {
 
 d-back comes with pre-configured mock Discord servers for testing:
 
-- **D-World Server** (`232769614004748288`): Main development server with active users
-- **Docs Server** (`482241773318701056`): Documentation server  
-- **OAuth2 Server** (`123456789012345678`): Protected server for OAuth testing
-- **My Repos Server** (`987654321098765432`): Repository showcase server
+- **d-world server** (`232769614004748288`): Main development server with active users
+- **docs server** (`482241773318701056`): Documentation server  
+- **oauth2 server** (`123456789012345678`): Protected server for OAuth testing
+- **my repos server** (`987654321098765432`): Repository showcase server
 
 ### Environment Variables
 
