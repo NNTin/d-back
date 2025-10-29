@@ -119,14 +119,14 @@ server.on_get_user_data = my_user_data_provider
 
 **Signature**:
 ```python
-async def callback(path: str) -> Optional[Tuple[bytes, str]]
+async def callback(path: str) -> Optional[Tuple[str, str]]
 ```
 
 **Parameters**:
 - `path` (str): Requested file path (e.g., `"/index.html"`, `"/api/data"`)
 
 **Expected Return**:
-- `Tuple[bytes, str]`: (file_content, content_type) if handled
+- `Tuple[str, str]`: (content_type, content) if handled - both strings
 - `None`: Fall back to default static file serving
 
 **Example**:
@@ -136,13 +136,13 @@ async def custom_static_handler(path: str):
     if path == "/api/status":
         # Return dynamic JSON
         data = {"status": "ok", "version": "1.0.0"}
-        return (json.dumps(data).encode(), "application/json")
+        return ("application/json", json.dumps(data))
     
     # Return None to use default static file serving
     return None
 
 server = WebSocketServer()
-server.on_static_request = custom_static_handler
+server.on_static_request(custom_static_handler)
 ```
 
 **Use Cases**:
@@ -158,52 +158,44 @@ server.on_static_request = custom_static_handler
 
 **Signature**:
 ```python
-async def callback(token: str, server_id: str) -> Tuple[bool, Optional[str]]
+async def callback(token: str, user_info: Dict[str, Any], server_id: str) -> bool
 ```
 
 **Parameters**:
 - `token` (str): Discord OAuth2 access token
+- `user_info` (Dict[str, Any]): User information from Discord OAuth2
 - `server_id` (str): Discord server ID to validate membership in
 
 **Expected Return**:
-- `Tuple[bool, Optional[str]]`: (is_valid, user_id)
-  - `is_valid`: Whether the token is valid and user is a member
-  - `user_id`: Discord user ID if valid, None otherwise
+- `bool`: True if the token is valid and user is a member, False otherwise
 
 **Example**:
 ```python
 import aiohttp
 
-async def validate_token(token: str, server_id: str) -> Tuple[bool, Optional[str]]:
+async def validate_token(token: str, user_info: Dict[str, Any], server_id: str) -> bool:
     """Validate Discord OAuth2 token and check server membership."""
     try:
         # Validate token with Discord API
         async with aiohttp.ClientSession() as session:
             headers = {"Authorization": f"Bearer {token}"}
             
-            # Get user info
-            async with session.get("https://discord.com/api/users/@me", headers=headers) as resp:
-                if resp.status != 200:
-                    return (False, None)
-                user_data = await resp.json()
-                user_id = user_data["id"]
-            
             # Check server membership
             async with session.get(f"https://discord.com/api/users/@me/guilds", headers=headers) as resp:
                 if resp.status != 200:
-                    return (False, None)
+                    return False
                 guilds = await resp.json()
                 
                 # Check if user is in the requested server
                 is_member = any(guild["id"] == server_id for guild in guilds)
-                return (is_member, user_id if is_member else None)
+                return is_member
     
     except Exception as e:
         print(f"Token validation error: {e}")
-        return (False, None)
+        return False
 
 server = WebSocketServer()
-server.on_validate_discord_user = validate_token
+server.on_validate_discord_user(validate_token)
 ```
 
 **Use Case**: Implement real Discord OAuth2 validation for protected servers.
@@ -217,56 +209,39 @@ server.on_validate_discord_user = validate_token
 
 **Signature**:
 ```python
-async def callback(server_id: str) -> Optional[str]
+async def callback(server_id: str) -> str
 ```
 
 **Parameters**:
 - `server_id` (str): Discord server ID
 
 **Expected Return**:
-- `Optional[str]`: OAuth2 client ID string, or None if not configured
+- `str`: OAuth2 client ID string
 
 **Example**:
 ```python
-async def get_client_id(server_id: str) -> Optional[str]:
+async def get_client_id(server_id: str) -> str:
     """Return OAuth2 client ID for a server."""
     # Could fetch from database or configuration
     client_ids = {
         "232769614004748288": "123456789012345678",
         "482241773318701056": "987654321098765432"
     }
-    return client_ids.get(server_id)
+    return client_ids.get(server_id, "default_client_id")
 
 server = WebSocketServer()
-server.on_get_client_id = get_client_id
+server.on_get_client_id(get_client_id)
 ```
 
 **Use Case**: Support different OAuth2 applications per server for multi-tenant setups.
 
 ## Registering Callbacks
 
-There are two ways to register callbacks with d-back:
-
-### Method 1: Direct Assignment
-
-The most straightforward approach:
+To register callbacks with d-back, call the callback method with your async function as an argument:
 
 ```python
 server = WebSocketServer()
-server.on_get_user_data = my_callback_function
-```
-
-### Method 2: Decorator-Style (if supported)
-
-Some callback systems support decorator syntax:
-
-```python
-server = WebSocketServer()
-
-@server.on_get_user_data
-async def my_callback(server_id: str):
-    # Implementation
-    pass
+server.on_get_user_data(my_callback_function)
 ```
 
 !!! note "Async Requirement"
@@ -300,18 +275,18 @@ async def get_users(server_id: str):
         }
     }
 
-async def validate_user(token: str, server_id: str):
+async def validate_user(token: str, user_info: Dict[str, Any], server_id: str):
     # Implement real OAuth2 validation
-    return (True, "user123")
+    return True
 
 # Create and configure server
 async def main():
     server = WebSocketServer(port=3000, host="localhost")
     
     # Register callbacks
-    server.on_get_server_data = get_servers
-    server.on_get_user_data = get_users
-    server.on_validate_discord_user = validate_user
+    server.on_get_server_data(get_servers)
+    server.on_get_user_data(get_users)
+    server.on_validate_discord_user(validate_user)
     
     # Start server
     await server.start()
@@ -444,7 +419,7 @@ d-back includes built-in support for Discord OAuth2 authentication, allowing you
 ```python
 import aiohttp
 
-async def oauth2_validator(token: str, server_id: str) -> Tuple[bool, Optional[str]]:
+async def oauth2_validator(token: str, user_info: Dict[str, Any], server_id: str) -> bool:
     """Validate Discord OAuth2 token."""
     try:
         async with aiohttp.ClientSession() as session:
@@ -456,20 +431,16 @@ async def oauth2_validator(token: str, server_id: str) -> Tuple[bool, Optional[s
                     # Check membership
                     for guild in guilds:
                         if guild["id"] == server_id:
-                            # Get user ID
-                            async with session.get("https://discord.com/api/users/@me", headers=headers) as user_resp:
-                                if user_resp.status == 200:
-                                    user_data = await user_resp.json()
-                                    return (True, user_data["id"])
+                            return True
         
-        return (False, None)
+        return False
     
     except Exception as e:
         print(f"OAuth2 validation error: {e}")
-        return (False, None)
+        return False
 
 server = WebSocketServer()
-server.on_validate_discord_user = oauth2_validator
+server.on_validate_discord_user(oauth2_validator)
 ```
 
 ### Security Considerations

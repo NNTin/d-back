@@ -78,7 +78,8 @@ d-back/
 │       ├── __init__.py     # Mock package initialization
 │       └── data.py         # MockDataProvider class
 ├── tests/                  # Test suite
-│   ├── test_dis_connect.py # WebSocket connection tests
+│   ├── test_websocket_server.py # WebSocket functionality tests
+│   ├── test_browser_integration.py # Browser integration tests
 │   ├── helpers/            # Test utilities
 │   │   └── mock_websocket_client.py
 │   └── README.md           # Testing documentation
@@ -252,7 +253,8 @@ Comprehensive testing ensures d-back remains stable and reliable.
 
 ```
 tests/
-├── test_dis_connect.py       # WebSocket functionality tests
+├── test_websocket_server.py  # WebSocket functionality tests
+├── test_browser_integration.py # Browser integration tests
 ├── helpers/
 │   └── mock_websocket_client.py  # Mock client for testing
 └── README.md                 # Detailed testing documentation
@@ -287,10 +289,10 @@ pytest
 pytest -v
 
 # Run specific test file
-pytest tests/test_dis_connect.py
+pytest tests/test_websocket_server.py
 
 # Run specific test
-pytest tests/test_dis_connect.py::test_server_startup
+pytest tests/test_websocket_server.py::test_server_startup
 
 # Run with coverage
 pytest --cov=d_back --cov-report=html
@@ -301,7 +303,7 @@ pytest --cov=d_back --cov-report=html
 For Python 3.8+ without pytest:
 
 ```bash
-python -m tests.test_dis_connect
+python -m tests.test_websocket_server
 ```
 
 #### Option 3: Manual Testing

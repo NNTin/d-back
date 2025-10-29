@@ -480,11 +480,11 @@ async def hybrid_user_data(server_id: str) -> Dict[str, Any]:
     else:
         # Fall back to mock data
         from d_back.mock.data import MockDataProvider
-        provider = MockDataProvider(None)
-        return await provider.get_mock_server_data(server_id)
+        provider = MockDataProvider(server)
+        return await provider.get_mock_user_data(server_id)
 
 server = WebSocketServer()
-server.on_get_user_data = hybrid_user_data
+server.on_get_user_data(hybrid_user_data)
 ```
 
 ### Fallback with Error Recovery
@@ -508,11 +508,11 @@ async def resilient_user_data(server_id: str) -> Dict[str, Any]:
         
         # Use mock data as fallback
         from d_back.mock.data import MockDataProvider
-        provider = MockDataProvider(None)
-        return await provider.get_mock_server_data(server_id)
+        provider = MockDataProvider(server)
+        return await provider.get_mock_user_data(server_id)
 
 server = WebSocketServer()
-server.on_get_user_data = resilient_user_data
+server.on_get_user_data(resilient_user_data)
 ```
 
 ## Real-Time Updates

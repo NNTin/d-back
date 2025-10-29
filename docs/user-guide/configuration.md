@@ -71,8 +71,8 @@ async def main():
     server = WebSocketServer(port=3000, host="localhost")
     
     # Configure callbacks (optional)
-    server.on_get_user_data = my_user_data_callback
-    server.on_get_server_data = my_server_data_callback
+    server.on_get_user_data(my_user_data_callback)
+    server.on_get_server_data(my_server_data_callback)
     
     # Start the server
     print("Starting d-back server...")
