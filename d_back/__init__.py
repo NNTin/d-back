@@ -9,18 +9,26 @@ Main Components:
     - MockDataProvider: Mock data generator for testing and development
     - OAuth2 authentication: Discord user validation
 
-Basic Usage::
+Basic Usage:
 
+    import asyncio
     from d_back import WebSocketServer
     
-    server = WebSocketServer(
-        port=5555,
-        static_dir='./dist',
-        client_id='your_discord_client_id'
-    )
-    server.start()
+    async def main():
+        server = WebSocketServer(port=5555, host='localhost')
+        server.static_dir = './dist'
+        
+        # Register OAuth client ID provider
+        async def get_client_id(server_id: str) -> str:
+            return 'your_discord_client_id'
+        
+        server.on_get_client_id(get_client_id)
+        
+        await server.run_forever()
+    
+    asyncio.run(main())
 
-Command Line Usage::
+Command Line Usage:
 
     # Start server with default settings
     python -m d_back

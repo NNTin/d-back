@@ -11,8 +11,8 @@ and realistic status updates. This is useful for:
     - Demonstrating server capabilities in development environments
     - Running integration tests with predictable data
 
-Example:
-    Using mock data provider::
+Examples:
+    Using mock data provider:
 
         from d_back.mock import MockDataProvider
         from d_back.server import WebSocketServer
@@ -31,7 +31,11 @@ import asyncio
 import json
 import random
 import websockets
-from typing import Dict, Any
+from typing import Dict, Any, TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from websockets.server import WebSocketServerProtocol
+    from d_back.server import WebSocketServer
 
 
 class MockDataProvider:
@@ -51,8 +55,8 @@ class MockDataProvider:
     Attributes:
         server: Reference to the WebSocketServer instance using this provider.
 
-    Example:
-        Basic usage::
+    Examples:
+        Basic usage:
 
             server = WebSocketServer()
             mock_provider = MockDataProvider(server)
@@ -71,7 +75,7 @@ class MockDataProvider:
         the provider in isolation.
     """
 
-    def __init__(self, server_instance):
+    def __init__(self, server_instance: 'WebSocketServer'):
         """Initialize the mock data provider.
 
         Args:
@@ -104,7 +108,7 @@ class MockDataProvider:
                 - status (str): Online status ("online", "idle", "dnd", "offline")
                 - roleColor (str): Hex color code for user's role (e.g., "#ff6b6b")
 
-        Example::
+        Examples:
 
             provider = MockDataProvider(server)
             users = provider.get_mock_user_data("232769614004748288")
@@ -308,37 +312,39 @@ class MockDataProvider:
     def get_mock_server_data(self) -> Dict[str, Any]:
         """Get mock server data with all available Discord servers.
 
-        Returns a comprehensive list of mock Discord servers including server IDs,
-        names, icons, and member information. Used for testing server selection,
-        display, and navigation features.
+        Returns a dictionary mapping Discord server IDs to server configuration
+        objects. Used for testing server selection, display, and navigation features.
 
         Returns:
-            Dict[str, Any]: Dictionary with 'servers' key mapping to list of server objects.
-                Each server object contains:
-                - id (str): Unique Discord server ID (18-digit snowflake)
+            Dict[str, Dict[str, Any]]: Dictionary mapping Discord server snowflake IDs
+                to server configuration objects. Each server object contains:
+                - id (str): Internal server identifier
                 - name (str): Server display name
-                - icon (str): Discord CDN URL to server icon image
-                - members (int): Total member count for the server
+                - passworded (bool): Whether OAuth2 authentication is required
+                - default (bool, optional): Whether this is the default server
 
-        Example::
+        Examples:
 
             provider = MockDataProvider(server)
-            data = provider.get_mock_server_data()
+            servers = provider.get_mock_server_data()
             # Returns:
             # {
-            #     "servers": [
-            #         {
-            #             "id": "232769614004748288",
-            #             "name": "D-World",
-            #             "icon": "https://cdn.discordapp.com/icons/...",
-            #             "members": 123
-            #         },
-            #         ...
-            #     ]
+            #     "232769614004748288": {
+            #         "id": "dworld",
+            #         "name": "D-World",
+            #         "default": True,
+            #         "passworded": False
+            #     },
+            #     "482241773318701056": {
+            #         "id": "docs",
+            #         "name": "Docs (WIP)",
+            #         "passworded": False
+            #     },
+            #     ...
             # }
             
-            for server in data['servers']:
-                print(f"{server['name']}: {server['members']} members")
+            for snowflake_id, server_info in servers.items():
+                print(f"{server_info['name']} (ID: {snowflake_id})")
         """
         return {
             "232769614004748288": {
@@ -364,7 +370,7 @@ class MockDataProvider:
             }
         }
 
-    async def periodic_status_updates(self, websocket) -> None:
+    async def periodic_status_updates(self, websocket: 'WebSocketServerProtocol') -> None:
         """Periodically send mock user status changes to a connected client.
 
         Background task that continuously generates random user status updates
@@ -384,7 +390,7 @@ class MockDataProvider:
             WebSocket connection. It automatically handles ConnectionClosed
             exceptions gracefully.
 
-        Example::
+        Examples:
 
             # Called automatically by the server for each connection
             task = asyncio.create_task(
@@ -430,7 +436,7 @@ class MockDataProvider:
             # Optionally remove problematic connections
             self.server.connections.discard(websocket)
 
-    async def periodic_messages(self, websocket) -> None:
+    async def periodic_messages(self, websocket: 'WebSocketServerProtocol') -> None:
         """Periodically send mock chat messages to a connected client.
 
         Background task that continuously generates random chat messages from
@@ -450,7 +456,7 @@ class MockDataProvider:
             WebSocket connection. It automatically handles ConnectionClosed
             exceptions gracefully.
 
-        Example::
+        Examples:
 
             # Called automatically by the server for each connection
             task = asyncio.create_task(

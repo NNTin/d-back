@@ -16,23 +16,28 @@ Warning:
     Do not use in production environments as they generate fake data
     and do not connect to actual Discord servers.
 
-Example::
+Examples:
 
+    import asyncio
     from d_back.mock import MockDataProvider
     from d_back import WebSocketServer
     
-    # Create server with mock data
-    server = WebSocketServer(port=5555)
-    mock_provider = MockDataProvider(server)
+    async def main():
+        # Create server with mock data
+        server = WebSocketServer(port=5555)
+        mock_provider = MockDataProvider(server)
+        
+        # Register callbacks with mock data
+        server.on_get_server_data(mock_provider.get_mock_server_data)
+        server.on_get_user_data(mock_provider.get_mock_user_data)
+        
+        # Start server with mock data
+        await server.run_forever()
     
-    # Override server callbacks with mock data
-    server.on_get_server_data = mock_provider.get_mock_server_data
-    server.on_get_user_data = mock_provider.get_mock_user_data
-    
-    # Start server with mock data
-    server.start()
+    asyncio.run(main())
 """
 
 from .data import MockDataProvider
 
 __all__ = ['MockDataProvider']
+
