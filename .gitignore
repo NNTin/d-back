@@ -58,14 +58,13 @@ coverage.xml
 .mypy_cache/
 .dmypy.json
 
-/.venv
-
-/.venv38/
-/.venv39/
-/.venv310/
-/.venv311/
-/.venv312/
-/.venv313/
+# virtualenv
+/.venv*/
 
 
 /allure-results/
+
+# MkDocs documentation
+/site/
+.mkdocs_cache/
+

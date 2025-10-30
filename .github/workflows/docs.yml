@@ -1,0 +1,92 @@
+name: Documentation
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+    tags:
+      - 'v*'
+  workflow_dispatch:
+    inputs:
+      target:
+        description: 'Deployment target'
+        required: true
+        default: 'latest'
+        type: choice
+        options:
+          - latest
+          - dev
+          - stable
+      version:
+        description: 'Version number (only for stable deployments)'
+        required: false
+        type: string
+
+permissions:
+  contents: write
+
+concurrency:
+  group: docs-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  deploy-docs:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Fetch gh-pages branch
+        run: git fetch origin gh-pages:gh-pages || true
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: Install dependencies
+        run: pip install -e .[docs]
+
+      - name: Configure Git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Determine version and deploy
+        run: |
+          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+            TARGET="${{ github.event.inputs.target }}"
+            echo "Manual deployment triggered for target: $TARGET"
+            if [[ "$TARGET" == "stable" ]]; then
+              if [[ -n "${{ github.event.inputs.version }}" ]]; then
+                VERSION="${{ github.event.inputs.version }}"
+                echo "Deploying stable version: $VERSION"
+                mike deploy $VERSION stable --push --update-aliases
+                mike set-default stable --push
+              else
+                echo "Error: version input is required for stable deployments"
+                exit 1
+              fi
+            elif [[ "$TARGET" == "latest" ]]; then
+              echo "Deploying latest prerelease"
+              mike deploy edge latest --push --update-aliases
+            elif [[ "$TARGET" == "dev" ]]; then
+              echo "Deploying dev prerelease"
+              mike deploy development dev --push --update-aliases
+            fi
+          elif [[ $GITHUB_REF == refs/tags/v* ]]; then
+            VERSION=${GITHUB_REF#refs/tags/v}
+            echo "Deploying stable version: $VERSION"
+            mike deploy $VERSION stable --push --update-aliases
+            mike set-default stable --push
+          elif [[ $GITHUB_REF == refs/heads/main ]]; then
+            echo "Deploying latest prerelease from main"
+            mike deploy edge latest --push --update-aliases
+          elif [[ $GITHUB_REF == refs/heads/develop ]]; then
+            echo "Deploying dev prerelease from develop"
+            mike deploy development dev --push --update-aliases
+          fi
