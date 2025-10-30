@@ -43,7 +43,7 @@ timeout = 60
 timeout_method = "thread"
 
 [tool.bumpversion]
-current_version = "0.0.14"
+current_version = "0.0.15"
 commit = true
 tag = true
 tag_name = "v{new_version}"
