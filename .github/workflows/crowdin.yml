@@ -6,6 +6,8 @@ on:
       - main
     paths:
       - 'docs/**/*.md'
+      - '!docs/**/*.es.md'
+      - '!docs/**/*.de.md'
       - 'mkdocs.yml'
       - 'crowdin.yml'
   workflow_dispatch:
@@ -13,6 +15,10 @@ on:
 permissions:
   contents: write
   pull-requests: write
+
+concurrency:
+  group: crowdin-sync
+  cancel-in-progress: true
 
 jobs:
   crowdin-sync:
