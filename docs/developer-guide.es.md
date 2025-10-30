@@ -651,8 +651,8 @@ El despliegue de la documentación está automatizado mediante GitHub Actions. E
    - Representa el estado actual de desarrollo
    - Se usa para probar cambios de documentación antes del lanzamiento
    - No se establece como predeterminado (dev es solo para pruebas)
-   - Usa el identificador de versión estable 'dev'
-   - Comando ejecutado: `mike deploy dev dev --push --update-aliases`
+   - Usa el identificador de versión estable 'development'
+   - Comando ejecutado: `mike deploy development dev --push --update-aliases`
 
 4. **Activación manual**: Disponible mediante `workflow_dispatch` en la interfaz de GitHub Actions
    - Útil para pruebas o re-despliegue de documentación

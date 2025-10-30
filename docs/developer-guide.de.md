@@ -651,8 +651,8 @@ Das Deployment der Dokumentation ist über GitHub Actions automatisiert. Der Wor
    - Repräsentiert den aktuellen Entwicklungszustand
    - Wird zum Testen von Dokumentationsänderungen vor der Veröffentlichung verwendet
    - Wird nicht als Standard festgelegt (dev ist nur zum Testen)
-   - Verwendet die stabile Versionskennung 'dev'
-   - Ausgeführter Befehl: `mike deploy dev dev --push --update-aliases`
+   - Verwendet die stabile Versionskennung 'development'
+   - Ausgeführter Befehl: `mike deploy development dev --push --update-aliases`
 
 4. **Manuelle Auslösung**: Verfügbar über `workflow_dispatch` in der GitHub Actions UI
    - Nützlich zum Testen oder erneuten Deployment von Dokumentation

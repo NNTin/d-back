@@ -76,7 +76,7 @@ jobs:
               mike deploy edge latest --push --update-aliases
             elif [[ "$TARGET" == "dev" ]]; then
               echo "Deploying dev prerelease"
-              mike deploy dev dev --push --update-aliases
+              mike deploy development dev --push --update-aliases
             fi
           elif [[ $GITHUB_REF == refs/tags/v* ]]; then
             VERSION=${GITHUB_REF#refs/tags/v}
@@ -88,5 +88,5 @@ jobs:
             mike deploy edge latest --push --update-aliases
           elif [[ $GITHUB_REF == refs/heads/develop ]]; then
             echo "Deploying dev prerelease from develop"
-            mike deploy dev dev --push --update-aliases
+            mike deploy development dev --push --update-aliases
           fi

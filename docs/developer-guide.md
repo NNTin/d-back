@@ -1009,8 +1009,8 @@ Documentation deployment is automated via GitHub Actions. The workflow is define
    - Represents the current development state
    - Used for testing documentation changes before release
    - Not set as default (dev is for testing only)
-   - Uses stable version identifier 'dev'
-   - Command executed: `mike deploy dev dev --push --update-aliases`
+   - Uses stable version identifier 'development'
+   - Command executed: `mike deploy development dev --push --update-aliases`
 
 4. **Manual trigger**: Available via `workflow_dispatch` in GitHub Actions UI
    - Useful for testing or re-deploying documentation
