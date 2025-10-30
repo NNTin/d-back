@@ -1,0 +1,3149 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="WebSocket server for Discord integration with d-zone ambient life simulation">
+      
+      
+        <meta name="author" content="Tin Nguyen">
+      
+      
+        <link rel="canonical" href="https://nntin.github.io/d-back/22968d5/developer-guide/">
+      
+      
+        <link rel="prev" href="../api-reference/">
+      
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.22">
+    
+    
+      
+        <title>Developer Guide - d-back Documentation</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.84d31ad4.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/_mkdocstrings.css">
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="blue">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#developer-guide" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      <div data-md-color-scheme="default" data-md-component="outdated" hidden>
+        
+      </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="d-back Documentation" class="md-header__button md-logo" aria-label="d-back Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            d-back Documentation
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Developer Guide
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="blue"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="blue"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+      <div class="md-header__option">
+  <div class="md-select">
+    
+    <button class="md-header__button md-icon" aria-label="Select language">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m12.87 15.07-2.54-2.51.03-.03A17.5 17.5 0 0 0 14.07 6H17V4h-7V2H8v2H1v2h11.17C11.5 7.92 10.44 9.75 9 11.35 8.07 10.32 7.3 9.19 6.69 8h-2c.73 1.63 1.73 3.17 2.98 4.56l-5.09 5.02L4 19l5-5 3.11 3.11zM18.5 10h-2L12 22h2l1.12-3h4.75L21 22h2zm-2.62 7 1.62-4.33L19.12 17z"/></svg>
+    </button>
+    <div class="md-select__inner">
+      <ul class="md-select__list">
+        
+          <li class="md-select__item">
+            <a href="./" hreflang="en" class="md-select__link">
+              English
+            </a>
+          </li>
+        
+          <li class="md-select__item">
+            <a href="../es/developer-guide/" hreflang="es" class="md-select__link">
+              Español
+            </a>
+          </li>
+        
+          <li class="md-select__item">
+            <a href="../de/developer-guide/" hreflang="de" class="md-select__link">
+              Deutsch
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</div>
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/NNTin/d-back" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    NNTin/d-back
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href=".." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../getting-started/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Getting Started
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../user-guide/" class="md-tabs__link">
+          
+  
+  
+  User Guide
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../api-reference/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  API Reference
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    <li class="md-tabs__item md-tabs__item--active">
+      <a href="./" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Developer Guide
+
+      </a>
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="d-back Documentation" class="md-nav__button md-logo" aria-label="d-back Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    d-back Documentation
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/NNTin/d-back" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    NNTin/d-back
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Home
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../getting-started/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Getting Started
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    User Guide
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            User Guide
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../user-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Overview
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../user-guide/configuration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Configuration
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../user-guide/callbacks/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Callbacks & Customization
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../user-guide/custom-data-providers/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Custom Data Providers
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../api-reference/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    API Reference
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    Developer Guide
+    
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    Developer Guide
+    
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#introduction" class="md-nav__link">
+    <span class="md-ellipsis">
+      Introduction
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#getting-started-with-development" class="md-nav__link">
+    <span class="md-ellipsis">
+      Getting Started with Development
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Getting Started with Development">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#fork-and-clone" class="md-nav__link">
+    <span class="md-ellipsis">
+      Fork and Clone
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#set-up-development-environment" class="md-nav__link">
+    <span class="md-ellipsis">
+      Set Up Development Environment
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#project-architecture" class="md-nav__link">
+    <span class="md-ellipsis">
+      Project Architecture
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Project Architecture">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#directory-structure" class="md-nav__link">
+    <span class="md-ellipsis">
+      Directory Structure
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#core-components" class="md-nav__link">
+    <span class="md-ellipsis">
+      Core Components
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Core Components">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#websocketserver-d_backserverpy" class="md-nav__link">
+    <span class="md-ellipsis">
+      WebSocketServer (d_back/server.py)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mockdataprovider-d_backmockdatapy" class="md-nav__link">
+    <span class="md-ellipsis">
+      MockDataProvider (d_back/mock/data.py)
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#message-protocol" class="md-nav__link">
+    <span class="md-ellipsis">
+      Message Protocol
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Message Protocol">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#client-server-messages" class="md-nav__link">
+    <span class="md-ellipsis">
+      Client → Server Messages
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#server-client-messages" class="md-nav__link">
+    <span class="md-ellipsis">
+      Server → Client Messages
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#http-support" class="md-nav__link">
+    <span class="md-ellipsis">
+      HTTP Support
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#testing" class="md-nav__link">
+    <span class="md-ellipsis">
+      Testing
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Testing">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#test-structure" class="md-nav__link">
+    <span class="md-ellipsis">
+      Test Structure
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#test-coverage" class="md-nav__link">
+    <span class="md-ellipsis">
+      Test Coverage
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#running-tests" class="md-nav__link">
+    <span class="md-ellipsis">
+      Running Tests
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Running Tests">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#option-1-pytest-recommended" class="md-nav__link">
+    <span class="md-ellipsis">
+      Option 1: pytest (Recommended)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#option-2-simple-test-runner" class="md-nav__link">
+    <span class="md-ellipsis">
+      Option 2: Simple Test Runner
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#option-3-manual-testing" class="md-nav__link">
+    <span class="md-ellipsis">
+      Option 3: Manual Testing
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#writing-tests" class="md-nav__link">
+    <span class="md-ellipsis">
+      Writing Tests
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#test-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      Test Configuration
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#contributing-guidelines" class="md-nav__link">
+    <span class="md-ellipsis">
+      Contributing Guidelines
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Contributing Guidelines">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#code-style" class="md-nav__link">
+    <span class="md-ellipsis">
+      Code Style
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#documentation" class="md-nav__link">
+    <span class="md-ellipsis">
+      Documentation
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#documentation-translation" class="md-nav__link">
+    <span class="md-ellipsis">
+      Documentation Translation
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Documentation Translation">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#overview" class="md-nav__link">
+    <span class="md-ellipsis">
+      Overview
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#crowdin-project-setup" class="md-nav__link">
+    <span class="md-ellipsis">
+      Crowdin Project Setup
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#translation-workflow" class="md-nav__link">
+    <span class="md-ellipsis">
+      Translation Workflow
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#file-structure-and-naming" class="md-nav__link">
+    <span class="md-ellipsis">
+      File Structure and Naming
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-gets-translated" class="md-nav__link">
+    <span class="md-ellipsis">
+      What Gets Translated
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#excluded-files" class="md-nav__link">
+    <span class="md-ellipsis">
+      Excluded Files
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#testing-translations-locally" class="md-nav__link">
+    <span class="md-ellipsis">
+      Testing Translations Locally
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#translation-best-practices" class="md-nav__link">
+    <span class="md-ellipsis">
+      Translation Best Practices
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#adding-new-languages" class="md-nav__link">
+    <span class="md-ellipsis">
+      Adding New Languages
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#troubleshooting" class="md-nav__link">
+    <span class="md-ellipsis">
+      Troubleshooting
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#resources" class="md-nav__link">
+    <span class="md-ellipsis">
+      Resources
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pull-request-process" class="md-nav__link">
+    <span class="md-ellipsis">
+      Pull Request Process
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#commit-message-format" class="md-nav__link">
+    <span class="md-ellipsis">
+      Commit Message Format
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#development-workflow" class="md-nav__link">
+    <span class="md-ellipsis">
+      Development Workflow
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Development Workflow">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#day-to-day-development" class="md-nav__link">
+    <span class="md-ellipsis">
+      Day-to-Day Development
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#debugging" class="md-nav__link">
+    <span class="md-ellipsis">
+      Debugging
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Debugging">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#enable-verbose-logging" class="md-nav__link">
+    <span class="md-ellipsis">
+      Enable Verbose Logging
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#use-python-debugger" class="md-nav__link">
+    <span class="md-ellipsis">
+      Use Python Debugger
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#test-with-mock-client" class="md-nav__link">
+    <span class="md-ellipsis">
+      Test with Mock Client
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#check-browser-console" class="md-nav__link">
+    <span class="md-ellipsis">
+      Check Browser Console
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#websocket-inspection-tools" class="md-nav__link">
+    <span class="md-ellipsis">
+      WebSocket Inspection Tools
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#release-process" class="md-nav__link">
+    <span class="md-ellipsis">
+      Release Process
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Release Process">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#version-numbering" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version Numbering
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#version-location" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version Location
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#creating-a-release" class="md-nav__link">
+    <span class="md-ellipsis">
+      Creating a Release
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#documentation-versioning" class="md-nav__link">
+    <span class="md-ellipsis">
+      Documentation Versioning
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Documentation Versioning">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#versioning-strategy" class="md-nav__link">
+    <span class="md-ellipsis">
+      Versioning Strategy
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#local-testing" class="md-nav__link">
+    <span class="md-ellipsis">
+      Local Testing
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#version-aliases" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version Aliases
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#deployment-workflow" class="md-nav__link">
+    <span class="md-ellipsis">
+      Deployment Workflow
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#automated-deployment-with-github-actions" class="md-nav__link">
+    <span class="md-ellipsis">
+      Automated Deployment with GitHub Actions
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#best-practices" class="md-nav__link">
+    <span class="md-ellipsis">
+      Best Practices
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#troubleshooting_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      Troubleshooting
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#resources_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      Resources
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#future-enhancements" class="md-nav__link">
+    <span class="md-ellipsis">
+      Future Enhancements
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Future Enhancements">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#real-discord-api-integration" class="md-nav__link">
+    <span class="md-ellipsis">
+      Real Discord API Integration
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#additional-authentication-methods" class="md-nav__link">
+    <span class="md-ellipsis">
+      Additional Authentication Methods
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#performance-optimizations" class="md-nav__link">
+    <span class="md-ellipsis">
+      Performance Optimizations
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#test-coverage_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      Test Coverage
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#documentation_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      Documentation
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#plugin-system" class="md-nav__link">
+    <span class="md-ellipsis">
+      Plugin System
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#getting-help" class="md-nav__link">
+    <span class="md-ellipsis">
+      Getting Help
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Getting Help">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#resources_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      Resources
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#contact" class="md-nav__link">
+    <span class="md-ellipsis">
+      Contact
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#thank-you" class="md-nav__link">
+    <span class="md-ellipsis">
+      Thank You!
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#introduction" class="md-nav__link">
+    <span class="md-ellipsis">
+      Introduction
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#getting-started-with-development" class="md-nav__link">
+    <span class="md-ellipsis">
+      Getting Started with Development
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Getting Started with Development">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#fork-and-clone" class="md-nav__link">
+    <span class="md-ellipsis">
+      Fork and Clone
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#set-up-development-environment" class="md-nav__link">
+    <span class="md-ellipsis">
+      Set Up Development Environment
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#project-architecture" class="md-nav__link">
+    <span class="md-ellipsis">
+      Project Architecture
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Project Architecture">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#directory-structure" class="md-nav__link">
+    <span class="md-ellipsis">
+      Directory Structure
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#core-components" class="md-nav__link">
+    <span class="md-ellipsis">
+      Core Components
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Core Components">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#websocketserver-d_backserverpy" class="md-nav__link">
+    <span class="md-ellipsis">
+      WebSocketServer (d_back/server.py)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mockdataprovider-d_backmockdatapy" class="md-nav__link">
+    <span class="md-ellipsis">
+      MockDataProvider (d_back/mock/data.py)
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#message-protocol" class="md-nav__link">
+    <span class="md-ellipsis">
+      Message Protocol
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Message Protocol">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#client-server-messages" class="md-nav__link">
+    <span class="md-ellipsis">
+      Client → Server Messages
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#server-client-messages" class="md-nav__link">
+    <span class="md-ellipsis">
+      Server → Client Messages
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#http-support" class="md-nav__link">
+    <span class="md-ellipsis">
+      HTTP Support
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#testing" class="md-nav__link">
+    <span class="md-ellipsis">
+      Testing
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Testing">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#test-structure" class="md-nav__link">
+    <span class="md-ellipsis">
+      Test Structure
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#test-coverage" class="md-nav__link">
+    <span class="md-ellipsis">
+      Test Coverage
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#running-tests" class="md-nav__link">
+    <span class="md-ellipsis">
+      Running Tests
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Running Tests">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#option-1-pytest-recommended" class="md-nav__link">
+    <span class="md-ellipsis">
+      Option 1: pytest (Recommended)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#option-2-simple-test-runner" class="md-nav__link">
+    <span class="md-ellipsis">
+      Option 2: Simple Test Runner
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#option-3-manual-testing" class="md-nav__link">
+    <span class="md-ellipsis">
+      Option 3: Manual Testing
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#writing-tests" class="md-nav__link">
+    <span class="md-ellipsis">
+      Writing Tests
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#test-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      Test Configuration
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#contributing-guidelines" class="md-nav__link">
+    <span class="md-ellipsis">
+      Contributing Guidelines
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Contributing Guidelines">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#code-style" class="md-nav__link">
+    <span class="md-ellipsis">
+      Code Style
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#documentation" class="md-nav__link">
+    <span class="md-ellipsis">
+      Documentation
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#documentation-translation" class="md-nav__link">
+    <span class="md-ellipsis">
+      Documentation Translation
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Documentation Translation">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#overview" class="md-nav__link">
+    <span class="md-ellipsis">
+      Overview
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#crowdin-project-setup" class="md-nav__link">
+    <span class="md-ellipsis">
+      Crowdin Project Setup
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#translation-workflow" class="md-nav__link">
+    <span class="md-ellipsis">
+      Translation Workflow
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#file-structure-and-naming" class="md-nav__link">
+    <span class="md-ellipsis">
+      File Structure and Naming
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-gets-translated" class="md-nav__link">
+    <span class="md-ellipsis">
+      What Gets Translated
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#excluded-files" class="md-nav__link">
+    <span class="md-ellipsis">
+      Excluded Files
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#testing-translations-locally" class="md-nav__link">
+    <span class="md-ellipsis">
+      Testing Translations Locally
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#translation-best-practices" class="md-nav__link">
+    <span class="md-ellipsis">
+      Translation Best Practices
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#adding-new-languages" class="md-nav__link">
+    <span class="md-ellipsis">
+      Adding New Languages
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#troubleshooting" class="md-nav__link">
+    <span class="md-ellipsis">
+      Troubleshooting
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#resources" class="md-nav__link">
+    <span class="md-ellipsis">
+      Resources
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pull-request-process" class="md-nav__link">
+    <span class="md-ellipsis">
+      Pull Request Process
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#commit-message-format" class="md-nav__link">
+    <span class="md-ellipsis">
+      Commit Message Format
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#development-workflow" class="md-nav__link">
+    <span class="md-ellipsis">
+      Development Workflow
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Development Workflow">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#day-to-day-development" class="md-nav__link">
+    <span class="md-ellipsis">
+      Day-to-Day Development
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#debugging" class="md-nav__link">
+    <span class="md-ellipsis">
+      Debugging
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Debugging">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#enable-verbose-logging" class="md-nav__link">
+    <span class="md-ellipsis">
+      Enable Verbose Logging
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#use-python-debugger" class="md-nav__link">
+    <span class="md-ellipsis">
+      Use Python Debugger
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#test-with-mock-client" class="md-nav__link">
+    <span class="md-ellipsis">
+      Test with Mock Client
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#check-browser-console" class="md-nav__link">
+    <span class="md-ellipsis">
+      Check Browser Console
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#websocket-inspection-tools" class="md-nav__link">
+    <span class="md-ellipsis">
+      WebSocket Inspection Tools
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#release-process" class="md-nav__link">
+    <span class="md-ellipsis">
+      Release Process
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Release Process">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#version-numbering" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version Numbering
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#version-location" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version Location
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#creating-a-release" class="md-nav__link">
+    <span class="md-ellipsis">
+      Creating a Release
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#documentation-versioning" class="md-nav__link">
+    <span class="md-ellipsis">
+      Documentation Versioning
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Documentation Versioning">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#versioning-strategy" class="md-nav__link">
+    <span class="md-ellipsis">
+      Versioning Strategy
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#local-testing" class="md-nav__link">
+    <span class="md-ellipsis">
+      Local Testing
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#version-aliases" class="md-nav__link">
+    <span class="md-ellipsis">
+      Version Aliases
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#deployment-workflow" class="md-nav__link">
+    <span class="md-ellipsis">
+      Deployment Workflow
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#automated-deployment-with-github-actions" class="md-nav__link">
+    <span class="md-ellipsis">
+      Automated Deployment with GitHub Actions
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#best-practices" class="md-nav__link">
+    <span class="md-ellipsis">
+      Best Practices
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#troubleshooting_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      Troubleshooting
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#resources_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      Resources
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#future-enhancements" class="md-nav__link">
+    <span class="md-ellipsis">
+      Future Enhancements
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Future Enhancements">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#real-discord-api-integration" class="md-nav__link">
+    <span class="md-ellipsis">
+      Real Discord API Integration
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#additional-authentication-methods" class="md-nav__link">
+    <span class="md-ellipsis">
+      Additional Authentication Methods
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#performance-optimizations" class="md-nav__link">
+    <span class="md-ellipsis">
+      Performance Optimizations
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#test-coverage_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      Test Coverage
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#documentation_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      Documentation
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#plugin-system" class="md-nav__link">
+    <span class="md-ellipsis">
+      Plugin System
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#getting-help" class="md-nav__link">
+    <span class="md-ellipsis">
+      Getting Help
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Getting Help">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#resources_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      Resources
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#contact" class="md-nav__link">
+    <span class="md-ellipsis">
+      Contact
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#thank-you" class="md-nav__link">
+    <span class="md-ellipsis">
+      Thank You!
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="developer-guide">Developer Guide<a class="headerlink" href="#developer-guide" title="Permanent link">&para;</a></h1>
+<p>Welcome to the d-back developer guide! Thank you for your interest in contributing to this project. This guide covers everything you need to know to get started with development, understand the architecture, run tests, and submit contributions.</p>
+<h2 id="introduction">Introduction<a class="headerlink" href="#introduction" title="Permanent link">&para;</a></h2>
+<p>d-back is an open-source project released under the MIT License. We welcome contributions of all kinds: bug fixes, new features, documentation improvements, and more. This guide will help you set up your development environment and understand how the project is structured.</p>
+<p><strong>GitHub Repository</strong>: <a href="https://github.com/NNTin/d-back">https://github.com/NNTin/d-back</a></p>
+<p><strong>License</strong>: MIT - See <a href="https://github.com/NNTin/d-back/blob/main/LICENSE">LICENSE</a> for details</p>
+<h2 id="getting-started-with-development">Getting Started with Development<a class="headerlink" href="#getting-started-with-development" title="Permanent link">&para;</a></h2>
+<h3 id="fork-and-clone">Fork and Clone<a class="headerlink" href="#fork-and-clone" title="Permanent link">&para;</a></h3>
+<ol>
+<li><strong>Fork the repository</strong> on GitHub</li>
+<li><strong>Clone your fork</strong>:
+   <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/YOUR_USERNAME/d-back.git
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="nb">cd</span><span class="w"> </span>d-back
+</code></pre></div></li>
+<li><strong>Add upstream remote</strong>:
+   <div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>git<span class="w"> </span>remote<span class="w"> </span>add<span class="w"> </span>upstream<span class="w"> </span>https://github.com/NNTin/d-back.git
+</code></pre></div></li>
+</ol>
+<h3 id="set-up-development-environment">Set Up Development Environment<a class="headerlink" href="#set-up-development-environment" title="Permanent link">&para;</a></h3>
+<ol>
+<li><strong>Create a virtual environment</strong>:</li>
+</ol>
+<p>=== "Windows"
+       <div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>python<span class="w"> </span>-m<span class="w"> </span>venv<span class="w"> </span>.venv
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>.venv<span class="se">\S</span>cripts<span class="se">\a</span>ctivate
+</code></pre></div></p>
+<p>=== "macOS/Linux"
+       <div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>python3<span class="w"> </span>-m<span class="w"> </span>venv<span class="w"> </span>.venv
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="nb">source</span><span class="w"> </span>.venv/bin/activate
+</code></pre></div></p>
+<ol>
+<li>
+<p><strong>Install in development mode</strong>:
+   <div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span>.
+</code></pre></div></p>
+</li>
+<li>
+<p><strong>Install test dependencies</strong>:
+   <div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>pip<span class="w"> </span>install<span class="w"> </span>pytest<span class="w"> </span>pytest-asyncio<span class="w"> </span>websockets
+</code></pre></div></p>
+</li>
+<li>
+<p><strong>Install documentation dependencies</strong> (optional):
+   <div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span>.<span class="o">[</span>docs<span class="o">]</span>
+</code></pre></div></p>
+</li>
+<li>
+<p><strong>Verify installation</strong>:
+   <div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>d_back<span class="w"> </span>--version
+<a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>pytest<span class="w"> </span>tests/
+</code></pre></div></p>
+</li>
+</ol>
+<h2 id="project-architecture">Project Architecture<a class="headerlink" href="#project-architecture" title="Permanent link">&para;</a></h2>
+<p>Understanding the codebase structure will help you navigate and contribute effectively.</p>
+<h3 id="directory-structure">Directory Structure<a class="headerlink" href="#directory-structure" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>d-back/
+<a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>├── d_back/                 # Main package directory
+<a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a>│   ├── __init__.py         # Package initialization and exports
+<a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a>│   ├── __main__.py         # CLI entry point (python -m d_back)
+<a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a>│   ├── server.py           # WebSocketServer implementation
+<a id="__codelineno-8-6" name="__codelineno-8-6" href="#__codelineno-8-6"></a>│   └── mock/               # Mock data providers
+<a id="__codelineno-8-7" name="__codelineno-8-7" href="#__codelineno-8-7"></a>│       ├── __init__.py     # Mock package initialization
+<a id="__codelineno-8-8" name="__codelineno-8-8" href="#__codelineno-8-8"></a>│       └── data.py         # MockDataProvider class
+<a id="__codelineno-8-9" name="__codelineno-8-9" href="#__codelineno-8-9"></a>├── tests/                  # Test suite
+<a id="__codelineno-8-10" name="__codelineno-8-10" href="#__codelineno-8-10"></a>│   ├── test_websocket_server.py # WebSocket functionality tests
+<a id="__codelineno-8-11" name="__codelineno-8-11" href="#__codelineno-8-11"></a>│   ├── test_browser_integration.py # Browser integration tests
+<a id="__codelineno-8-12" name="__codelineno-8-12" href="#__codelineno-8-12"></a>│   ├── helpers/            # Test utilities
+<a id="__codelineno-8-13" name="__codelineno-8-13" href="#__codelineno-8-13"></a>│   │   └── mock_websocket_client.py
+<a id="__codelineno-8-14" name="__codelineno-8-14" href="#__codelineno-8-14"></a>│   └── README.md           # Testing documentation
+<a id="__codelineno-8-15" name="__codelineno-8-15" href="#__codelineno-8-15"></a>├── docs/                   # Documentation source files (MkDocs)
+<a id="__codelineno-8-16" name="__codelineno-8-16" href="#__codelineno-8-16"></a>│   ├── index.md            # Documentation homepage
+<a id="__codelineno-8-17" name="__codelineno-8-17" href="#__codelineno-8-17"></a>│   ├── getting-started.md  # Installation and setup guide
+<a id="__codelineno-8-18" name="__codelineno-8-18" href="#__codelineno-8-18"></a>│   ├── user-guide/         # User guide sections
+<a id="__codelineno-8-19" name="__codelineno-8-19" href="#__codelineno-8-19"></a>│   ├── api-reference.md    # API documentation
+<a id="__codelineno-8-20" name="__codelineno-8-20" href="#__codelineno-8-20"></a>│   └── developer-guide.md  # This file
+<a id="__codelineno-8-21" name="__codelineno-8-21" href="#__codelineno-8-21"></a>├── setup.cfg               # Package configuration
+<a id="__codelineno-8-22" name="__codelineno-8-22" href="#__codelineno-8-22"></a>├── pyproject.toml          # Build system configuration
+<a id="__codelineno-8-23" name="__codelineno-8-23" href="#__codelineno-8-23"></a>├── mkdocs.yml              # Documentation configuration
+<a id="__codelineno-8-24" name="__codelineno-8-24" href="#__codelineno-8-24"></a>├── requirements.txt        # Runtime dependencies
+<a id="__codelineno-8-25" name="__codelineno-8-25" href="#__codelineno-8-25"></a>└── README.md               # Project readme
+</code></pre></div>
+<h3 id="core-components">Core Components<a class="headerlink" href="#core-components" title="Permanent link">&para;</a></h3>
+<h4 id="websocketserver-d_backserverpy">WebSocketServer (<code>d_back/server.py</code>)<a class="headerlink" href="#websocketserver-d_backserverpy" title="Permanent link">&para;</a></h4>
+<p>The main server class responsible for:</p>
+<ul>
+<li><strong>Connection Management</strong>: Maintains a set of active WebSocket connections</li>
+<li><strong>Callback System</strong>: Provides hooks for customizing behavior:</li>
+<li><code>on_get_user_data</code>: Fetch user data for a server</li>
+<li><code>on_get_server_data</code>: Fetch list of available servers</li>
+<li><code>on_static_request</code>: Handle custom static file requests</li>
+<li><code>on_validate_discord_user</code>: Validate OAuth2 tokens</li>
+<li><code>on_get_client_id</code>: Provide OAuth2 client IDs</li>
+<li><strong>HTTP Static File Serving</strong>: Uses websockets 10.0+ support for serving files</li>
+<li><strong>Message Broadcasting</strong>: Methods for sending updates to all connected clients:</li>
+<li><code>broadcast_message</code>: Send chat messages</li>
+<li><code>broadcast_presence</code>: Send presence updates (status changes)</li>
+<li><code>broadcast_client_id_update</code>: Send OAuth2 configuration changes</li>
+<li><strong>OAuth2 Authentication</strong>: Built-in flow for Discord authentication</li>
+</ul>
+<p><strong>Key Methods</strong>:
+- <code>start()</code>: Initialize and start the server
+- <code>stop()</code>: Gracefully shutdown the server
+- <code>run_forever()</code>: Run the server indefinitely
+- <code>_handle_connection()</code>: Process incoming WebSocket connections
+- <code>_serve_static_file()</code>: Serve HTTP static files with security</p>
+<h4 id="mockdataprovider-d_backmockdatapy">MockDataProvider (<code>d_back/mock/data.py</code>)<a class="headerlink" href="#mockdataprovider-d_backmockdatapy" title="Permanent link">&para;</a></h4>
+<p>Provides mock data for development and testing:</p>
+<ul>
+<li><strong>Mock User Data</strong>: Generates realistic Discord user objects with various statuses</li>
+<li><strong>Mock Server Configurations</strong>: Pre-configured test servers (d-world, docs, oauth2, my repos)</li>
+<li><strong>Periodic Background Tasks</strong>: Simulates user activity:</li>
+<li>Random status changes</li>
+<li>Random chat messages</li>
+<li>Realistic timing patterns</li>
+</ul>
+<p><strong>Key Methods</strong>:
+- <code>get_mock_server_data(server_id)</code>: Returns mock users for a server
+- <code>get_mock_servers()</code>: Returns list of available mock servers
+- <code>_start_background_tasks()</code>: Initiates periodic updates
+- <code>_random_status_change()</code>: Simulates presence changes
+- <code>_random_message()</code>: Simulates chat activity</p>
+<h3 id="message-protocol">Message Protocol<a class="headerlink" href="#message-protocol" title="Permanent link">&para;</a></h3>
+<p>WebSocket messages use JSON format with a <code>type</code> field to determine the message kind.</p>
+<h4 id="client-server-messages">Client → Server Messages<a class="headerlink" href="#client-server-messages" title="Permanent link">&para;</a></h4>
+<p><strong>get_user_data</strong>:
+<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="p">{</span>
+<a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a><span class="w">  </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;get_user_data&quot;</span><span class="p">,</span>
+<a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a><span class="w">  </span><span class="nt">&quot;serverId&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;232769614004748288&quot;</span>
+<a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a><span class="p">}</span>
+</code></pre></div></p>
+<p><strong>authenticate</strong> (OAuth2):
+<div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="p">{</span>
+<a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a><span class="w">  </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;authenticate&quot;</span><span class="p">,</span>
+<a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a><span class="w">  </span><span class="nt">&quot;token&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;oauth2_access_token&quot;</span><span class="p">,</span>
+<a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a><span class="w">  </span><span class="nt">&quot;serverId&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;232769614004748288&quot;</span>
+<a id="__codelineno-10-5" name="__codelineno-10-5" href="#__codelineno-10-5"></a><span class="p">}</span>
+</code></pre></div></p>
+<h4 id="server-client-messages">Server → Client Messages<a class="headerlink" href="#server-client-messages" title="Permanent link">&para;</a></h4>
+<p><strong>connect</strong> (initial connection):
+<div class="highlight"><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a><span class="p">{</span>
+<a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a><span class="w">  </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;connect&quot;</span><span class="p">,</span>
+<a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a><span class="w">  </span><span class="nt">&quot;servers&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-11-4" name="__codelineno-11-4" href="#__codelineno-11-4"></a><span class="w">    </span><span class="nt">&quot;232769614004748288&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-11-5" name="__codelineno-11-5" href="#__codelineno-11-5"></a><span class="w">      </span><span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;232769614004748288&quot;</span><span class="p">,</span>
+<a id="__codelineno-11-6" name="__codelineno-11-6" href="#__codelineno-11-6"></a><span class="w">      </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;d-world&quot;</span><span class="p">,</span>
+<a id="__codelineno-11-7" name="__codelineno-11-7" href="#__codelineno-11-7"></a><span class="w">      </span><span class="nt">&quot;passworded&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
+<a id="__codelineno-11-8" name="__codelineno-11-8" href="#__codelineno-11-8"></a><span class="w">      </span><span class="nt">&quot;default&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span>
+<a id="__codelineno-11-9" name="__codelineno-11-9" href="#__codelineno-11-9"></a><span class="w">    </span><span class="p">}</span>
+<a id="__codelineno-11-10" name="__codelineno-11-10" href="#__codelineno-11-10"></a><span class="w">  </span><span class="p">}</span>
+<a id="__codelineno-11-11" name="__codelineno-11-11" href="#__codelineno-11-11"></a><span class="p">}</span>
+</code></pre></div></p>
+<p><strong>user_data</strong>:
+<div class="highlight"><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a><span class="p">{</span>
+<a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a><span class="w">  </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;user_data&quot;</span><span class="p">,</span>
+<a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a><span class="w">  </span><span class="nt">&quot;serverId&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;232769614004748288&quot;</span><span class="p">,</span>
+<a id="__codelineno-12-4" name="__codelineno-12-4" href="#__codelineno-12-4"></a><span class="w">  </span><span class="nt">&quot;users&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-12-5" name="__codelineno-12-5" href="#__codelineno-12-5"></a><span class="w">    </span><span class="nt">&quot;user123&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-12-6" name="__codelineno-12-6" href="#__codelineno-12-6"></a><span class="w">      </span><span class="nt">&quot;uid&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;user123&quot;</span><span class="p">,</span>
+<a id="__codelineno-12-7" name="__codelineno-12-7" href="#__codelineno-12-7"></a><span class="w">      </span><span class="nt">&quot;username&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;TestUser&quot;</span><span class="p">,</span>
+<a id="__codelineno-12-8" name="__codelineno-12-8" href="#__codelineno-12-8"></a><span class="w">      </span><span class="nt">&quot;status&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;online&quot;</span><span class="p">,</span>
+<a id="__codelineno-12-9" name="__codelineno-12-9" href="#__codelineno-12-9"></a><span class="w">      </span><span class="nt">&quot;roleColor&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;#ff6b6b&quot;</span>
+<a id="__codelineno-12-10" name="__codelineno-12-10" href="#__codelineno-12-10"></a><span class="w">    </span><span class="p">}</span>
+<a id="__codelineno-12-11" name="__codelineno-12-11" href="#__codelineno-12-11"></a><span class="w">  </span><span class="p">}</span>
+<a id="__codelineno-12-12" name="__codelineno-12-12" href="#__codelineno-12-12"></a><span class="p">}</span>
+</code></pre></div></p>
+<p><strong>message</strong> (chat message):
+<div class="highlight"><pre><span></span><code><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a><span class="p">{</span>
+<a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a><span class="w">  </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;message&quot;</span><span class="p">,</span>
+<a id="__codelineno-13-3" name="__codelineno-13-3" href="#__codelineno-13-3"></a><span class="w">  </span><span class="nt">&quot;server&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;232769614004748288&quot;</span><span class="p">,</span>
+<a id="__codelineno-13-4" name="__codelineno-13-4" href="#__codelineno-13-4"></a><span class="w">  </span><span class="nt">&quot;uid&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;user123&quot;</span><span class="p">,</span>
+<a id="__codelineno-13-5" name="__codelineno-13-5" href="#__codelineno-13-5"></a><span class="w">  </span><span class="nt">&quot;message&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Hello!&quot;</span><span class="p">,</span>
+<a id="__codelineno-13-6" name="__codelineno-13-6" href="#__codelineno-13-6"></a><span class="w">  </span><span class="nt">&quot;channel&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;channel456&quot;</span>
+<a id="__codelineno-13-7" name="__codelineno-13-7" href="#__codelineno-13-7"></a><span class="p">}</span>
+</code></pre></div></p>
+<p><strong>presence</strong> (status update):
+<div class="highlight"><pre><span></span><code><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a><span class="p">{</span>
+<a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a><span class="w">  </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;presence&quot;</span><span class="p">,</span>
+<a id="__codelineno-14-3" name="__codelineno-14-3" href="#__codelineno-14-3"></a><span class="w">  </span><span class="nt">&quot;server&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;232769614004748288&quot;</span><span class="p">,</span>
+<a id="__codelineno-14-4" name="__codelineno-14-4" href="#__codelineno-14-4"></a><span class="w">  </span><span class="nt">&quot;uid&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;user123&quot;</span><span class="p">,</span>
+<a id="__codelineno-14-5" name="__codelineno-14-5" href="#__codelineno-14-5"></a><span class="w">  </span><span class="nt">&quot;status&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;idle&quot;</span><span class="p">,</span>
+<a id="__codelineno-14-6" name="__codelineno-14-6" href="#__codelineno-14-6"></a><span class="w">  </span><span class="nt">&quot;username&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;TestUser&quot;</span><span class="p">,</span>
+<a id="__codelineno-14-7" name="__codelineno-14-7" href="#__codelineno-14-7"></a><span class="w">  </span><span class="nt">&quot;roleColor&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;#ff6b6b&quot;</span><span class="p">,</span>
+<a id="__codelineno-14-8" name="__codelineno-14-8" href="#__codelineno-14-8"></a><span class="w">  </span><span class="nt">&quot;delete&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span>
+<a id="__codelineno-14-9" name="__codelineno-14-9" href="#__codelineno-14-9"></a><span class="p">}</span>
+</code></pre></div></p>
+<p><strong>client_id_update</strong>:
+<div class="highlight"><pre><span></span><code><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a><span class="p">{</span>
+<a id="__codelineno-15-2" name="__codelineno-15-2" href="#__codelineno-15-2"></a><span class="w">  </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;client_id_update&quot;</span><span class="p">,</span>
+<a id="__codelineno-15-3" name="__codelineno-15-3" href="#__codelineno-15-3"></a><span class="w">  </span><span class="nt">&quot;server&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;232769614004748288&quot;</span><span class="p">,</span>
+<a id="__codelineno-15-4" name="__codelineno-15-4" href="#__codelineno-15-4"></a><span class="w">  </span><span class="nt">&quot;clientId&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;123456789012345678&quot;</span>
+<a id="__codelineno-15-5" name="__codelineno-15-5" href="#__codelineno-15-5"></a><span class="p">}</span>
+</code></pre></div></p>
+<h3 id="http-support">HTTP Support<a class="headerlink" href="#http-support" title="Permanent link">&para;</a></h3>
+<p>d-back includes HTTP support for serving static files (requires websockets 10.0+):</p>
+<ul>
+<li><strong>Version Detection</strong>: Checks websockets library version at runtime</li>
+<li><strong>Fallback Behavior</strong>: Logs warning if HTTP not supported</li>
+<li><strong>Static File Serving</strong>: Serves files from <code>dist/</code> directory by default</li>
+<li><strong>Security</strong>: Path traversal protection prevents accessing files outside static directory</li>
+<li><strong>Content Types</strong>: Automatically detects MIME types based on file extensions</li>
+</ul>
+<p><strong>API Endpoints</strong>:
+- <code>/api/version</code>: Returns server version information (if implemented)
+- All other paths: Serve from static directory</p>
+<h2 id="testing">Testing<a class="headerlink" href="#testing" title="Permanent link">&para;</a></h2>
+<p>Comprehensive testing ensures d-back remains stable and reliable.</p>
+<h3 id="test-structure">Test Structure<a class="headerlink" href="#test-structure" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a>tests/
+<a id="__codelineno-16-2" name="__codelineno-16-2" href="#__codelineno-16-2"></a>├── test_websocket_server.py  # WebSocket functionality tests
+<a id="__codelineno-16-3" name="__codelineno-16-3" href="#__codelineno-16-3"></a>├── test_browser_integration.py # Browser integration tests
+<a id="__codelineno-16-4" name="__codelineno-16-4" href="#__codelineno-16-4"></a>├── helpers/
+<a id="__codelineno-16-5" name="__codelineno-16-5" href="#__codelineno-16-5"></a>│   └── mock_websocket_client.py  # Mock client for testing
+<a id="__codelineno-16-6" name="__codelineno-16-6" href="#__codelineno-16-6"></a>└── README.md                 # Detailed testing documentation
+</code></pre></div>
+<h3 id="test-coverage">Test Coverage<a class="headerlink" href="#test-coverage" title="Permanent link">&para;</a></h3>
+<p>The test suite covers:</p>
+<ul>
+<li>✅ WebSocket server initialization and startup</li>
+<li>✅ Client connection and disconnection</li>
+<li>✅ Message sending and receiving</li>
+<li>✅ User data requests and responses</li>
+<li>✅ Server list retrieval</li>
+<li>✅ OAuth2 authentication flow</li>
+<li>✅ Error handling and edge cases</li>
+<li>✅ Callback customization</li>
+<li>✅ Broadcasting functionality</li>
+<li>✅ Static file serving</li>
+<li>✅ Path traversal protection</li>
+<li>✅ Graceful shutdown</li>
+</ul>
+<h3 id="running-tests">Running Tests<a class="headerlink" href="#running-tests" title="Permanent link">&para;</a></h3>
+<h4 id="option-1-pytest-recommended">Option 1: pytest (Recommended)<a class="headerlink" href="#option-1-pytest-recommended" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a><span class="c1"># Run all tests</span>
+<a id="__codelineno-17-2" name="__codelineno-17-2" href="#__codelineno-17-2"></a>pytest
+<a id="__codelineno-17-3" name="__codelineno-17-3" href="#__codelineno-17-3"></a>
+<a id="__codelineno-17-4" name="__codelineno-17-4" href="#__codelineno-17-4"></a><span class="c1"># Run with verbose output</span>
+<a id="__codelineno-17-5" name="__codelineno-17-5" href="#__codelineno-17-5"></a>pytest<span class="w"> </span>-v
+<a id="__codelineno-17-6" name="__codelineno-17-6" href="#__codelineno-17-6"></a>
+<a id="__codelineno-17-7" name="__codelineno-17-7" href="#__codelineno-17-7"></a><span class="c1"># Run specific test file</span>
+<a id="__codelineno-17-8" name="__codelineno-17-8" href="#__codelineno-17-8"></a>pytest<span class="w"> </span>tests/test_websocket_server.py
+<a id="__codelineno-17-9" name="__codelineno-17-9" href="#__codelineno-17-9"></a>
+<a id="__codelineno-17-10" name="__codelineno-17-10" href="#__codelineno-17-10"></a><span class="c1"># Run specific test</span>
+<a id="__codelineno-17-11" name="__codelineno-17-11" href="#__codelineno-17-11"></a>pytest<span class="w"> </span>tests/test_websocket_server.py::test_server_startup
+<a id="__codelineno-17-12" name="__codelineno-17-12" href="#__codelineno-17-12"></a>
+<a id="__codelineno-17-13" name="__codelineno-17-13" href="#__codelineno-17-13"></a><span class="c1"># Run with coverage</span>
+<a id="__codelineno-17-14" name="__codelineno-17-14" href="#__codelineno-17-14"></a>pytest<span class="w"> </span>--cov<span class="o">=</span>d_back<span class="w"> </span>--cov-report<span class="o">=</span>html
+</code></pre></div>
+<h4 id="option-2-simple-test-runner">Option 2: Simple Test Runner<a class="headerlink" href="#option-2-simple-test-runner" title="Permanent link">&para;</a></h4>
+<p>For Python 3.8+ without pytest:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-18-1" name="__codelineno-18-1" href="#__codelineno-18-1"></a>python<span class="w"> </span>-m<span class="w"> </span>tests.test_websocket_server
+</code></pre></div>
+<h4 id="option-3-manual-testing">Option 3: Manual Testing<a class="headerlink" href="#option-3-manual-testing" title="Permanent link">&para;</a></h4>
+<p>Start the server and test manually:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-19-1" name="__codelineno-19-1" href="#__codelineno-19-1"></a><span class="c1"># Terminal 1: Start server</span>
+<a id="__codelineno-19-2" name="__codelineno-19-2" href="#__codelineno-19-2"></a>d_back
+<a id="__codelineno-19-3" name="__codelineno-19-3" href="#__codelineno-19-3"></a>
+<a id="__codelineno-19-4" name="__codelineno-19-4" href="#__codelineno-19-4"></a><span class="c1"># Terminal 2: Test with Python client</span>
+<a id="__codelineno-19-5" name="__codelineno-19-5" href="#__codelineno-19-5"></a>python<span class="w"> </span>test_client.py
+</code></pre></div>
+<h3 id="writing-tests">Writing Tests<a class="headerlink" href="#writing-tests" title="Permanent link">&para;</a></h3>
+<p>Tests use pytest and pytest-asyncio for async support:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-20-1" name="__codelineno-20-1" href="#__codelineno-20-1"></a><span class="kn">import</span><span class="w"> </span><span class="nn">pytest</span>
+<a id="__codelineno-20-2" name="__codelineno-20-2" href="#__codelineno-20-2"></a><span class="kn">import</span><span class="w"> </span><span class="nn">websockets</span>
+<a id="__codelineno-20-3" name="__codelineno-20-3" href="#__codelineno-20-3"></a><span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+<a id="__codelineno-20-4" name="__codelineno-20-4" href="#__codelineno-20-4"></a><span class="kn">from</span><span class="w"> </span><span class="nn">d_back.server</span><span class="w"> </span><span class="kn">import</span> <span class="n">WebSocketServer</span>
+<a id="__codelineno-20-5" name="__codelineno-20-5" href="#__codelineno-20-5"></a>
+<a id="__codelineno-20-6" name="__codelineno-20-6" href="#__codelineno-20-6"></a><span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">asyncio</span>
+<a id="__codelineno-20-7" name="__codelineno-20-7" href="#__codelineno-20-7"></a><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">test_my_feature</span><span class="p">():</span>
+<a id="__codelineno-20-8" name="__codelineno-20-8" href="#__codelineno-20-8"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Test description.&quot;&quot;&quot;</span>
+<a id="__codelineno-20-9" name="__codelineno-20-9" href="#__codelineno-20-9"></a>    <span class="c1"># Setup</span>
+<a id="__codelineno-20-10" name="__codelineno-20-10" href="#__codelineno-20-10"></a>    <span class="n">server</span> <span class="o">=</span> <span class="n">WebSocketServer</span><span class="p">(</span><span class="n">port</span><span class="o">=</span><span class="mi">3001</span><span class="p">,</span> <span class="n">host</span><span class="o">=</span><span class="s2">&quot;localhost&quot;</span><span class="p">)</span>
+<a id="__codelineno-20-11" name="__codelineno-20-11" href="#__codelineno-20-11"></a>    <span class="k">await</span> <span class="n">server</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+<a id="__codelineno-20-12" name="__codelineno-20-12" href="#__codelineno-20-12"></a>
+<a id="__codelineno-20-13" name="__codelineno-20-13" href="#__codelineno-20-13"></a>    <span class="k">try</span><span class="p">:</span>
+<a id="__codelineno-20-14" name="__codelineno-20-14" href="#__codelineno-20-14"></a>        <span class="c1"># Test</span>
+<a id="__codelineno-20-15" name="__codelineno-20-15" href="#__codelineno-20-15"></a>        <span class="k">async</span> <span class="k">with</span> <span class="n">websockets</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="s2">&quot;ws://localhost:3001&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">websocket</span><span class="p">:</span>
+<a id="__codelineno-20-16" name="__codelineno-20-16" href="#__codelineno-20-16"></a>            <span class="c1"># Send request</span>
+<a id="__codelineno-20-17" name="__codelineno-20-17" href="#__codelineno-20-17"></a>            <span class="k">await</span> <span class="n">websocket</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">({</span>
+<a id="__codelineno-20-18" name="__codelineno-20-18" href="#__codelineno-20-18"></a>                <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;get_user_data&quot;</span><span class="p">,</span>
+<a id="__codelineno-20-19" name="__codelineno-20-19" href="#__codelineno-20-19"></a>                <span class="s2">&quot;serverId&quot;</span><span class="p">:</span> <span class="s2">&quot;232769614004748288&quot;</span>
+<a id="__codelineno-20-20" name="__codelineno-20-20" href="#__codelineno-20-20"></a>            <span class="p">}))</span>
+<a id="__codelineno-20-21" name="__codelineno-20-21" href="#__codelineno-20-21"></a>
+<a id="__codelineno-20-22" name="__codelineno-20-22" href="#__codelineno-20-22"></a>            <span class="c1"># Receive response</span>
+<a id="__codelineno-20-23" name="__codelineno-20-23" href="#__codelineno-20-23"></a>            <span class="n">response</span> <span class="o">=</span> <span class="k">await</span> <span class="n">websocket</span><span class="o">.</span><span class="n">recv</span><span class="p">()</span>
+<a id="__codelineno-20-24" name="__codelineno-20-24" href="#__codelineno-20-24"></a>            <span class="n">data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">response</span><span class="p">)</span>
+<a id="__codelineno-20-25" name="__codelineno-20-25" href="#__codelineno-20-25"></a>
+<a id="__codelineno-20-26" name="__codelineno-20-26" href="#__codelineno-20-26"></a>            <span class="c1"># Assertions</span>
+<a id="__codelineno-20-27" name="__codelineno-20-27" href="#__codelineno-20-27"></a>            <span class="k">assert</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;type&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;user_data&quot;</span>
+<a id="__codelineno-20-28" name="__codelineno-20-28" href="#__codelineno-20-28"></a>            <span class="k">assert</span> <span class="s2">&quot;users&quot;</span> <span class="ow">in</span> <span class="n">data</span>
+<a id="__codelineno-20-29" name="__codelineno-20-29" href="#__codelineno-20-29"></a>
+<a id="__codelineno-20-30" name="__codelineno-20-30" href="#__codelineno-20-30"></a>    <span class="k">finally</span><span class="p">:</span>
+<a id="__codelineno-20-31" name="__codelineno-20-31" href="#__codelineno-20-31"></a>        <span class="c1"># Cleanup</span>
+<a id="__codelineno-20-32" name="__codelineno-20-32" href="#__codelineno-20-32"></a>        <span class="k">await</span> <span class="n">server</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
+</code></pre></div>
+<h3 id="test-configuration">Test Configuration<a class="headerlink" href="#test-configuration" title="Permanent link">&para;</a></h3>
+<p>Test settings are defined in <code>pyproject.toml</code>:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-21-1" name="__codelineno-21-1" href="#__codelineno-21-1"></a><span class="k">[tool.pytest.ini_options]</span>
+<a id="__codelineno-21-2" name="__codelineno-21-2" href="#__codelineno-21-2"></a><span class="n">asyncio_mode</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;auto&quot;</span>
+<a id="__codelineno-21-3" name="__codelineno-21-3" href="#__codelineno-21-3"></a><span class="n">testpaths</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;tests&quot;</span><span class="p">]</span>
+<a id="__codelineno-21-4" name="__codelineno-21-4" href="#__codelineno-21-4"></a><span class="n">python_files</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;test_*.py&quot;</span>
+<a id="__codelineno-21-5" name="__codelineno-21-5" href="#__codelineno-21-5"></a><span class="n">python_functions</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;test_*&quot;</span>
+</code></pre></div>
+<h2 id="contributing-guidelines">Contributing Guidelines<a class="headerlink" href="#contributing-guidelines" title="Permanent link">&para;</a></h2>
+<h3 id="code-style">Code Style<a class="headerlink" href="#code-style" title="Permanent link">&para;</a></h3>
+<p>Follow these conventions to maintain code quality:</p>
+<ul>
+<li><strong>PEP 8</strong>: Follow Python style guide</li>
+<li><strong>Type Hints</strong>: Add type annotations to all functions</li>
+<li><strong>Docstrings</strong>: Use Google-style docstrings</li>
+<li><strong>Function Size</strong>: Keep functions focused and under 50 lines when possible</li>
+<li><strong>Variable Names</strong>: Use descriptive names (avoid single letters except loops)</li>
+</ul>
+<p><strong>Example</strong>:
+<div class="highlight"><pre><span></span><code><a id="__codelineno-22-1" name="__codelineno-22-1" href="#__codelineno-22-1"></a><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">fetch_user_data</span><span class="p">(</span><span class="n">server_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">include_offline</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+<a id="__codelineno-22-2" name="__codelineno-22-2" href="#__codelineno-22-2"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<a id="__codelineno-22-3" name="__codelineno-22-3" href="#__codelineno-22-3"></a><span class="sd">    Fetch user data for a Discord server.</span>
+<a id="__codelineno-22-4" name="__codelineno-22-4" href="#__codelineno-22-4"></a>
+<a id="__codelineno-22-5" name="__codelineno-22-5" href="#__codelineno-22-5"></a><span class="sd">    Args:</span>
+<a id="__codelineno-22-6" name="__codelineno-22-6" href="#__codelineno-22-6"></a><span class="sd">        server_id: Discord server snowflake ID.</span>
+<a id="__codelineno-22-7" name="__codelineno-22-7" href="#__codelineno-22-7"></a><span class="sd">        include_offline: Whether to include offline users.</span>
+<a id="__codelineno-22-8" name="__codelineno-22-8" href="#__codelineno-22-8"></a>
+<a id="__codelineno-22-9" name="__codelineno-22-9" href="#__codelineno-22-9"></a><span class="sd">    Returns:</span>
+<a id="__codelineno-22-10" name="__codelineno-22-10" href="#__codelineno-22-10"></a><span class="sd">        Dictionary mapping user IDs to user objects.</span>
+<a id="__codelineno-22-11" name="__codelineno-22-11" href="#__codelineno-22-11"></a>
+<a id="__codelineno-22-12" name="__codelineno-22-12" href="#__codelineno-22-12"></a><span class="sd">    Examples:</span>
+<a id="__codelineno-22-13" name="__codelineno-22-13" href="#__codelineno-22-13"></a><span class="sd">        &gt;&gt;&gt; data = await fetch_user_data(&quot;123456789&quot;)</span>
+<a id="__codelineno-22-14" name="__codelineno-22-14" href="#__codelineno-22-14"></a><span class="sd">        &gt;&gt;&gt; print(data.keys())</span>
+<a id="__codelineno-22-15" name="__codelineno-22-15" href="#__codelineno-22-15"></a><span class="sd">        dict_keys([&#39;user1&#39;, &#39;user2&#39;])</span>
+<a id="__codelineno-22-16" name="__codelineno-22-16" href="#__codelineno-22-16"></a><span class="sd">    &quot;&quot;&quot;</span>
+<a id="__codelineno-22-17" name="__codelineno-22-17" href="#__codelineno-22-17"></a>    <span class="c1"># Implementation</span>
+<a id="__codelineno-22-18" name="__codelineno-22-18" href="#__codelineno-22-18"></a>    <span class="k">pass</span>
+</code></pre></div></p>
+<h3 id="documentation">Documentation<a class="headerlink" href="#documentation" title="Permanent link">&para;</a></h3>
+<p>Document your changes thoroughly:</p>
+<ul>
+<li><strong>Docstrings</strong>: Add to all public classes and methods</li>
+<li><strong>Examples</strong>: Include usage examples in docstrings</li>
+<li><strong>User Guide</strong>: Update relevant documentation pages</li>
+<li><strong>CHANGELOG</strong>: Add entry describing your change</li>
+</ul>
+<p><strong>Test documentation builds</strong>:
+<div class="highlight"><pre><span></span><code><a id="__codelineno-23-1" name="__codelineno-23-1" href="#__codelineno-23-1"></a>mkdocs<span class="w"> </span>serve
+</code></pre></div></p>
+<p>Visit <code>http://127.0.0.1:8000</code> to preview.</p>
+<h2 id="documentation-translation">Documentation Translation<a class="headerlink" href="#documentation-translation" title="Permanent link">&para;</a></h2>
+<h3 id="overview">Overview<a class="headerlink" href="#overview" title="Permanent link">&para;</a></h3>
+<p>The d-back documentation is available in multiple languages (English, Spanish, German). We use Crowdin to manage translations collaboratively. English is the source language — make changes to English files first. Translations are synchronized using Crowdin and GitHub Actions. The project uses <code>mkdocs-static-i18n</code> with the suffix structure (e.g., <code>index.es.md</code>, <code>index.de.md</code>).</p>
+<h3 id="crowdin-project-setup">Crowdin Project Setup<a class="headerlink" href="#crowdin-project-setup" title="Permanent link">&para;</a></h3>
+<ol>
+<li>Create a Crowdin project at https://crowdin.com and select <strong>Markdown</strong> as the file type.</li>
+<li>Set English as the source language and add Spanish (<code>es</code>) and German (<code>de</code>) as target languages.</li>
+<li>Install the Crowdin GitHub App on the repository, or configure Crowdin CLI with GitHub Actions. The repository root <code>crowdin.yml</code> defines file patterns and parser options used by Crowdin.</li>
+</ol>
+<p>Required GitHub secrets (Repository → Settings → Secrets and variables → Actions):</p>
+<ul>
+<li><code>CROWDIN_PROJECT_ID</code> — Crowdin project ID</li>
+<li><code>CROWDIN_PERSONAL_TOKEN</code> — Crowdin personal access token</li>
+</ul>
+<h3 id="translation-workflow">Translation Workflow<a class="headerlink" href="#translation-workflow" title="Permanent link">&para;</a></h3>
+<ol>
+<li>Edit English source files (for example: <code>docs/index.md</code>, <code>docs/getting-started.md</code>) and submit a pull request.</li>
+<li>After the PR is merged into <code>main</code>, Crowdin will detect changed strings and notify translators.</li>
+<li>Translators translate content in the Crowdin editor. Crowdin preserves code blocks, inline code, and markdown formatting.</li>
+<li>Translations are synced back to the repository via Crowdin GitHub integration or through GitHub Actions. Crowdin will create PRs with translation updates for maintainers to review and merge.</li>
+</ol>
+<h3 id="file-structure-and-naming">File Structure and Naming<a class="headerlink" href="#file-structure-and-naming" title="Permanent link">&para;</a></h3>
+<ul>
+<li>English (source): <code>docs/index.md</code>, <code>docs/getting-started.md</code>, <code>docs/user-guide/configuration.md</code></li>
+<li>Spanish: <code>docs/index.es.md</code>, <code>docs/getting-started.es.md</code>, <code>docs/user-guide/configuration.es.md</code></li>
+<li>German: <code>docs/index.de.md</code>, <code>docs/getting-started.de.md</code>, <code>docs/user-guide/configuration.de.md</code></li>
+</ul>
+<p>This suffix-based convention matches <code>mkdocs-static-i18n</code> configuration in <code>mkdocs.yml</code>.</p>
+<h3 id="what-gets-translated">What Gets Translated<a class="headerlink" href="#what-gets-translated" title="Permanent link">&para;</a></h3>
+<p>Translated content includes:</p>
+<ul>
+<li>Explanatory text, section headings, and titles</li>
+<li>User-facing messages and instructions</li>
+<li>Non-code examples' descriptions</li>
+</ul>
+<p>Not translated:</p>
+<ul>
+<li>Code blocks and inline code</li>
+<li>Function and class names</li>
+<li>File paths and URLs</li>
+<li>Configuration keys and values</li>
+<li>Project names and technical terms (e.g., d-back, d-zone, WebSocket, OAuth2)</li>
+</ul>
+<h3 id="excluded-files">Excluded Files<a class="headerlink" href="#excluded-files" title="Permanent link">&para;</a></h3>
+<p>The following files are intentionally excluded from Crowdin translation:</p>
+<ul>
+<li><code>docs/VERCEL_SETUP.md</code> (internal Vercel deployment docs)</li>
+<li><code>docs/TESTING_I18N.md</code> (internal i18n testing docs)</li>
+<li><code>docs/.pages</code> (navigation configuration)</li>
+<li>API reference files (auto-generated by <code>mkdocstrings</code>)</li>
+</ul>
+<h3 id="testing-translations-locally">Testing Translations Locally<a class="headerlink" href="#testing-translations-locally" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-24-1" name="__codelineno-24-1" href="#__codelineno-24-1"></a><span class="c1"># Install documentation dependencies</span>
+<a id="__codelineno-24-2" name="__codelineno-24-2" href="#__codelineno-24-2"></a>pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span>.<span class="o">[</span>docs<span class="o">]</span>
+<a id="__codelineno-24-3" name="__codelineno-24-3" href="#__codelineno-24-3"></a>
+<a id="__codelineno-24-4" name="__codelineno-24-4" href="#__codelineno-24-4"></a><span class="c1"># Serve documentation locally with all languages</span>
+<a id="__codelineno-24-5" name="__codelineno-24-5" href="#__codelineno-24-5"></a>mkdocs<span class="w"> </span>serve
+<a id="__codelineno-24-6" name="__codelineno-24-6" href="#__codelineno-24-6"></a>
+<a id="__codelineno-24-7" name="__codelineno-24-7" href="#__codelineno-24-7"></a><span class="c1"># Build documentation (generates site/ directory with all languages)</span>
+<a id="__codelineno-24-8" name="__codelineno-24-8" href="#__codelineno-24-8"></a>mkdocs<span class="w"> </span>build
+</code></pre></div>
+<p>Check specific language previews:</p>
+<ul>
+<li>English: <code>http://127.0.0.1:8000/</code></li>
+<li>Spanish: <code>http://127.0.0.1:8000/es/</code></li>
+<li>German: <code>http://127.0.0.1:8000/de/</code></li>
+</ul>
+<h3 id="translation-best-practices">Translation Best Practices<a class="headerlink" href="#translation-best-practices" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Use a formal tone for user-facing content (Spanish: "usted", German: "Sie").</li>
+<li>Keep technical terms and project names in English.</li>
+<li>Preserve markdown formatting, code blocks, and inline code.</li>
+<li>Test translations locally before submitting them.</li>
+</ul>
+<h3 id="adding-new-languages">Adding New Languages<a class="headerlink" href="#adding-new-languages" title="Permanent link">&para;</a></h3>
+<p>To add a new language:</p>
+<ol>
+<li>Update <code>mkdocs.yml</code> i18n configuration to include the new language.</li>
+<li>Update <code>crowdin.yml</code> with the new <code>two_letters_code</code>.</li>
+<li>Add the language in the Crowdin project settings.</li>
+<li>Create initial translation files following the suffix pattern.</li>
+<li>Update this section with the new language details.</li>
+</ol>
+<h3 id="troubleshooting">Troubleshooting<a class="headerlink" href="#troubleshooting" title="Permanent link">&para;</a></h3>
+<p>Common issues:</p>
+<ul>
+<li>Translations not appearing in Crowdin: ensure file patterns in <code>crowdin.yml</code> match committed files and they are not listed in <code>ignore</code>.</li>
+<li>Translations not syncing to GitHub: check GitHub Actions logs and verify <code>CROWDIN_PROJECT_ID</code> and <code>CROWDIN_PERSONAL_TOKEN</code> are set.</li>
+<li>Broken formatting: review translations in Crowdin editor and verify code blocks are preserved.</li>
+</ul>
+<h3 id="resources">Resources<a class="headerlink" href="#resources" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Crowdin documentation: https://support.crowdin.com/</li>
+<li>mkdocs-static-i18n: https://github.com/ultrabug/mkdocs-static-i18n</li>
+<li>Material for MkDocs i18n: https://squidfunk.github.io/mkdocs-material/setup/changing-the-language/</li>
+</ul>
+<h3 id="pull-request-process">Pull Request Process<a class="headerlink" href="#pull-request-process" title="Permanent link">&para;</a></h3>
+<ol>
+<li>
+<p><strong>Create a feature branch</strong>:
+   <div class="highlight"><pre><span></span><code><a id="__codelineno-25-1" name="__codelineno-25-1" href="#__codelineno-25-1"></a>git<span class="w"> </span>checkout<span class="w"> </span>-b<span class="w"> </span>feature/my-awesome-feature
+</code></pre></div></p>
+</li>
+<li>
+<p><strong>Make your changes</strong>:</p>
+</li>
+<li>Write code</li>
+<li>Add tests</li>
+<li>
+<p>Update documentation</p>
+</li>
+<li>
+<p><strong>Ensure tests pass</strong>:
+   <div class="highlight"><pre><span></span><code><a id="__codelineno-26-1" name="__codelineno-26-1" href="#__codelineno-26-1"></a>pytest
+</code></pre></div></p>
+</li>
+<li>
+<p><strong>Commit your changes</strong>:
+   <div class="highlight"><pre><span></span><code><a id="__codelineno-27-1" name="__codelineno-27-1" href="#__codelineno-27-1"></a>git<span class="w"> </span>add<span class="w"> </span>.
+<a id="__codelineno-27-2" name="__codelineno-27-2" href="#__codelineno-27-2"></a>git<span class="w"> </span>commit<span class="w"> </span>-m<span class="w"> </span><span class="s2">&quot;feat: add awesome feature&quot;</span>
+</code></pre></div></p>
+</li>
+<li>
+<p><strong>Push to your fork</strong>:
+   <div class="highlight"><pre><span></span><code><a id="__codelineno-28-1" name="__codelineno-28-1" href="#__codelineno-28-1"></a>git<span class="w"> </span>push<span class="w"> </span>origin<span class="w"> </span>feature/my-awesome-feature
+</code></pre></div></p>
+</li>
+<li>
+<p><strong>Create Pull Request</strong> on GitHub:</p>
+</li>
+<li>Provide clear description</li>
+<li>Link related issues</li>
+<li>
+<p>Explain motivation and changes</p>
+</li>
+<li>
+<p><strong>Respond to review feedback</strong>:</p>
+</li>
+<li>Address comments</li>
+<li>Push additional commits</li>
+<li>Request re-review</li>
+</ol>
+<h3 id="commit-message-format">Commit Message Format<a class="headerlink" href="#commit-message-format" title="Permanent link">&para;</a></h3>
+<p>Use conventional commits format:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-29-1" name="__codelineno-29-1" href="#__codelineno-29-1"></a>&lt;type&gt;(&lt;scope&gt;): &lt;subject&gt;
+<a id="__codelineno-29-2" name="__codelineno-29-2" href="#__codelineno-29-2"></a>
+<a id="__codelineno-29-3" name="__codelineno-29-3" href="#__codelineno-29-3"></a>&lt;body&gt;
+<a id="__codelineno-29-4" name="__codelineno-29-4" href="#__codelineno-29-4"></a>
+<a id="__codelineno-29-5" name="__codelineno-29-5" href="#__codelineno-29-5"></a>&lt;footer&gt;
+</code></pre></div>
+<p><strong>Types</strong>:
+- <code>feat</code>: New feature
+- <code>fix</code>: Bug fix
+- <code>docs</code>: Documentation changes
+- <code>style</code>: Code style changes (formatting)
+- <code>refactor</code>: Code refactoring
+- <code>test</code>: Test additions or changes
+- <code>chore</code>: Maintenance tasks</p>
+<p><strong>Examples</strong>:
+<div class="highlight"><pre><span></span><code><a id="__codelineno-30-1" name="__codelineno-30-1" href="#__codelineno-30-1"></a>feat: add OAuth2 token validation callback
+<a id="__codelineno-30-2" name="__codelineno-30-2" href="#__codelineno-30-2"></a>
+<a id="__codelineno-30-3" name="__codelineno-30-3" href="#__codelineno-30-3"></a>Implement on_validate_discord_user callback to support
+<a id="__codelineno-30-4" name="__codelineno-30-4" href="#__codelineno-30-4"></a>Discord OAuth2 authentication flow.
+<a id="__codelineno-30-5" name="__codelineno-30-5" href="#__codelineno-30-5"></a>
+<a id="__codelineno-30-6" name="__codelineno-30-6" href="#__codelineno-30-6"></a>Closes #123
+</code></pre></div></p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-31-1" name="__codelineno-31-1" href="#__codelineno-31-1"></a>fix: handle connection errors gracefully
+<a id="__codelineno-31-2" name="__codelineno-31-2" href="#__codelineno-31-2"></a>
+<a id="__codelineno-31-3" name="__codelineno-31-3" href="#__codelineno-31-3"></a>Add try-except block to prevent server crash when
+<a id="__codelineno-31-4" name="__codelineno-31-4" href="#__codelineno-31-4"></a>client disconnects unexpectedly.
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-32-1" name="__codelineno-32-1" href="#__codelineno-32-1"></a>docs: update API reference with examples
+<a id="__codelineno-32-2" name="__codelineno-32-2" href="#__codelineno-32-2"></a>
+<a id="__codelineno-32-3" name="__codelineno-32-3" href="#__codelineno-32-3"></a>Add comprehensive examples to WebSocketServer methods
+<a id="__codelineno-32-4" name="__codelineno-32-4" href="#__codelineno-32-4"></a>in API documentation.
+</code></pre></div>
+<h2 id="development-workflow">Development Workflow<a class="headerlink" href="#development-workflow" title="Permanent link">&para;</a></h2>
+<h3 id="day-to-day-development">Day-to-Day Development<a class="headerlink" href="#day-to-day-development" title="Permanent link">&para;</a></h3>
+<ol>
+<li>
+<p><strong>Sync with upstream</strong>:
+   <div class="highlight"><pre><span></span><code><a id="__codelineno-33-1" name="__codelineno-33-1" href="#__codelineno-33-1"></a>git<span class="w"> </span>fetch<span class="w"> </span>upstream
+<a id="__codelineno-33-2" name="__codelineno-33-2" href="#__codelineno-33-2"></a>git<span class="w"> </span>rebase<span class="w"> </span>upstream/main
+</code></pre></div></p>
+</li>
+<li>
+<p><strong>Create feature branch</strong>:
+   <div class="highlight"><pre><span></span><code><a id="__codelineno-34-1" name="__codelineno-34-1" href="#__codelineno-34-1"></a>git<span class="w"> </span>checkout<span class="w"> </span>-b<span class="w"> </span>feature/my-feature
+</code></pre></div></p>
+</li>
+<li>
+<p><strong>Make changes and test</strong>:
+   <div class="highlight"><pre><span></span><code><a id="__codelineno-35-1" name="__codelineno-35-1" href="#__codelineno-35-1"></a><span class="c1"># Edit files</span>
+<a id="__codelineno-35-2" name="__codelineno-35-2" href="#__codelineno-35-2"></a>pytest
+<a id="__codelineno-35-3" name="__codelineno-35-3" href="#__codelineno-35-3"></a>mkdocs<span class="w"> </span>serve<span class="w">  </span><span class="c1"># If updating docs</span>
+</code></pre></div></p>
+</li>
+<li>
+<p><strong>Commit and push</strong>:
+   <div class="highlight"><pre><span></span><code><a id="__codelineno-36-1" name="__codelineno-36-1" href="#__codelineno-36-1"></a>git<span class="w"> </span>add<span class="w"> </span>.
+<a id="__codelineno-36-2" name="__codelineno-36-2" href="#__codelineno-36-2"></a>git<span class="w"> </span>commit<span class="w"> </span>-m<span class="w"> </span><span class="s2">&quot;feat: add my feature&quot;</span>
+<a id="__codelineno-36-3" name="__codelineno-36-3" href="#__codelineno-36-3"></a>git<span class="w"> </span>push<span class="w"> </span>origin<span class="w"> </span>feature/my-feature
+</code></pre></div></p>
+</li>
+<li>
+<p><strong>Create Pull Request</strong> on GitHub</p>
+</li>
+</ol>
+<h3 id="debugging">Debugging<a class="headerlink" href="#debugging" title="Permanent link">&para;</a></h3>
+<h4 id="enable-verbose-logging">Enable Verbose Logging<a class="headerlink" href="#enable-verbose-logging" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-37-1" name="__codelineno-37-1" href="#__codelineno-37-1"></a><span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+<a id="__codelineno-37-2" name="__codelineno-37-2" href="#__codelineno-37-2"></a><span class="n">logging</span><span class="o">.</span><span class="n">basicConfig</span><span class="p">(</span><span class="n">level</span><span class="o">=</span><span class="n">logging</span><span class="o">.</span><span class="n">DEBUG</span><span class="p">)</span>
+</code></pre></div>
+<h4 id="use-python-debugger">Use Python Debugger<a class="headerlink" href="#use-python-debugger" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-38-1" name="__codelineno-38-1" href="#__codelineno-38-1"></a><span class="kn">import</span><span class="w"> </span><span class="nn">pdb</span>
+<a id="__codelineno-38-2" name="__codelineno-38-2" href="#__codelineno-38-2"></a>
+<a id="__codelineno-38-3" name="__codelineno-38-3" href="#__codelineno-38-3"></a><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">my_function</span><span class="p">():</span>
+<a id="__codelineno-38-4" name="__codelineno-38-4" href="#__codelineno-38-4"></a>    <span class="c1"># Set breakpoint</span>
+<a id="__codelineno-38-5" name="__codelineno-38-5" href="#__codelineno-38-5"></a>    <span class="n">pdb</span><span class="o">.</span><span class="n">set_trace</span><span class="p">()</span>
+<a id="__codelineno-38-6" name="__codelineno-38-6" href="#__codelineno-38-6"></a>    <span class="c1"># Code here</span>
+</code></pre></div>
+<h4 id="test-with-mock-client">Test with Mock Client<a class="headerlink" href="#test-with-mock-client" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-39-1" name="__codelineno-39-1" href="#__codelineno-39-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">tests.helpers.mock_websocket_client</span><span class="w"> </span><span class="kn">import</span> <span class="n">MockWebSocketClient</span>
+<a id="__codelineno-39-2" name="__codelineno-39-2" href="#__codelineno-39-2"></a>
+<a id="__codelineno-39-3" name="__codelineno-39-3" href="#__codelineno-39-3"></a><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">test_manually</span><span class="p">():</span>
+<a id="__codelineno-39-4" name="__codelineno-39-4" href="#__codelineno-39-4"></a>    <span class="n">client</span> <span class="o">=</span> <span class="n">MockWebSocketClient</span><span class="p">(</span><span class="s2">&quot;ws://localhost:3000&quot;</span><span class="p">)</span>
+<a id="__codelineno-39-5" name="__codelineno-39-5" href="#__codelineno-39-5"></a>    <span class="k">await</span> <span class="n">client</span><span class="o">.</span><span class="n">connect</span><span class="p">()</span>
+<a id="__codelineno-39-6" name="__codelineno-39-6" href="#__codelineno-39-6"></a>    <span class="k">await</span> <span class="n">client</span><span class="o">.</span><span class="n">send_message</span><span class="p">({</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;get_user_data&quot;</span><span class="p">,</span> <span class="s2">&quot;serverId&quot;</span><span class="p">:</span> <span class="s2">&quot;123&quot;</span><span class="p">})</span>
+<a id="__codelineno-39-7" name="__codelineno-39-7" href="#__codelineno-39-7"></a>    <span class="n">response</span> <span class="o">=</span> <span class="k">await</span> <span class="n">client</span><span class="o">.</span><span class="n">receive_message</span><span class="p">()</span>
+<a id="__codelineno-39-8" name="__codelineno-39-8" href="#__codelineno-39-8"></a>    <span class="nb">print</span><span class="p">(</span><span class="n">response</span><span class="p">)</span>
+</code></pre></div>
+<h4 id="check-browser-console">Check Browser Console<a class="headerlink" href="#check-browser-console" title="Permanent link">&para;</a></h4>
+<p>When testing frontend integration, open browser DevTools and check:
+- Console for errors
+- Network tab for WebSocket messages
+- Application tab for connection status</p>
+<h4 id="websocket-inspection-tools">WebSocket Inspection Tools<a class="headerlink" href="#websocket-inspection-tools" title="Permanent link">&para;</a></h4>
+<p>Use tools like:
+- <strong>Chrome DevTools</strong>: Network → WS tab
+- <strong>Postman</strong>: WebSocket request feature
+- <strong>wscat</strong>: Command-line WebSocket client</p>
+<h2 id="release-process">Release Process<a class="headerlink" href="#release-process" title="Permanent link">&para;</a></h2>
+<h3 id="version-numbering">Version Numbering<a class="headerlink" href="#version-numbering" title="Permanent link">&para;</a></h3>
+<p>d-back follows <a href="https://semver.org/">Semantic Versioning</a>:</p>
+<ul>
+<li><strong>MAJOR.MINOR.PATCH</strong> (e.g., 1.2.3)</li>
+<li><strong>MAJOR</strong>: Breaking changes</li>
+<li><strong>MINOR</strong>: New features (backwards compatible)</li>
+<li><strong>PATCH</strong>: Bug fixes</li>
+</ul>
+<h3 id="version-location">Version Location<a class="headerlink" href="#version-location" title="Permanent link">&para;</a></h3>
+<p>Version is defined in <code>setup.cfg</code>:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-40-1" name="__codelineno-40-1" href="#__codelineno-40-1"></a><span class="k">[metadata]</span>
+<a id="__codelineno-40-2" name="__codelineno-40-2" href="#__codelineno-40-2"></a><span class="na">name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">d_back</span>
+<a id="__codelineno-40-3" name="__codelineno-40-3" href="#__codelineno-40-3"></a><span class="na">version</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">0.0.14</span>
+</code></pre></div>
+<h3 id="creating-a-release">Creating a Release<a class="headerlink" href="#creating-a-release" title="Permanent link">&para;</a></h3>
+<ol>
+<li><strong>Update version</strong> in <code>setup.cfg</code></li>
+<li><strong>Update CHANGELOG.md</strong> with release notes</li>
+<li><strong>Commit changes</strong>:
+   <div class="highlight"><pre><span></span><code><a id="__codelineno-41-1" name="__codelineno-41-1" href="#__codelineno-41-1"></a>git<span class="w"> </span>commit<span class="w"> </span>-am<span class="w"> </span><span class="s2">&quot;chore: bump version to 0.0.15&quot;</span>
+</code></pre></div></li>
+<li><strong>Create git tag</strong>:
+   <div class="highlight"><pre><span></span><code><a id="__codelineno-42-1" name="__codelineno-42-1" href="#__codelineno-42-1"></a>git<span class="w"> </span>tag<span class="w"> </span>v0.0.15
+<a id="__codelineno-42-2" name="__codelineno-42-2" href="#__codelineno-42-2"></a>git<span class="w"> </span>push<span class="w"> </span>origin<span class="w"> </span>v0.0.15
+</code></pre></div></li>
+<li><strong>GitHub Actions</strong> automatically builds and publishes to PyPI</li>
+</ol>
+<h3 id="documentation-versioning">Documentation Versioning<a class="headerlink" href="#documentation-versioning" title="Permanent link">&para;</a></h3>
+<p>d-back uses mike for documentation versioning, which integrates seamlessly with Material for MkDocs to provide a version selector in the documentation. The versioning strategy uses three types of versions:</p>
+<ul>
+<li><strong>Stable versions</strong>: Created from git tags (e.g., 0.0.14, 0.1.0, 1.0.0)</li>
+<li><strong>Prerelease 'latest'</strong>: Tracks the main branch (production-ready but not yet tagged)</li>
+<li><strong>Prerelease 'dev'</strong>: Tracks the develop branch (development/testing)</li>
+</ul>
+<p>The version selector appears in the top navigation bar, allowing users to switch between different documentation versions.</p>
+<h4 id="versioning-strategy">Versioning Strategy<a class="headerlink" href="#versioning-strategy" title="Permanent link">&para;</a></h4>
+<p><strong>1. Stable Versions (from tags)</strong></p>
+<p>Created when a new version is tagged:</p>
+<ul>
+<li>Version number matches the git tag without the 'v' prefix</li>
+<li>These versions are permanent and immutable</li>
+<li>Example: Tag v0.0.15 creates documentation version 0.0.15</li>
+<li>Command: <code>mike deploy 0.0.15 --push</code></li>
+</ul>
+<p><strong>2. Latest Prerelease (main branch)</strong></p>
+<p>Represents the current state of the main branch:</p>
+<ul>
+<li>Alias: 'latest'</li>
+<li>Updated on every push to main</li>
+<li>This is the default version users see</li>
+<li>Command: <code>mike deploy &lt;commit-sha&gt; latest --push --update-aliases</code></li>
+</ul>
+<p><strong>3. Dev Prerelease (develop branch)</strong></p>
+<p>Represents the current state of the develop branch:</p>
+<ul>
+<li>Alias: 'dev'</li>
+<li>Updated on every push to develop</li>
+<li>Used for testing documentation changes before release</li>
+<li>Command: <code>mike deploy &lt;commit-sha&gt; dev --push --update-aliases</code></li>
+</ul>
+<h4 id="local-testing">Local Testing<a class="headerlink" href="#local-testing" title="Permanent link">&para;</a></h4>
+<p>Test mike locally before deploying:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-43-1" name="__codelineno-43-1" href="#__codelineno-43-1"></a><span class="c1"># Install documentation dependencies (includes mike)</span>
+<a id="__codelineno-43-2" name="__codelineno-43-2" href="#__codelineno-43-2"></a>pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span>.<span class="o">[</span>docs<span class="o">]</span>
+<a id="__codelineno-43-3" name="__codelineno-43-3" href="#__codelineno-43-3"></a>
+<a id="__codelineno-43-4" name="__codelineno-43-4" href="#__codelineno-43-4"></a><span class="c1"># Deploy a test version locally (doesn&#39;t push to remote)</span>
+<a id="__codelineno-43-5" name="__codelineno-43-5" href="#__codelineno-43-5"></a>mike<span class="w"> </span>deploy<span class="w"> </span><span class="m">0</span>.0.14-test
+<a id="__codelineno-43-6" name="__codelineno-43-6" href="#__codelineno-43-6"></a>
+<a id="__codelineno-43-7" name="__codelineno-43-7" href="#__codelineno-43-7"></a><span class="c1"># Deploy with an alias</span>
+<a id="__codelineno-43-8" name="__codelineno-43-8" href="#__codelineno-43-8"></a>mike<span class="w"> </span>deploy<span class="w"> </span><span class="m">0</span>.0.15-test<span class="w"> </span>latest<span class="w"> </span>--update-aliases
+<a id="__codelineno-43-9" name="__codelineno-43-9" href="#__codelineno-43-9"></a>
+<a id="__codelineno-43-10" name="__codelineno-43-10" href="#__codelineno-43-10"></a><span class="c1"># Set the default version (what users see when visiting the docs)</span>
+<a id="__codelineno-43-11" name="__codelineno-43-11" href="#__codelineno-43-11"></a>mike<span class="w"> </span>set-default<span class="w"> </span>latest
+<a id="__codelineno-43-12" name="__codelineno-43-12" href="#__codelineno-43-12"></a>
+<a id="__codelineno-43-13" name="__codelineno-43-13" href="#__codelineno-43-13"></a><span class="c1"># List all deployed versions</span>
+<a id="__codelineno-43-14" name="__codelineno-43-14" href="#__codelineno-43-14"></a>mike<span class="w"> </span>list
+<a id="__codelineno-43-15" name="__codelineno-43-15" href="#__codelineno-43-15"></a>
+<a id="__codelineno-43-16" name="__codelineno-43-16" href="#__codelineno-43-16"></a><span class="c1"># Serve the versioned documentation locally</span>
+<a id="__codelineno-43-17" name="__codelineno-43-17" href="#__codelineno-43-17"></a>mike<span class="w"> </span>serve
+<a id="__codelineno-43-18" name="__codelineno-43-18" href="#__codelineno-43-18"></a><span class="c1"># Visit http://localhost:8000 to test</span>
+<a id="__codelineno-43-19" name="__codelineno-43-19" href="#__codelineno-43-19"></a><span class="c1"># Use the version selector in the top navigation to switch between versions</span>
+<a id="__codelineno-43-20" name="__codelineno-43-20" href="#__codelineno-43-20"></a>
+<a id="__codelineno-43-21" name="__codelineno-43-21" href="#__codelineno-43-21"></a><span class="c1"># Delete a test version</span>
+<a id="__codelineno-43-22" name="__codelineno-43-22" href="#__codelineno-43-22"></a>mike<span class="w"> </span>delete<span class="w"> </span><span class="m">0</span>.0.14-test
+</code></pre></div>
+<p><strong>Important notes for local testing:</strong></p>
+<ul>
+<li>Mike creates a <code>gh-pages</code> branch locally to store versioned documentation</li>
+<li>Use test version names (e.g., 0.0.14-test) to avoid conflicts with production versions</li>
+<li>The <code>--push</code> flag is omitted during local testing to prevent accidental deployment</li>
+<li>Always test the version selector functionality before deploying</li>
+<li>Verify that all three languages (English, Spanish, German) work correctly in each version</li>
+</ul>
+<h4 id="version-aliases">Version Aliases<a class="headerlink" href="#version-aliases" title="Permanent link">&para;</a></h4>
+<p>Aliases are symbolic names that point to specific versions:</p>
+<ul>
+<li>Common aliases: 'latest' (main branch), 'dev' (develop branch), 'stable' (latest stable release)</li>
+<li>Aliases can be updated to point to different versions</li>
+<li>Example: After releasing 0.1.0, update 'stable' alias: <code>mike deploy 0.1.0 stable --update-aliases</code></li>
+<li>The <code>--update-aliases</code> flag updates existing aliases instead of creating duplicates</li>
+</ul>
+<h4 id="deployment-workflow">Deployment Workflow<a class="headerlink" href="#deployment-workflow" title="Permanent link">&para;</a></h4>
+<p>Manual deployment process (for local testing or when needed):</p>
+<p><strong>For stable releases:</strong>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-44-1" name="__codelineno-44-1" href="#__codelineno-44-1"></a><span class="c1"># After creating a git tag (e.g., v0.0.15)</span>
+<a id="__codelineno-44-2" name="__codelineno-44-2" href="#__codelineno-44-2"></a>mike<span class="w"> </span>deploy<span class="w"> </span><span class="m">0</span>.0.15<span class="w"> </span>stable<span class="w"> </span>--push<span class="w"> </span>--update-aliases
+<a id="__codelineno-44-3" name="__codelineno-44-3" href="#__codelineno-44-3"></a>mike<span class="w"> </span>set-default<span class="w"> </span>latest<span class="w"> </span>--push
+</code></pre></div></p>
+<p><strong>For main branch updates:</strong>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-45-1" name="__codelineno-45-1" href="#__codelineno-45-1"></a><span class="c1"># After merging to main</span>
+<a id="__codelineno-45-2" name="__codelineno-45-2" href="#__codelineno-45-2"></a>mike<span class="w"> </span>deploy<span class="w"> </span>&lt;commit-sha&gt;<span class="w"> </span>latest<span class="w"> </span>--push<span class="w"> </span>--update-aliases
+</code></pre></div></p>
+<p><strong>For develop branch updates:</strong>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-46-1" name="__codelineno-46-1" href="#__codelineno-46-1"></a><span class="c1"># After merging to develop</span>
+<a id="__codelineno-46-2" name="__codelineno-46-2" href="#__codelineno-46-2"></a>mike<span class="w"> </span>deploy<span class="w"> </span>&lt;commit-sha&gt;<span class="w"> </span>dev<span class="w"> </span>--push<span class="w"> </span>--update-aliases
+</code></pre></div></p>
+<p><strong>Note:</strong> These commands are for manual deployment. Automated deployment via GitHub Actions is the recommended approach for production (see "Automated Deployment with GitHub Actions" below).</p>
+<h4 id="automated-deployment-with-github-actions">Automated Deployment with GitHub Actions<a class="headerlink" href="#automated-deployment-with-github-actions" title="Permanent link">&para;</a></h4>
+<p>Documentation deployment is automated via GitHub Actions. The workflow is defined in <code>.github/workflows/docs.yml</code> and handles all production deployments.</p>
+<p><strong>Overview:</strong></p>
+<ul>
+<li>Documentation deploys automatically on pushes to main, develop, and tag creation</li>
+<li>The workflow manages versioning with mike and deploys to GitHub Pages</li>
+<li>Manual deployment using mike locally is still available for testing</li>
+<li>All three languages (English, Spanish, German) are built and deployed together</li>
+</ul>
+<p><strong>Automatic Triggers:</strong></p>
+<ol>
+<li><strong>Tag creation (v*)</strong>: Creates a stable version</li>
+<li>Example: Tag <code>v0.0.15</code> deploys version <code>0.0.15</code> with alias <code>stable</code></li>
+<li>Stable versions are permanent and immutable</li>
+<li>
+<p>Command executed: <code>mike deploy 0.0.15 stable --push --update-aliases</code></p>
+</li>
+<li>
+<p><strong>Push to main</strong>: Deploys 'latest' prerelease</p>
+</li>
+<li>Represents the current production-ready state</li>
+<li>Set as the default version users see</li>
+<li>
+<p>Command executed: <code>mike deploy &lt;commit-sha&gt; latest --push --update-aliases</code></p>
+</li>
+<li>
+<p><strong>Push to develop</strong>: Deploys 'dev' prerelease</p>
+</li>
+<li>Represents the current development state</li>
+<li>Used for testing documentation changes before release</li>
+<li>Not set as default (dev is for testing only)</li>
+<li>
+<p>Command executed: <code>mike deploy &lt;commit-sha&gt; dev --push --update-aliases</code></p>
+</li>
+<li>
+<p><strong>Manual trigger</strong>: Available via <code>workflow_dispatch</code> in GitHub Actions UI</p>
+</li>
+<li>Useful for testing or re-deploying documentation</li>
+<li>Access via: Repository → Actions tab → Documentation workflow → Run workflow</li>
+</ol>
+<p><strong>Workflow Process:</strong></p>
+<ol>
+<li><strong>Checkout repository</strong>: Fetches full git history (required for mike to access gh-pages branch)</li>
+<li><strong>Set up Python 3.11</strong>: Installs Python with pip caching for faster builds</li>
+<li><strong>Install dependencies</strong>: Runs <code>pip install -e .[docs]</code> to install mkdocs-material, mkdocs-static-i18n, mkdocstrings, and mike from setup.cfg</li>
+<li><strong>Configure git</strong>: Sets up git user for automated commits to gh-pages branch</li>
+<li><strong>Determine version</strong>: Analyzes the trigger type (tag, main, or develop) to decide deployment strategy</li>
+<li><strong>Deploy with mike</strong>: Executes appropriate mike command to deploy versioned documentation to gh-pages branch</li>
+<li><strong>GitHub Pages serves updated documentation</strong>: Changes appear within 1-2 minutes at https://nntin.github.io/d-back/</li>
+</ol>
+<p><strong>Version Strategy:</strong></p>
+<ul>
+<li><strong>Stable versions</strong> (from tags): Permanent, immutable, represent official releases</li>
+<li><strong>'latest' alias</strong>: Updated on every main branch push, set as default for users</li>
+<li><strong>'dev' alias</strong>: Updated on every develop branch push, for testing only</li>
+<li>The version selector in documentation navigation shows all available versions</li>
+</ul>
+<p><strong>Monitoring Deployments:</strong></p>
+<ul>
+<li><strong>View workflow runs</strong>: Repository → Actions tab → Documentation workflow</li>
+<li><strong>Check deployment status</strong>: See the Documentation Status badge in README.md</li>
+<li><strong>Workflow logs</strong>: Detailed deployment information available in each workflow run</li>
+<li><strong>Failed deployments</strong>: Error messages appear in workflow logs with troubleshooting information</li>
+</ul>
+<p><strong>GitHub Pages Configuration:</strong></p>
+<p>First-time setup (only needed once):</p>
+<ol>
+<li>Go to: Repository Settings → Pages</li>
+<li>Set Source: Deploy from a branch</li>
+<li>Set Branch: <code>gh-pages</code> (created automatically by first workflow run)</li>
+<li>Click Save</li>
+<li>Documentation will be available at: https://nntin.github.io/d-back/</li>
+<li>Changes appear within 1-2 minutes after workflow completion</li>
+</ol>
+<p><strong>Manual Deployment (if needed):</strong></p>
+<p>The automated workflow handles most deployment scenarios. Manual deployment may be needed for:</p>
+<ul>
+<li>Testing documentation changes locally before pushing</li>
+<li>Fixing deployment issues that require local troubleshooting</li>
+<li>Deploying from a local branch for testing purposes</li>
+</ul>
+<p>Use the mike commands documented in the "Deployment Workflow" subsection above for manual deployment.</p>
+<p><strong>Troubleshooting Workflow Issues:</strong></p>
+<p><strong>Issue:</strong> Workflow fails on git push to gh-pages
+- <strong>Solution</strong>: Check that Actions have write permissions
+  - Go to: Settings → Actions → General → Workflow permissions
+  - Select: "Read and write permissions"
+  - Click Save</p>
+<p><strong>Issue:</strong> Deployed version not appearing in version selector
+- <strong>Solution</strong>: Verify the trigger condition matched the expected branch or tag
+- <strong>Solution</strong>: Check workflow logs to confirm deployment completed successfully
+- <strong>Solution</strong>: Ensure at least two versions are deployed for selector to appear</p>
+<p><strong>Issue:</strong> Old content appearing in newly deployed version
+- <strong>Solution</strong>: Clear browser cache and reload
+- <strong>Solution</strong>: Check that workflow completed successfully in Actions tab
+- <strong>Solution</strong>: Verify the correct version was deployed by checking workflow logs</p>
+<p><strong>Issue:</strong> gh-pages branch not created
+- <strong>Solution</strong>: Check workflow logs for errors during first deployment
+- <strong>Solution</strong>: Verify Actions have write permissions (see first issue above)
+- <strong>Solution</strong>: Manually trigger workflow via workflow_dispatch to retry</p>
+<h4 id="best-practices">Best Practices<a class="headerlink" href="#best-practices" title="Permanent link">&para;</a></h4>
+<ul>
+<li>Always test locally with <code>mike serve</code> before deploying</li>
+<li>Use semantic versioning for stable releases (MAJOR.MINOR.PATCH)</li>
+<li>Keep 'latest' as the default version for users</li>
+<li>Document breaking changes in version-specific release notes</li>
+<li>Maintain at least the last 3 stable versions for reference</li>
+<li>Delete very old versions to keep the version list manageable: <code>mike delete 0.0.1 --push</code></li>
+<li>Verify multilingual support works in all deployed versions</li>
+</ul>
+<h4 id="troubleshooting_1">Troubleshooting<a class="headerlink" href="#troubleshooting_1" title="Permanent link">&para;</a></h4>
+<p><strong>Issue:</strong> Version selector not appearing
+- Solution: Verify <code>extra.version.provider: mike</code> is set in mkdocs.yml (already configured at line 137)
+- Solution: Ensure at least two versions are deployed
+- Solution: Check that Material theme is properly configured</p>
+<p><strong>Issue:</strong> Versions not deploying
+- Solution: Ensure mike is installed: <code>pip install -e .[docs]</code>
+- Solution: Check that gh-pages branch exists
+- Solution: Verify git remote is configured correctly</p>
+<p><strong>Issue:</strong> Language selector conflicts with version selector
+- Solution: Both selectors should work together; verify mkdocs-static-i18n configuration
+- Solution: Test with <code>mike serve</code> to ensure both selectors appear</p>
+<p><strong>Issue:</strong> Old content appearing in new version
+- Solution: Use <code>mike deploy --update-aliases</code> to refresh aliases
+- Solution: Clear browser cache
+- Solution: Rebuild with <code>mkdocs build --clean</code> before deploying</p>
+<h4 id="resources_1">Resources<a class="headerlink" href="#resources_1" title="Permanent link">&para;</a></h4>
+<ul>
+<li>Mike documentation: https://github.com/jimporter/mike</li>
+<li>Material for MkDocs versioning: https://squidfunk.github.io/mkdocs-material/setup/setting-up-versioning/</li>
+<li>Semantic Versioning: https://semver.org/</li>
+</ul>
+<p><strong>Note:</strong> GitHub Actions will automate this process in a future phase, automatically deploying 'dev' on develop branch pushes, 'latest' on main branch pushes, and stable versions on tag creation.</p>
+<h2 id="future-enhancements">Future Enhancements<a class="headerlink" href="#future-enhancements" title="Permanent link">&para;</a></h2>
+<p>We welcome contributions in these areas:</p>
+<h3 id="real-discord-api-integration">Real Discord API Integration<a class="headerlink" href="#real-discord-api-integration" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Discord.py integration examples</li>
+<li>Gateway event forwarding</li>
+<li>Presence tracking improvements</li>
+<li>Voice channel support</li>
+</ul>
+<h3 id="additional-authentication-methods">Additional Authentication Methods<a class="headerlink" href="#additional-authentication-methods" title="Permanent link">&para;</a></h3>
+<ul>
+<li>GitHub OAuth</li>
+<li>Google OAuth</li>
+<li>Custom JWT tokens</li>
+<li>API key authentication</li>
+</ul>
+<h3 id="performance-optimizations">Performance Optimizations<a class="headerlink" href="#performance-optimizations" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Connection pooling</li>
+<li>Redis caching layer</li>
+<li>Load balancing support</li>
+<li>Horizontal scaling</li>
+</ul>
+<h3 id="test-coverage_1">Test Coverage<a class="headerlink" href="#test-coverage_1" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Integration tests with Discord API</li>
+<li>Load testing and benchmarks</li>
+<li>Security testing</li>
+<li>Frontend integration tests</li>
+</ul>
+<h3 id="documentation_1">Documentation<a class="headerlink" href="#documentation_1" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Video tutorials</li>
+<li>Interactive examples</li>
+<li>Additional language translations (Spanish, German, etc.)</li>
+<li>Architecture diagrams</li>
+</ul>
+<h3 id="plugin-system">Plugin System<a class="headerlink" href="#plugin-system" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Extensibility framework</li>
+<li>Community plugins</li>
+<li>Plugin marketplace</li>
+</ul>
+<h2 id="getting-help">Getting Help<a class="headerlink" href="#getting-help" title="Permanent link">&para;</a></h2>
+<h3 id="resources_2">Resources<a class="headerlink" href="#resources_2" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>GitHub Issues</strong>: <a href="https://github.com/NNTin/d-back/issues">Report bugs</a></li>
+<li><strong>GitHub Discussions</strong>: <a href="https://github.com/NNTin/d-back/discussions">Ask questions</a></li>
+<li><strong>API Reference</strong>: <a href="../api-reference/">Complete API docs</a></li>
+<li><strong>User Guide</strong>: <a href="../user-guide/">Usage patterns</a></li>
+</ul>
+<h3 id="contact">Contact<a class="headerlink" href="#contact" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Repository</strong>: <a href="https://github.com/NNTin/d-back">github.com/NNTin/d-back</a></li>
+<li><strong>Issues</strong>: <a href="https://github.com/NNTin/d-back/issues">github.com/NNTin/d-back/issues</a></li>
+<li><strong>Email</strong>: See GitHub profile</li>
+</ul>
+<h2 id="thank-you">Thank You!<a class="headerlink" href="#thank-you" title="Permanent link">&para;</a></h2>
+<p>Thank you for contributing to d-back! Your efforts help make this project better for everyone. We appreciate your time and dedication.</p>
+<p>Happy coding! 🚀</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      Copyright &copy; 2024 Tin Nguyen
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        
+<div class="md-social">
+  
+    
+    
+    
+    
+    <a href="https://github.com/NNTin/d-back" target="_blank" rel="noopener" title="d-back on GitHub" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+    </a>
+  
+    
+    
+    
+    
+    <a href="https://pypi.org/project/d-back/" target="_blank" rel="noopener" title="d-back on PyPI" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.8 200.5c-7.7-30.9-22.3-54.2-53.4-54.2h-40.1v47.4c0 36.8-31.2 67.8-66.8 67.8H172.7c-29.2 0-53.4 25-53.4 54.3v101.8c0 29 25.2 46 53.4 54.3 33.8 9.9 66.3 11.7 106.8 0 26.9-7.8 53.4-23.5 53.4-54.3v-40.7H226.2v-13.6h160.2c31.1 0 42.6-21.7 53.4-54.2 11.2-33.5 10.7-65.7 0-108.6M286.2 444.7a20.4 20.4 0 1 1 0-40.7 20.4 20.4 0 1 1 0 40.7M167.8 248.1h106.8c29.7 0 53.4-24.5 53.4-54.3V91.9c0-29-24.4-50.7-53.4-55.6-35.8-5.9-74.7-5.6-106.8.1-45.2 8-53.4 24.7-53.4 55.6v40.7h106.9v13.6h-147c-31.1 0-58.3 18.7-66.8 54.2-9.8 40.7-10.2 66.1 0 108.6 7.6 31.6 25.7 54.2 56.8 54.2H101v-48.8c0-35.3 30.5-66.4 66.8-66.4m-6.6-183.4a20.4 20.4 0 1 1 0 40.8 20.4 20.4 0 1 1 0-40.8"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      <script id="__config" type="application/json">{"base": "..", "features": ["navigation.tabs", "navigation.sections", "navigation.expand", "navigation.top", "search.suggest", "search.highlight", "content.code.copy", "content.code.annotate"], "search": "../assets/javascripts/workers/search.973d3a69.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.f55a23d4.min.js"></script>
+      
+    
+  </body>
+</html>
