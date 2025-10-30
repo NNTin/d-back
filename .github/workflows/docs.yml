@@ -44,9 +44,9 @@ jobs:
             mike set-default latest --push
           elif [[ $GITHUB_REF == refs/heads/main ]]; then
             echo "Deploying latest prerelease from main"
-            mike deploy <commit-sha> latest --push --update-aliases
+            mike deploy ${GITHUB_SHA::7} latest --push --update-aliases
             mike set-default latest --push
           elif [[ $GITHUB_REF == refs/heads/develop ]]; then
             echo "Deploying dev prerelease from develop"
-            mike deploy <commit-sha> dev --push --update-aliases
+            mike deploy ${GITHUB_SHA::7} dev --push --update-aliases
           fi
