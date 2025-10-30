@@ -1,0 +1,18 @@
+project_id_env: CROWDIN_PROJECT_ID
+preserve_hierarchy: true
+commit_message: "docs: update translations from Crowdin"
+
+files:
+  - source: /docs/**/*.md
+    translation: /docs/**/%file_name%.%two_letters_code%.%file_extension%
+    ignore:
+      - /docs/VERCEL_SETUP.md
+      - /docs/TESTING_I18N.md
+      - /docs/.pages
+      - /docs/api-reference.md
+      - /docs/api-reference/**
+      - /site/**
+      - /docs/site/**
+      - /docs/**/*.es.md
+      - /docs/**/*.de.md
+    type: md

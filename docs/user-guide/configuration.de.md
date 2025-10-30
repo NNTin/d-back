@@ -6,7 +6,7 @@ Dieser Leitfaden behandelt alle Möglichkeiten, wie Sie d-back an Ihre Bedürfni
 
 d-back bietet flexible Konfigurationsoptionen zur Anpassung an verschiedene Bereitstellungsszenarien. Egal, ob Sie es während der Entwicklung über die Befehlszeile ausführen oder in eine größere Python-Anwendung integrieren, Sie haben volle Kontrolle über Serververhalten, Netzwerkeinstellungen und statische Dateiauslieferung.
 
-## Befehlszeilenoptionen
+## Befehlszeilenoptionen {#command-line-options}
 
 Beim Ausführen von d-back über die Befehlszeile können Sie sein Verhalten mit verschiedenen Optionen anpassen:
 
@@ -112,7 +112,7 @@ host = os.getenv('D_BACK_HOST', 'localhost')
 server = WebSocketServer(port=port, host=host)
 ```
 
-## Statische Dateiauslieferung
+## Statische Dateiauslieferung {#static-file-serving}
 
 d-back enthält einen integrierten HTTP-Server für die Auslieferung statischer Dateien, was die Bereitstellung Ihres d-zone-Frontends oder anderer Web-Assets vereinfacht.
 

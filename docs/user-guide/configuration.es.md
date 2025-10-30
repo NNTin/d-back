@@ -6,7 +6,7 @@ Esta guía cubre todas las formas en que puede configurar d-back para adaptarlo 
 
 d-back ofrece opciones de configuración flexibles para adaptarse a diferentes escenarios de despliegue. Ya sea que lo esté ejecutando desde la línea de comandos durante el desarrollo o integrándolo en una aplicación Python más grande, tiene control total sobre el comportamiento del servidor, configuraciones de red y servicio de archivos estáticos.
 
-## Opciones de Línea de Comandos
+## Opciones de Línea de Comandos {#command-line-options}
 
 Al ejecutar d-back desde la línea de comandos, puede personalizar su comportamiento usando varias opciones:
 
@@ -170,7 +170,7 @@ if __name__ == '__main__':
 !!! tip "Flexibilidad de Despliegue"
     Usar variables de entorno facilita desplegar d-back en diferentes entornos (desarrollo, staging, producción) sin cambios de código.
 
-## Servicio de Archivos Estáticos
+## Servicio de Archivos Estáticos {#static-file-serving}
 
 d-back incluye un servidor HTTP integrado para servir archivos estáticos, facilitando la entrega de su frontend d-zone u otros activos web.
 

@@ -224,6 +224,112 @@ mkdocs build
 
 Zugriff auf Docs unter `http://127.0.0.1:8000/`
 
+## Dokumentationsübersetzung
+
+### Übersicht
+
+Die d-back-Dokumentation ist in mehreren Sprachen verfügbar (English, Spanish, German). Wir verwenden Crowdin zur kollaborativen Verwaltung von Übersetzungen. Englisch ist die Quellsprache — Änderungen müssen zunächst in den englischen Dateien vorgenommen werden. Übersetzungen werden mittels Crowdin und GitHub Actions synchronisiert. Das Projekt verwendet `mkdocs-static-i18n` mit der Suffix-Struktur (z. B. `index.es.md`, `index.de.md`).
+
+### Crowdin-Projekt-Einrichtung
+
+1. Erstellen Sie ein Crowdin-Projekt unter https://crowdin.com und wählen Sie **Markdown** als Dateityp.
+2. Legen Sie English als Quellsprache fest und fügen Sie Spanish (`es`) und German (`de`) als Zielsprachen hinzu.
+3. Installieren Sie die Crowdin GitHub App im Repository oder konfigurieren Sie Crowdin CLI mit GitHub Actions. Die `crowdin.yml` in der Repository-Root definiert die Dateimuster und Parser-Optionen.
+
+Benötigte GitHub-Secrets (Repository → Settings → Secrets and variables → Actions):
+
+- `CROWDIN_PROJECT_ID` — Crowdin-Projekt-ID
+- `CROWDIN_PERSONAL_TOKEN` — Crowdin-Personal-Access-Token
+
+### Übersetzungs-Workflow
+
+1. Änderungen an den englischen Quelldateien (z. B. `docs/index.md`, `docs/getting-started.md`) vornehmen und einen Pull Request eröffnen.
+2. Nach dem Merge in `main` erkennt Crowdin neue/geänderte Strings und benachrichtigt Übersetzer.
+3. Übersetzer arbeiten im Crowdin-Editor; Crowdin bewahrt Codeblöcke, Inline-Code und Markdown-Formatierung.
+4. Übersetzungen werden via Crowdin ↔ GitHub oder GitHub Actions zurück in das Repository synchronisiert. Crowdin erzeugt PRs mit Übersetzungs-Updates, die Maintainer prüfen und mergen.
+
+### Dateistruktur
+
+- Englisch (Quelle): `docs/index.md`, `docs/getting-started.md`, `docs/user-guide/configuration.md`
+- Spanish: `docs/index.es.md`, `docs/getting-started.es.md`, `docs/user-guide/configuration.es.md`
+- German: `docs/index.de.md`, `docs/getting-started.de.md`, `docs/user-guide/configuration.de.md`
+
+### Was wird übersetzt
+
+Zu übersetzen sind:
+
+- Erläuternder Text, Überschriften und Titel
+- Anwendernahe Meldungen und Anleitungen
+- Beschreibungen von Beispielen (nicht die Codeblöcke)
+
+Nicht zu übersetzen sind:
+
+- Codeblöcke und Inline-Code
+- Funktions- und Klassennamen
+- Dateipfade und URLs
+- Konfigurationsschlüssel und -werte
+- Projekt- und Fachbegriffe (z. B. d-back, d-zone, WebSocket, OAuth2)
+
+### Ausgeschlossene Dateien
+
+Die folgenden Dateien sind von Crowdin-Übersetzungen ausgeschlossen:
+
+- `docs/VERCEL_SETUP.md`
+- `docs/TESTING_I18N.md`
+- `docs/.pages`
+- API-Referenzdateien (durch mkdocstrings generiert)
+
+### Übersetzungen lokal testen
+
+```bash
+# Install documentation dependencies
+pip install -e .[docs]
+
+# Serve documentation locally with all languages
+mkdocs serve
+
+# Build documentation (generates site/ directory with all languages)
+mkdocs build
+```
+
+Sprachspezifische Vorschau:
+
+- English: `http://127.0.0.1:8000/`
+- Spanish: `http://127.0.0.1:8000/es/`
+- German: `http://127.0.0.1:8000/de/`
+
+### Best Practices für Übersetzungen
+
+- Verwenden Sie formale Anrede (Sie) im Nutzertext.
+- Lassen Sie Fachbegriffe und Projektnamen im Englischen.
+- Bewahren Sie Markdown-Formatierung, Codeblöcke und Inline-Code.
+- Testen Sie Übersetzungen lokal vor Einreichen.
+
+### Neue Sprachen hinzufügen
+
+So fügen Sie eine neue Sprache hinzu:
+
+1. Aktualisieren Sie `mkdocs.yml`, um die neue Sprache in der i18n-Konfiguration hinzuzufügen.
+2. Ergänzen Sie `crowdin.yml` um den neuen `two_letters_code`.
+3. Fügen Sie die Sprache in den Crowdin-Projekteinstellungen hinzu.
+4. Erstellen Sie initiale Übersetzungsdateien nach dem Suffix-Pattern.
+5. Aktualisieren Sie diese Dokumentationssektion mit Details zur neuen Sprache.
+
+### Fehlerbehebung
+
+Häufige Probleme:
+
+- Übersetzungen erscheinen nicht in Crowdin: Prüfen Sie, ob die Muster in `crowdin.yml` mit den committeten Dateien übereinstimmen und ob Dateien nicht in `ignore` gelistet sind.
+- Übersetzungen werden nicht nach GitHub synchronisiert: Prüfen Sie die Logs von GitHub Actions und die gesetzten Secrets `CROWDIN_PROJECT_ID` und `CROWDIN_PERSONAL_TOKEN`.
+- Formatierungsprobleme: Überprüfen Sie die Übersetzung im Crowdin-Editor und stellen Sie sicher, dass Codeblöcke erhalten bleiben.
+
+### Ressourcen
+
+- Crowdin documentation: https://support.crowdin.com/
+- mkdocs-static-i18n: https://github.com/ultrabug/mkdocs-static-i18n
+- Material for MkDocs i18n: https://squidfunk.github.io/mkdocs-material/setup/changing-the-language/
+
+
 ## Fehlersuche
 
 ### Debug-Protokollierung
@@ -259,6 +365,153 @@ Releases werden von Projekt-Maintainern verwaltet:
 3. Git-Tag erstellen: `git tag v0.0.X`
 4. Tag pushen: `git push origin v0.0.X`
 5. GitHub Actions baut automatisch und veröffentlicht auf PyPI
+
+### Dokumentationsversionierung
+
+d-back verwendet mike für die Dokumentationsversionierung, das sich nahtlos in Material for MkDocs integriert und einen Versionsauswähler in der Dokumentation bereitstellt. Die Versionierungsstrategie verwendet drei Arten von Versionen:
+
+- **Stabile Versionen**: Erstellt aus Git-Tags (z. B. 0.0.14, 0.1.0, 1.0.0)
+- **Prerelease 'latest'**: Verfolgt den main-Branch (produktionsbereit, aber noch nicht getaggt)
+- **Prerelease 'dev'**: Verfolgt den develop-Branch (Entwicklung/Tests)
+
+Der Versionsauswähler erscheint in der oberen Navigationsleiste und ermöglicht es Benutzern, zwischen verschiedenen Dokumentationsversionen zu wechseln.
+
+#### Versionierungsstrategie
+
+**1. Stabile Versionen (aus Tags)**
+
+Erstellt, wenn eine neue Version getaggt wird:
+
+- Die Versionsnummer entspricht dem Git-Tag ohne das 'v'-Präfix
+- Diese Versionen sind permanent und unveränderlich
+- Beispiel: Tag v0.0.15 erstellt Dokumentationsversion 0.0.15
+- Befehl: `mike deploy 0.0.15 --push`
+
+**2. Latest Prerelease (main-Branch)**
+
+Repräsentiert den aktuellen Zustand des main-Branches:
+
+- Alias: 'latest'
+- Wird bei jedem Push auf main aktualisiert
+- Dies ist die Standardversion, die Benutzer sehen
+- Befehl: `mike deploy <commit-sha> latest --push --update-aliases`
+
+**3. Dev Prerelease (develop-Branch)**
+
+Repräsentiert den aktuellen Zustand des develop-Branches:
+
+- Alias: 'dev'
+- Wird bei jedem Push auf develop aktualisiert
+- Wird zum Testen von Dokumentationsänderungen vor der Veröffentlichung verwendet
+- Befehl: `mike deploy <commit-sha> dev --push --update-aliases`
+
+#### Lokales Testen
+
+Testen Sie mike lokal vor dem Deployment:
+
+```bash
+# Dokumentationsabhängigkeiten installieren (beinhaltet mike)
+pip install -e .[docs]
+
+# Testversion lokal deployen (kein Push zum Remote)
+mike deploy 0.0.14-test
+
+# Mit einem Alias deployen
+mike deploy 0.0.15-test latest --update-aliases
+
+# Standardversion festlegen (was Benutzer sehen, wenn sie die Docs besuchen)
+mike set-default latest
+
+# Alle deployten Versionen auflisten
+mike list
+
+# Versionierte Dokumentation lokal bereitstellen
+mike serve
+# Besuchen Sie http://localhost:8000 zum Testen
+# Verwenden Sie den Versionsauswähler in der oberen Navigation zum Wechseln zwischen Versionen
+
+# Testversion löschen
+mike delete 0.0.14-test
+```
+
+**Wichtige Hinweise für lokales Testen:**
+
+- Mike erstellt lokal einen `gh-pages`-Branch zur Speicherung der versionierten Dokumentation
+- Verwenden Sie Testversionsnamen (z. B. 0.0.14-test), um Konflikte mit Produktionsversionen zu vermeiden
+- Das `--push`-Flag wird beim lokalen Testen weggelassen, um versehentliches Deployment zu verhindern
+- Testen Sie immer die Funktionalität des Versionsauswählers vor dem Deployment
+- Überprüfen Sie, dass alle drei Sprachen (English, Spanish, German) in jeder Version korrekt funktionieren
+
+#### Versions-Aliase
+
+Aliase sind symbolische Namen, die auf bestimmte Versionen verweisen:
+
+- Gängige Aliase: 'latest' (main-Branch), 'dev' (develop-Branch), 'stable' (letzte stabile Version)
+- Aliase können aktualisiert werden, um auf verschiedene Versionen zu verweisen
+- Beispiel: Nach der Veröffentlichung von 0.1.0, 'stable'-Alias aktualisieren: `mike deploy 0.1.0 stable --update-aliases`
+- Das `--update-aliases`-Flag aktualisiert bestehende Aliase, anstatt Duplikate zu erstellen
+
+#### Deployment-Workflow
+
+Manueller Deployment-Prozess (GitHub Actions wird dies in einer zukünftigen Phase automatisieren):
+
+**Für stabile Releases:**
+```bash
+# Nach Erstellung eines Git-Tags (z. B. v0.0.15)
+mike deploy 0.0.15 stable --push --update-aliases
+mike set-default latest --push
+```
+
+**Für main-Branch-Updates:**
+```bash
+# Nach Merge zu main
+mike deploy <commit-sha> latest --push --update-aliases
+```
+
+**Für develop-Branch-Updates:**
+```bash
+# Nach Merge zu develop
+mike deploy <commit-sha> dev --push --update-aliases
+```
+
+#### Best Practices
+
+- Testen Sie immer lokal mit `mike serve` vor dem Deployment
+- Verwenden Sie Semantic Versioning für stabile Releases (MAJOR.MINOR.PATCH)
+- Behalten Sie 'latest' als Standardversion für Benutzer bei
+- Dokumentieren Sie Breaking Changes in versionsspezifischen Release Notes
+- Behalten Sie mindestens die letzten 3 stabilen Versionen als Referenz
+- Löschen Sie sehr alte Versionen, um die Versionsliste überschaubar zu halten: `mike delete 0.0.1 --push`
+- Überprüfen Sie, dass mehrsprachige Unterstützung in allen deployten Versionen funktioniert
+
+#### Fehlerbehebung
+
+**Problem:** Versionsauswähler erscheint nicht
+- Lösung: Überprüfen Sie, dass `extra.version.provider: mike` in mkdocs.yml gesetzt ist (bereits konfiguriert in Zeile 137)
+- Lösung: Stellen Sie sicher, dass mindestens zwei Versionen deployed sind
+- Lösung: Prüfen Sie, dass das Material-Theme richtig konfiguriert ist
+
+**Problem:** Versionen werden nicht deployed
+- Lösung: Stellen Sie sicher, dass mike installiert ist: `pip install -e .[docs]`
+- Lösung: Prüfen Sie, dass der gh-pages-Branch existiert
+- Lösung: Überprüfen Sie, dass das Git-Remote richtig konfiguriert ist
+
+**Problem:** Sprachauswähler kollidiert mit Versionsauswähler
+- Lösung: Beide Auswähler sollten zusammenarbeiten; überprüfen Sie die mkdocs-static-i18n-Konfiguration
+- Lösung: Testen Sie mit `mike serve`, um sicherzustellen, dass beide Auswähler erscheinen
+
+**Problem:** Alter Inhalt erscheint in neuer Version
+- Lösung: Verwenden Sie `mike deploy --update-aliases`, um Aliase zu aktualisieren
+- Lösung: Browser-Cache leeren
+- Lösung: Neu bauen mit `mkdocs build --clean` vor dem Deployment
+
+#### Ressourcen
+
+- Mike documentation: https://github.com/jimporter/mike
+- Material for MkDocs versioning: https://squidfunk.github.io/mkdocs-material/setup/setting-up-versioning/
+- Semantic Versioning: https://semver.org/
+
+**Hinweis:** GitHub Actions wird diesen Prozess in einer zukünftigen Phase automatisieren und automatisch 'dev' bei Pushes zum develop-Branch, 'latest' bei Pushes zum main-Branch und stabile Versionen bei Tag-Erstellung deployen.
 
 ## Zukünftige Verbesserungen
 

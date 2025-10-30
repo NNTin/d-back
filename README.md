@@ -1,6 +1,15 @@
-# d-back  
+# d-back
 
-![Last Commit](https://i## 📚 Documentation
+![Last Commit](https://img.shields.io/github/last-commit/NNTin/d-back)
+![Open Pull Requests](https://img.shields.io/github/issues-pr/NNTin/d-back)
+![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)
+![Stars](https://img.shields.io/github/stars/NNTin/d-back)
+![Contributors](https://img.shields.io/github/contributors/NNTin/d-back)
+![Build Status](https://github.com/NNTin/d-back/actions/workflows/test.yml/badge.svg)
+![PyPI](https://img.shields.io/pypi/v/d-back)
+[![Documentation](https://img.shields.io/badge/docs-mkdocs-blue)](https://nntin.github.io/d-back/)
+
+## 📚 Documentation
 
 Comprehensive documentation is available online in **English, Spanish (Español), and German (Deutsch)**, including API reference, user guides, and examples.
 
@@ -12,16 +21,7 @@ Comprehensive documentation is available online in **English, Spanish (Español)
 
 The documentation is available in multiple languages. Use the language selector in the navigation to switch between languages.
 
-### Documentation Sections
-
-- **Getting Started**: Quick installation and first steps
-- **User Guide**: Configuration, callbacks, and customization
-- **API Reference**: Detailed API documentation with examples
-- **Developer Guide**: Contributing guidelines and architecture
-
 ### Building Documentation Locally
-
-Build and serve the documentation locally (all languages):
 
 ```bash
 # Install documentation dependencies
@@ -39,16 +39,7 @@ After running `mkdocs serve`, access the documentation at:
 - Spanish: `http://127.0.0.1:8000/es/`
 - German: `http://127.0.0.1:8000/de/`
 
-**Note:** The documentation uses mkdocs-static-i18n for multilingual support with Material for MkDocs theme./last-commit/NNTin/d-back) 
-![Open Pull Requests](https://img.shields.io/github/issues-pr/NNTin/d-back)
-![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)
-![Stars](https://img.shields.io/github/stars/NNTin/d-back)
-![Contributors](https://img.shields.io/github/contributors/NNTin/d-back)
-![Build Status](https://github.com/NNTin/d-back/actions/workflows/test.yml/badge.svg)
-![PyPI](https://img.shields.io/pypi/v/d-back)
-[![Documentation](https://img.shields.io/badge/docs-mkdocs-blue)](https://nntin.github.io/d-back/)
-
-
+**Note:** The documentation uses mkdocs-static-i18n for multilingual support with the Material for MkDocs theme.
 
 Welcome to **d-back** – the backend service that powers the magical **d-zone** ambient life simulation!
 
@@ -56,8 +47,7 @@ Welcome to **d-back** – the backend service that powers the magical **d-zone**
 
 **d-zone** is an ambient life simulation where the presence and activity of users in a Discord server subtly influence a living digital environment. Think of it as a digital terrarium that reacts to your community's energy!
 
-**d-back** serves as the intelligent bridge between Discord servers and the beautiful [d-zone frontend](https://nntin.github.io/d-zone/).  
-It provides real-time user data through WebSocket connections, creating an immersive experience where every Discord user becomes part of a living, breathing digital ecosystem.
+**d-back** serves as the intelligent bridge between Discord servers and the beautiful [d-zone frontend](https://nntin.github.io/d-zone/). It provides real-time user data through WebSocket connections, creating an immersive experience where every Discord user becomes part of a living, breathing digital ecosystem.
 
 Currently, d-back uses sophisticated mock data to simulate user activity, making it perfect for development, testing, and demonstration purposes.
 
@@ -65,7 +55,7 @@ Currently, d-back uses sophisticated mock data to simulate user activity, making
 
 - 🔌 **WebSocket Server**: Real-time communication with the d-zone frontend
 - 👥 **User Activity Simulation**: Mock Discord user data with realistic presence states
-- 🎨 **Role Color Support**: Beautiful user representation with Discord role colors  
+- 🎨 **Role Color Support**: Beautiful user representation with Discord role colors
 - 🌐 **Multi-Server Support**: Handle multiple Discord servers simultaneously
 - 📊 **Status Tracking**: Monitor online, idle, DND, and offline user states
 - 🔒 **OAuth2 Ready**: Built-in support for Discord OAuth2 authentication
@@ -73,28 +63,7 @@ Currently, d-back uses sophisticated mock data to simulate user activity, making
 - 🚀 **Easy Configuration**: Simple command-line options and programmatic setup
 - 🧪 **Development Friendly**: Comprehensive mock data for testing and development
 
-## � Documentation
-
-Comprehensive documentation is available online, including API reference, user guides, and examples.
-
-Visit the [full documentation](https://nntin.github.io/d-back/) for detailed information.
-
-Documentation is available in multiple languages (English, Spanish, German).
-
-### Building Documentation Locally
-
-```bash
-# Install documentation dependencies
-pip install -e .[docs]
-
-# Serve documentation locally
-mkdocs serve
-
-# Build documentation
-mkdocs build
-```
-
-## �🛠️ Installation
+## 🛠️ Installation
 
 ### Step-by-Step Setup
 
@@ -110,7 +79,7 @@ mkdocs build
    python -m venv .venv
    .venv\Scripts\activate
 
-   # On macOS/Linux  
+   # On macOS/Linux
    python3 -m venv .venv
    source .venv/bin/activate
    ```
@@ -219,7 +188,7 @@ socket.onmessage = (event) => {
 d-back comes with pre-configured mock Discord servers for testing:
 
 - **d-world server** (`232769614004748288`): Main development server with active users
-- **docs server** (`482241773318701056`): Documentation server  
+- **docs server** (`482241773318701056`): Documentation server
 - **oauth2 server** (`123456789012345678`): Protected server for OAuth testing
 - **my repos server** (`987654321098765432`): Repository showcase server
 

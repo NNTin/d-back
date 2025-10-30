@@ -49,7 +49,7 @@ async def get_my_servers(server_id: Optional[str] = None) -> Dict[str, Any]:
 server.on_get_server_data(get_my_servers)
 ```
 
-### on_get_user_data Callback
+### on_get_user_data Callback {#on_get_user_data-callback}
 
 **Zweck**: Benutzerdaten für einen bestimmten Discord-Server bereitstellen.
 
@@ -106,7 +106,7 @@ async def custom_static_handler(path: str) -> Optional[Tuple[str, str]]:
 server.on_static_request(custom_static_handler)
 ```
 
-### on_validate_discord_user Callback
+### on_validate_discord_user Callback {#on_validate_discord_user-callback}
 
 **Zweck**: Discord-Benutzer während OAuth2-Authentifizierungsabläufen validieren.
 
@@ -217,7 +217,7 @@ async def main():
 asyncio.run(main())
 ```
 
-## Broadcasting-Methoden
+## Broadcasting-Methoden {#broadcasting-methods}
 
 d-back stellt Methoden bereit, um Echtzeit-Updates an verbundene Clients zu broadcasten.
 

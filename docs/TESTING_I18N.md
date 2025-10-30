@@ -316,6 +316,119 @@ mkdocs build --clean
 python -m http.server 8000 --directory site
 ```
 
+## Testing Mike Versioning
+
+This section explains how to test mike versioning locally with the multilingual setup.
+
+### Prerequisites
+
+- Ensure mike is installed: `pip list | grep mike`
+- Verify mkdocs.yml has `extra.version.provider: mike` configured
+
+### Testing Version Deployment
+
+Deploy test versions to verify mike integration:
+
+```bash
+# Deploy a test version
+mike deploy 0.0.14-test
+
+# Deploy with alias
+mike deploy 0.0.15-test latest
+
+# Set default version
+mike set-default latest
+
+# List all versions
+mike list
+
+# Serve versioned docs
+mike serve
+```
+
+### Verification Checklist
+
+- [ ] Version selector appears in top navigation bar
+- [ ] Language selector appears alongside version selector
+- [ ] Both selectors work independently without conflicts
+- [ ] All three languages (English, Spanish, German) work in each version
+- [ ] Switching versions preserves the selected language
+- [ ] Switching languages preserves the selected version
+- [ ] URLs follow pattern: `/version/language/` (e.g., `/latest/es/`, `/0.0.14/de/`)
+- [ ] Default version loads correctly
+- [ ] Version aliases resolve correctly
+
+### Testing Version Switching
+
+1. Deploy multiple test versions:
+   ```bash
+   mike deploy 0.0.14-test
+   mike deploy 0.0.15-test latest
+   mike deploy dev-test dev
+   mike set-default latest
+   ```
+
+2. Serve and test:
+   ```bash
+   mike serve
+   ```
+
+3. Visit http://localhost:8000 and verify:
+   - Default version (latest) loads
+   - Version selector shows all three versions
+   - Clicking each version switches correctly
+   - Language selector works in each version
+
+### Testing Multilingual Versioning
+
+**Test English version:**
+- Visit http://localhost:8000/latest/
+- Verify content is in English
+- Switch to version 0.0.14-test
+- Verify English content loads
+
+**Test Spanish version:**
+- Visit http://localhost:8000/latest/es/
+- Verify content is in Spanish
+- Switch to version 0.0.14-test
+- Verify Spanish content loads
+
+**Test German version:**
+- Visit http://localhost:8000/latest/de/
+- Verify content is in German
+- Switch to version 0.0.14-test
+- Verify German content loads
+
+### Cleanup Test Versions
+
+After testing, clean up test versions:
+
+```bash
+# Delete test versions
+mike delete 0.0.14-test
+mike delete 0.0.15-test
+mike delete dev-test
+
+# Verify deletion
+mike list
+```
+
+### Common Issues
+
+**Issue:** Version selector not appearing
+- Solution: Deploy at least two versions
+- Solution: Verify `extra.version.provider: mike` in mkdocs.yml
+
+**Issue:** Language selector disappears when using mike
+- Solution: Verify `reconfigure_material: true` in i18n plugin configuration
+- Solution: Ensure mkdocs-static-i18n is installed
+
+**Issue:** URLs not working correctly
+- Solution: Check that both mike and i18n plugins are properly configured
+- Solution: Clear browser cache and retry
+
+**Note:** This testing is for local development only. GitHub Actions will handle automated deployment in production.
+
 ## Next Steps
 
 After successful local testing:
