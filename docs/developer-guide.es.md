@@ -459,7 +459,7 @@ Proceso de despliegue manual (para pruebas locales o cuando sea necesario):
 ```bash
 # Después de crear un tag de git (por ejemplo, v0.0.15)
 mike deploy 0.0.15 stable --push --update-aliases
-mike set-default latest --push
+mike set-default stable --push
 ```
 
 **Para actualizaciones de la rama main:**
@@ -492,18 +492,22 @@ El despliegue de la documentación está automatizado mediante GitHub Actions. E
 1. **Creación de tag (v*)**: Crea una versión estable
    - Ejemplo: Tag `v0.0.15` despliega versión `0.0.15` con alias `stable`
    - Las versiones estables son permanentes e inmutables
+   - Se establece como la versión predeterminada que ven los usuarios
    - Comando ejecutado: `mike deploy 0.0.15 stable --push --update-aliases`
+   - Comando ejecutado: `mike set-default stable --push`
 
 2. **Push a main**: Despliega prerelease 'latest'
    - Representa el estado actual listo para producción
-   - Se establece como la versión predeterminada que ven los usuarios
-   - Comando ejecutado: `mike deploy <commit-sha> latest --push --update-aliases`
+   - No se establece como predeterminado (los lanzamientos estables permanecen como predeterminados)
+   - Usa el identificador de versión estable 'edge'
+   - Comando ejecutado: `mike deploy edge latest --push --update-aliases`
 
 3. **Push a develop**: Despliega prerelease 'dev'
    - Representa el estado actual de desarrollo
    - Se usa para probar cambios de documentación antes del lanzamiento
    - No se establece como predeterminado (dev es solo para pruebas)
-   - Comando ejecutado: `mike deploy <commit-sha> dev --push --update-aliases`
+   - Usa el identificador de versión estable 'dev'
+   - Comando ejecutado: `mike deploy dev dev --push --update-aliases`
 
 4. **Activación manual**: Disponible mediante `workflow_dispatch` en la interfaz de GitHub Actions
    - Útil para pruebas o re-despliegue de documentación
@@ -521,9 +525,9 @@ El despliegue de la documentación está automatizado mediante GitHub Actions. E
 
 **Estrategia de Versiones:**
 
-- **Versiones estables** (desde tags): Permanentes, inmutables, representan lanzamientos oficiales
-- **Alias 'latest'**: Actualizado en cada push a la rama main, establecido como predeterminado para usuarios
-- **Alias 'dev'**: Actualizado en cada push a la rama develop, solo para pruebas
+- **Versiones estables** (desde tags): Permanentes, inmutables, representan lanzamientos oficiales; siempre se establecen como predeterminadas
+- **Alias 'latest'**: Actualizado en cada push a la rama main; disponible en el selector de versión pero no se establece como predeterminado
+- **Alias 'dev'**: Actualizado en cada push a la rama develop, solo para pruebas (nunca se establece como predeterminado)
 - El selector de versión en la navegación de la documentación muestra todas las versiones disponibles
 
 **Monitoreo de Despliegues:**
@@ -614,7 +618,7 @@ Use los comandos mike documentados en la subsección "Flujo de Trabajo de Despli
 - Material for MkDocs versioning: https://squidfunk.github.io/mkdocs-material/setup/setting-up-versioning/
 - Semantic Versioning: https://semver.org/
 
-**Nota:** GitHub Actions automatizará este proceso en una fase futura, desplegando automáticamente 'dev' en pushes a la rama develop, 'latest' en pushes a la rama main, y versiones estables en la creación de tags.
+**Nota:** El despliegue de la documentación está completamente automatizado mediante GitHub Actions. Vea la sección "Despliegue Automatizado con GitHub Actions" arriba para detalles sobre cómo el workflow despliega la documentación en pushes a ramas y creación de tags.
 
 ## Mejoras Futuras
 

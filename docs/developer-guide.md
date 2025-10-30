@@ -817,7 +817,7 @@ Manual deployment process (for local testing or when needed):
 ```bash
 # After creating a git tag (e.g., v0.0.15)
 mike deploy 0.0.15 stable --push --update-aliases
-mike set-default latest --push
+mike set-default stable --push
 ```
 
 **For main branch updates:**
@@ -850,18 +850,22 @@ Documentation deployment is automated via GitHub Actions. The workflow is define
 1. **Tag creation (v*)**: Creates a stable version
    - Example: Tag `v0.0.15` deploys version `0.0.15` with alias `stable`
    - Stable versions are permanent and immutable
+   - Set as the default version users see
    - Command executed: `mike deploy 0.0.15 stable --push --update-aliases`
+   - Command executed: `mike set-default stable --push`
 
 2. **Push to main**: Deploys 'latest' prerelease
    - Represents the current production-ready state
-   - Set as the default version users see
-   - Command executed: `mike deploy <commit-sha> latest --push --update-aliases`
+   - Not set as default (stable releases remain the default)
+   - Uses stable version identifier 'edge'
+   - Command executed: `mike deploy edge latest --push --update-aliases`
 
 3. **Push to develop**: Deploys 'dev' prerelease
    - Represents the current development state
    - Used for testing documentation changes before release
    - Not set as default (dev is for testing only)
-   - Command executed: `mike deploy <commit-sha> dev --push --update-aliases`
+   - Uses stable version identifier 'dev'
+   - Command executed: `mike deploy dev dev --push --update-aliases`
 
 4. **Manual trigger**: Available via `workflow_dispatch` in GitHub Actions UI
    - Useful for testing or re-deploying documentation
@@ -879,9 +883,9 @@ Documentation deployment is automated via GitHub Actions. The workflow is define
 
 **Version Strategy:**
 
-- **Stable versions** (from tags): Permanent, immutable, represent official releases
-- **'latest' alias**: Updated on every main branch push, set as default for users
-- **'dev' alias**: Updated on every develop branch push, for testing only
+- **Stable versions** (from tags): Permanent, immutable, represent official releases; always set as default
+- **'latest' alias**: Updated on every main branch push; available in version selector but not set as default
+- **'dev' alias**: Updated on every develop branch push, for testing only (never set as default)
 - The version selector in documentation navigation shows all available versions
 
 **Monitoring Deployments:**
@@ -972,7 +976,7 @@ Use the mike commands documented in the "Deployment Workflow" subsection above f
 - Material for MkDocs versioning: https://squidfunk.github.io/mkdocs-material/setup/setting-up-versioning/
 - Semantic Versioning: https://semver.org/
 
-**Note:** GitHub Actions will automate this process in a future phase, automatically deploying 'dev' on develop branch pushes, 'latest' on main branch pushes, and stable versions on tag creation.
+**Note:** Documentation deployment is fully automated via GitHub Actions. See the "Automated Deployment with GitHub Actions" section above for details on how the workflow deploys documentation on branch pushes and tag creation.
 
 ## Future Enhancements
 

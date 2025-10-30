@@ -459,7 +459,7 @@ Manueller Deployment-Prozess (für lokale Tests oder wenn benötigt):
 ```bash
 # Nach Erstellung eines Git-Tags (z. B. v0.0.15)
 mike deploy 0.0.15 stable --push --update-aliases
-mike set-default latest --push
+mike set-default stable --push
 ```
 
 **Für main-Branch-Updates:**
@@ -492,18 +492,22 @@ Das Deployment der Dokumentation ist über GitHub Actions automatisiert. Der Wor
 1. **Tag-Erstellung (v*)**: Erstellt eine stabile Version
    - Beispiel: Tag `v0.0.15` deployed Version `0.0.15` mit Alias `stable`
    - Stabile Versionen sind permanent und unveränderlich
+   - Wird als Standardversion festgelegt, die Benutzer sehen
    - Ausgeführter Befehl: `mike deploy 0.0.15 stable --push --update-aliases`
+   - Ausgeführter Befehl: `mike set-default stable --push`
 
 2. **Push zu main**: Deployed 'latest' Prerelease
    - Repräsentiert den aktuellen produktionsbereiten Zustand
-   - Wird als Standardversion festgelegt, die Benutzer sehen
-   - Ausgeführter Befehl: `mike deploy <commit-sha> latest --push --update-aliases`
+   - Wird nicht als Standard festgelegt (stabile Releases bleiben die Standardversion)
+   - Verwendet die stabile Versionskennung 'edge'
+   - Ausgeführter Befehl: `mike deploy edge latest --push --update-aliases`
 
 3. **Push zu develop**: Deployed 'dev' Prerelease
    - Repräsentiert den aktuellen Entwicklungszustand
    - Wird zum Testen von Dokumentationsänderungen vor der Veröffentlichung verwendet
    - Wird nicht als Standard festgelegt (dev ist nur zum Testen)
-   - Ausgeführter Befehl: `mike deploy <commit-sha> dev --push --update-aliases`
+   - Verwendet die stabile Versionskennung 'dev'
+   - Ausgeführter Befehl: `mike deploy dev dev --push --update-aliases`
 
 4. **Manuelle Auslösung**: Verfügbar über `workflow_dispatch` in der GitHub Actions UI
    - Nützlich zum Testen oder erneuten Deployment von Dokumentation
@@ -521,9 +525,9 @@ Das Deployment der Dokumentation ist über GitHub Actions automatisiert. Der Wor
 
 **Versionsstrategie:**
 
-- **Stabile Versionen** (von Tags): Permanent, unveränderlich, repräsentieren offizielle Releases
-- **'latest' Alias**: Bei jedem Push zum main-Branch aktualisiert, als Standard für Benutzer festgelegt
-- **'dev' Alias**: Bei jedem Push zum develop-Branch aktualisiert, nur zum Testen
+- **Stabile Versionen** (von Tags): Permanent, unveränderlich, repräsentieren offizielle Releases; werden immer als Standard festgelegt
+- **'latest' Alias**: Bei jedem Push zum main-Branch aktualisiert; im Versionsauswähler verfügbar, aber nicht als Standard festgelegt
+- **'dev' Alias**: Bei jedem Push zum develop-Branch aktualisiert, nur zum Testen (wird nie als Standard festgelegt)
 - Der Versionsauswähler in der Dokumentationsnavigation zeigt alle verfügbaren Versionen
 
 **Deployments überwachen:**
@@ -614,7 +618,7 @@ Verwenden Sie die mike-Befehle, die im Unterabschnitt "Deployment-Workflow" oben
 - Material for MkDocs versioning: https://squidfunk.github.io/mkdocs-material/setup/setting-up-versioning/
 - Semantic Versioning: https://semver.org/
 
-**Hinweis:** GitHub Actions wird diesen Prozess in einer zukünftigen Phase automatisieren und automatisch 'dev' bei Pushes zum develop-Branch, 'latest' bei Pushes zum main-Branch und stabile Versionen bei Tag-Erstellung deployen.
+**Hinweis:** Das Deployment der Dokumentation ist vollständig über GitHub Actions automatisiert. Siehe den Abschnitt "Automatisiertes Deployment mit GitHub Actions" oben für Details darüber, wie der Workflow die Dokumentation bei Branch-Pushes und Tag-Erstellung deployed.
 
 ## Zukünftige Verbesserungen
 
