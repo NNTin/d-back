@@ -241,6 +241,151 @@ Secrets de GitHub necesarios (Repository → Settings → Secrets and variables 
 - `CROWDIN_PROJECT_ID` — ID del proyecto Crowdin
 - `CROWDIN_PERSONAL_TOKEN` — Token de acceso personal de Crowdin
 
+#### Configuración de Secretos de GitHub
+
+Cree los secretos necesarios para la integración de Crowdin:
+
+1. **Obtener Credenciales de Crowdin:**
+   - **Project ID:** 
+     - Inicie sesión en Crowdin
+     - Navegue a su proyecto
+     - Vaya a Settings → API
+     - Copie el Project ID (valor numérico)
+   - **Personal Access Token:**
+     - Vaya a Account Settings → API
+     - Haga clic en "New Token"
+     - Nombre: "d-back GitHub Actions"
+     - Scopes: Seleccione "Projects" (read/write)
+     - Haga clic en "Create"
+     - Copie el token inmediatamente (no se mostrará nuevamente)
+
+2. **Añadir Secretos al Repositorio de GitHub:**
+   - Navegue a: Repository → Settings → Secrets and variables → Actions
+   - Haga clic en "New repository secret"
+   - Añada `CROWDIN_PROJECT_ID`:
+     - Name: `CROWDIN_PROJECT_ID`
+     - Value: Su ID de proyecto de Crowdin (numérico)
+     - Haga clic en "Add secret"
+   - Añada `CROWDIN_PERSONAL_TOKEN`:
+     - Name: `CROWDIN_PERSONAL_TOKEN`
+     - Value: Su token de acceso personal de Crowdin
+     - Haga clic en "Add secret"
+
+3. **Verificar Secretos:**
+   - Los secretos deben aparecer en la lista de secretos del repositorio
+   - Los valores de los secretos están ocultos y no se pueden ver después de la creación
+   - Solo los administradores del repositorio pueden gestionar secretos
+
+**Notas de Seguridad Importantes:**
+- Nunca haga commit de tokens o IDs de proyecto al repositorio
+- Los tokens tienen acceso completo a su proyecto de Crowdin - manténgalos seguros
+- Rote los tokens periódicamente por seguridad
+- Use secretos de repositorio, no secretos de entorno (para acceso específico del repositorio)
+
+#### Flujo de Trabajo de GitHub Actions
+
+**Descripción General:**
+
+La sincronización con Crowdin está automatizada mediante GitHub Actions. El workflow está definido en `.github/workflows/crowdin.yml` y maneja:
+- Subida de archivos fuente en inglés a Crowdin cuando se actualiza la documentación
+- Descarga de traducciones y creación de pull requests para revisión
+
+**Activadores del Workflow:**
+
+1. **Subida Automática (Push a main):**
+   - Se activa cuando se hacen push de archivos de documentación a la rama main
+   - Sube archivos fuente en inglés nuevos/modificados a Crowdin
+   - Los traductores son notificados del nuevo contenido a traducir
+   - Se ejecuta automáticamente - no se necesita intervención manual
+
+2. **Descarga Manual (workflow_dispatch):**
+   - Se activa manualmente desde la interfaz de GitHub Actions
+   - Descarga traducciones completadas de Crowdin
+   - Crea un pull request con actualizaciones de traducción
+   - Permite revisión antes de fusionar las traducciones
+
+**Cómo Funciona:**
+
+1. **Proceso de Subida de Fuentes:**
+   - El desarrollador fusiona cambios de documentación a la rama main
+   - GitHub Actions detecta cambios en archivos `docs/**/*.md`
+   - El workflow sube archivos en inglés modificados a Crowdin
+   - Crowdin analiza los cambios y notifica a los traductores
+   - Los traductores ven cadenas nuevas/modificadas en el editor de Crowdin
+
+2. **Proceso de Descarga de Traducciones:**
+   - El mantenedor activa manualmente el workflow desde la interfaz de GitHub Actions
+   - El workflow descarga traducciones completadas de Crowdin
+   - Crea una nueva rama: `crowdin-translations`
+   - Crea un pull request con título: "docs: update translations from Crowdin"
+   - El PR incluye etiquetas: documentation, translations, crowdin
+   - El mantenedor revisa y fusiona el PR
+
+**Probar el Workflow:**
+
+1. **Probar Subida de Fuentes:**
+   - Haga un pequeño cambio a un archivo de documentación en inglés (ej: añada una oración a `docs/index.md`)
+   - Haga commit y push a la rama main
+   - Navegue a: Repository → Actions → Crowdin Sync workflow
+   - Verifique que el workflow se ejecute exitosamente
+   - Revise el proyecto de Crowdin para confirmar que aparece el nuevo contenido
+
+2. **Probar Descarga de Traducciones:**
+   - Asegúrese de que algunas traducciones estén completadas en Crowdin
+   - Navegue a: Repository → Actions → Crowdin Sync workflow
+   - Haga clic en el botón "Run workflow"
+   - Seleccione la rama "main"
+   - Haga clic en "Run workflow"
+   - Espere a que el workflow se complete
+   - Revise la pestaña Pull Requests para un nuevo PR de Crowdin
+   - Revise el PR y fusiónelo si las traducciones se ven correctas
+
+**Monitorear el Workflow:**
+
+- **Ver ejecuciones de workflow:** Repository → Actions → Crowdin Sync
+- **Verificar estado de workflow:** Ver el badge de estado (se puede añadir al README)
+- **Logs de workflow:** Haga clic en cualquier ejecución de workflow para ver logs detallados
+- **Workflows fallidos:** Los mensajes de error aparecen en los logs con información de troubleshooting
+
+**Solución de Problemas del Workflow:**
+
+**Problema:** El workflow falla con "Authentication failed"
+- **Solución:** Verifique que los secretos `CROWDIN_PROJECT_ID` y `CROWDIN_PERSONAL_TOKEN` estén configurados correctamente
+- **Solución:** Verifique que el token de acceso personal tenga el scope "Projects" habilitado
+- **Solución:** Asegúrese de que el token no haya expirado (los tokens no expiran por defecto, pero pueden ser revocados)
+
+**Problema:** El workflow se ejecuta pero no se suben archivos a Crowdin
+- **Solución:** Verifique que los archivos modificados coincidan con los patrones en `crowdin.yml` (`/docs/**/*.md`)
+- **Solución:** Verifique que los archivos no estén en la lista de ignorados en `crowdin.yml`
+- **Solución:** Revise los logs del workflow para mensajes de detección de archivos
+
+**Problema:** No se crea el PR de traducción
+- **Solución:** Asegúrese de que el workflow fue activado mediante workflow_dispatch (activación manual)
+- **Solución:** Verifique que hay traducciones completadas en Crowdin para descargar
+- **Solución:** Verifique que GitHub Actions tiene permisos de escritura para pull requests
+- **Solución:** Revise los logs del workflow para errores de creación de PR
+
+**Problema:** Se crea el PR pero faltan traducciones
+- **Solución:** Verifique que las traducciones estén marcadas como "approved" en Crowdin (si el workflow de aprobación está habilitado)
+- **Solución:** Verifique que los archivos de traducción coincidan con el patrón en `crowdin.yml`
+- **Solución:** Asegúrese de que los traductores completaron traducciones para todos los idiomas (español y alemán)
+
+**Rama de Localización:**
+
+El workflow crea una rama llamada `crowdin-translations` para actualizaciones de traducción:
+- Esta rama es creada/actualizada automáticamente por el workflow
+- Cada descarga de traducción sobrescribe esta rama con las últimas traducciones
+- La rama se usa como fuente para el pull request
+- Después de fusionar el PR, la rama puede ser eliminada (GitHub ofrece esta opción)
+- El workflow recreará la rama en la próxima descarga de traducción
+
+**Mejores Prácticas:**
+- Ejecute descargas de traducción periódicamente (ej: semanalmente) para mantener las traducciones actualizadas
+- Revise los PRs de traducción cuidadosamente antes de fusionar
+- Pruebe la construcción de la documentación localmente después de fusionar traducciones
+- Coordine con los traductores sobre fechas límite de traducción
+- Use el workflow de aprobación de Crowdin para control de calidad (opcional)
+
 ### Flujo de Trabajo de Traducción
 
 1. Edite los archivos fuente en inglés (por ejemplo: `docs/index.md`, `docs/getting-started.md`) y envíe un pull request.
@@ -459,7 +604,7 @@ Proceso de despliegue manual (para pruebas locales o cuando sea necesario):
 ```bash
 # Después de crear un tag de git (por ejemplo, v0.0.15)
 mike deploy 0.0.15 stable --push --update-aliases
-mike set-default latest --push
+mike set-default stable --push
 ```
 
 **Para actualizaciones de la rama main:**
@@ -492,18 +637,22 @@ El despliegue de la documentación está automatizado mediante GitHub Actions. E
 1. **Creación de tag (v*)**: Crea una versión estable
    - Ejemplo: Tag `v0.0.15` despliega versión `0.0.15` con alias `stable`
    - Las versiones estables son permanentes e inmutables
+   - Se establece como la versión predeterminada que ven los usuarios
    - Comando ejecutado: `mike deploy 0.0.15 stable --push --update-aliases`
+   - Comando ejecutado: `mike set-default stable --push`
 
 2. **Push a main**: Despliega prerelease 'latest'
    - Representa el estado actual listo para producción
-   - Se establece como la versión predeterminada que ven los usuarios
-   - Comando ejecutado: `mike deploy <commit-sha> latest --push --update-aliases`
+   - No se establece como predeterminado (los lanzamientos estables permanecen como predeterminados)
+   - Usa el identificador de versión estable 'edge'
+   - Comando ejecutado: `mike deploy edge latest --push --update-aliases`
 
 3. **Push a develop**: Despliega prerelease 'dev'
    - Representa el estado actual de desarrollo
    - Se usa para probar cambios de documentación antes del lanzamiento
    - No se establece como predeterminado (dev es solo para pruebas)
-   - Comando ejecutado: `mike deploy <commit-sha> dev --push --update-aliases`
+   - Usa el identificador de versión estable 'dev'
+   - Comando ejecutado: `mike deploy dev dev --push --update-aliases`
 
 4. **Activación manual**: Disponible mediante `workflow_dispatch` en la interfaz de GitHub Actions
    - Útil para pruebas o re-despliegue de documentación
@@ -521,9 +670,9 @@ El despliegue de la documentación está automatizado mediante GitHub Actions. E
 
 **Estrategia de Versiones:**
 
-- **Versiones estables** (desde tags): Permanentes, inmutables, representan lanzamientos oficiales
-- **Alias 'latest'**: Actualizado en cada push a la rama main, establecido como predeterminado para usuarios
-- **Alias 'dev'**: Actualizado en cada push a la rama develop, solo para pruebas
+- **Versiones estables** (desde tags): Permanentes, inmutables, representan lanzamientos oficiales; siempre se establecen como predeterminadas
+- **Alias 'latest'**: Actualizado en cada push a la rama main; disponible en el selector de versión pero no se establece como predeterminado
+- **Alias 'dev'**: Actualizado en cada push a la rama develop, solo para pruebas (nunca se establece como predeterminado)
 - El selector de versión en la navegación de la documentación muestra todas las versiones disponibles
 
 **Monitoreo de Despliegues:**
@@ -614,7 +763,7 @@ Use los comandos mike documentados en la subsección "Flujo de Trabajo de Despli
 - Material for MkDocs versioning: https://squidfunk.github.io/mkdocs-material/setup/setting-up-versioning/
 - Semantic Versioning: https://semver.org/
 
-**Nota:** GitHub Actions automatizará este proceso en una fase futura, desplegando automáticamente 'dev' en pushes a la rama develop, 'latest' en pushes a la rama main, y versiones estables en la creación de tags.
+**Nota:** El despliegue de la documentación está completamente automatizado mediante GitHub Actions. Vea la sección "Despliegue Automatizado con GitHub Actions" arriba para detalles sobre cómo el workflow despliega la documentación en pushes a ramas y creación de tags.
 
 ## Mejoras Futuras
 

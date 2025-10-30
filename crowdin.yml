@@ -13,6 +13,7 @@ files:
       - /docs/api-reference/**
       - /site/**
       - /docs/site/**
-      - /docs/**/*.es.md
-      - /docs/**/*.de.md
+      # Ignore all localized markdown files
+      - /docs/**/*.??.md        # e.g. guide.es.md, intro.de.md
+      - /docs/**/*.??-*.md      # e.g. guide.pt-BR.md, guide.zh-Hant.md
     type: md

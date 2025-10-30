@@ -436,6 +436,151 @@ Required GitHub secrets (Repository → Settings → Secrets and variables → A
 - `CROWDIN_PROJECT_ID` — Crowdin project ID
 - `CROWDIN_PERSONAL_TOKEN` — Crowdin personal access token
 
+#### Setting Up GitHub Secrets
+
+Create the required secrets for Crowdin integration:
+
+1. **Obtain Crowdin Credentials:**
+   - **Project ID:** 
+     - Log in to Crowdin
+     - Navigate to your project
+     - Go to Settings → API
+     - Copy the Project ID (numeric value)
+   - **Personal Access Token:**
+     - Go to Account Settings → API
+     - Click "New Token"
+     - Name: "d-back GitHub Actions"
+     - Scopes: Select "Projects" (read/write)
+     - Click "Create"
+     - Copy the token immediately (it won't be shown again)
+
+2. **Add Secrets to GitHub Repository:**
+   - Navigate to: Repository → Settings → Secrets and variables → Actions
+   - Click "New repository secret"
+   - Add `CROWDIN_PROJECT_ID`:
+     - Name: `CROWDIN_PROJECT_ID`
+     - Value: Your Crowdin project ID (numeric)
+     - Click "Add secret"
+   - Add `CROWDIN_PERSONAL_TOKEN`:
+     - Name: `CROWDIN_PERSONAL_TOKEN`
+     - Value: Your Crowdin personal access token
+     - Click "Add secret"
+
+3. **Verify Secrets:**
+   - Secrets should appear in the repository secrets list
+   - Secret values are hidden and cannot be viewed after creation
+   - Only repository administrators can manage secrets
+
+**Important Security Notes:**
+- Never commit tokens or project IDs to the repository
+- Tokens have full access to your Crowdin project - keep them secure
+- Rotate tokens periodically for security
+- Use repository secrets, not environment secrets (for repository-specific access)
+
+#### GitHub Actions Workflow
+
+**Overview:**
+
+The Crowdin synchronization is automated via GitHub Actions. The workflow is defined in `.github/workflows/crowdin.yml` and handles:
+- Uploading English source files to Crowdin when documentation is updated
+- Downloading translations and creating pull requests for review
+
+**Workflow Triggers:**
+
+1. **Automatic Upload (Push to main):**
+   - Triggers when documentation files are pushed to the main branch
+   - Uploads new/changed English source files to Crowdin
+   - Translators are notified of new content to translate
+   - Runs automatically - no manual intervention needed
+
+2. **Manual Download (workflow_dispatch):**
+   - Triggered manually from GitHub Actions UI
+   - Downloads completed translations from Crowdin
+   - Creates a pull request with translation updates
+   - Allows review before merging translations
+
+**How It Works:**
+
+1. **Source Upload Process:**
+   - Developer merges documentation changes to main branch
+   - GitHub Actions detects changes in `docs/**/*.md` files
+   - Workflow uploads changed English files to Crowdin
+   - Crowdin analyzes changes and notifies translators
+   - Translators see new/modified strings in Crowdin editor
+
+2. **Translation Download Process:**
+   - Maintainer manually triggers the workflow from GitHub Actions UI
+   - Workflow downloads completed translations from Crowdin
+   - Creates a new branch: `crowdin-translations`
+   - Creates a pull request with title: "docs: update translations from Crowdin"
+   - PR includes labels: documentation, translations, crowdin
+   - Maintainer reviews and merges the PR
+
+**Testing the Workflow:**
+
+1. **Test Source Upload:**
+   - Make a small change to an English documentation file (e.g., add a sentence to `docs/index.md`)
+   - Commit and push to main branch
+   - Navigate to: Repository → Actions → Crowdin Sync workflow
+   - Verify the workflow runs successfully
+   - Check Crowdin project to confirm the new content appears
+
+2. **Test Translation Download:**
+   - Ensure some translations are completed in Crowdin
+   - Navigate to: Repository → Actions → Crowdin Sync workflow
+   - Click "Run workflow" button
+   - Select "main" branch
+   - Click "Run workflow"
+   - Wait for workflow to complete
+   - Check Pull Requests tab for new PR from Crowdin
+   - Review the PR and merge if translations look correct
+
+**Monitoring Workflow:**
+
+- **View workflow runs:** Repository → Actions → Crowdin Sync
+- **Check workflow status:** See status badge (can be added to README)
+- **Workflow logs:** Click on any workflow run to see detailed logs
+- **Failed workflows:** Error messages appear in logs with troubleshooting info
+
+**Troubleshooting Workflow Issues:**
+
+**Issue:** Workflow fails with "Authentication failed"
+- **Solution:** Verify `CROWDIN_PROJECT_ID` and `CROWDIN_PERSONAL_TOKEN` secrets are set correctly
+- **Solution:** Check that the personal access token has "Projects" scope enabled
+- **Solution:** Ensure the token hasn't expired (tokens don't expire by default, but can be revoked)
+
+**Issue:** Workflow runs but no files uploaded to Crowdin
+- **Solution:** Check that changed files match the patterns in `crowdin.yml` (`/docs/**/*.md`)
+- **Solution:** Verify files are not in the ignore list in `crowdin.yml`
+- **Solution:** Check workflow logs for file detection messages
+
+**Issue:** Translation PR not created
+- **Solution:** Ensure workflow was triggered via workflow_dispatch (manual trigger)
+- **Solution:** Verify there are completed translations in Crowdin to download
+- **Solution:** Check that GitHub Actions has write permissions for pull requests
+- **Solution:** Review workflow logs for PR creation errors
+
+**Issue:** PR created but translations missing
+- **Solution:** Verify translations are marked as "approved" in Crowdin (if approval workflow is enabled)
+- **Solution:** Check that translation files match the pattern in `crowdin.yml`
+- **Solution:** Ensure translators completed translations for all languages (Spanish and German)
+
+**Localization Branch:**
+
+The workflow creates a branch named `crowdin-translations` for translation updates:
+- This branch is automatically created/updated by the workflow
+- Each translation download overwrites this branch with latest translations
+- The branch is used as the source for the pull request
+- After merging the PR, the branch can be deleted (GitHub offers this option)
+- The workflow will recreate the branch on the next translation download
+
+**Best Practices:**
+- Run translation downloads periodically (e.g., weekly) to keep translations up-to-date
+- Review translation PRs carefully before merging
+- Test the documentation build locally after merging translations
+- Coordinate with translators about translation deadlines
+- Use Crowdin's approval workflow for quality control (optional)
+
 ### Translation Workflow
 
 1. Edit English source files (for example: `docs/index.md`, `docs/getting-started.md`) and submit a pull request.
@@ -817,7 +962,7 @@ Manual deployment process (for local testing or when needed):
 ```bash
 # After creating a git tag (e.g., v0.0.15)
 mike deploy 0.0.15 stable --push --update-aliases
-mike set-default latest --push
+mike set-default stable --push
 ```
 
 **For main branch updates:**
@@ -850,18 +995,22 @@ Documentation deployment is automated via GitHub Actions. The workflow is define
 1. **Tag creation (v*)**: Creates a stable version
    - Example: Tag `v0.0.15` deploys version `0.0.15` with alias `stable`
    - Stable versions are permanent and immutable
+   - Set as the default version users see
    - Command executed: `mike deploy 0.0.15 stable --push --update-aliases`
+   - Command executed: `mike set-default stable --push`
 
 2. **Push to main**: Deploys 'latest' prerelease
    - Represents the current production-ready state
-   - Set as the default version users see
-   - Command executed: `mike deploy <commit-sha> latest --push --update-aliases`
+   - Not set as default (stable releases remain the default)
+   - Uses stable version identifier 'edge'
+   - Command executed: `mike deploy edge latest --push --update-aliases`
 
 3. **Push to develop**: Deploys 'dev' prerelease
    - Represents the current development state
    - Used for testing documentation changes before release
    - Not set as default (dev is for testing only)
-   - Command executed: `mike deploy <commit-sha> dev --push --update-aliases`
+   - Uses stable version identifier 'dev'
+   - Command executed: `mike deploy dev dev --push --update-aliases`
 
 4. **Manual trigger**: Available via `workflow_dispatch` in GitHub Actions UI
    - Useful for testing or re-deploying documentation
@@ -879,9 +1028,9 @@ Documentation deployment is automated via GitHub Actions. The workflow is define
 
 **Version Strategy:**
 
-- **Stable versions** (from tags): Permanent, immutable, represent official releases
-- **'latest' alias**: Updated on every main branch push, set as default for users
-- **'dev' alias**: Updated on every develop branch push, for testing only
+- **Stable versions** (from tags): Permanent, immutable, represent official releases; always set as default
+- **'latest' alias**: Updated on every main branch push; available in version selector but not set as default
+- **'dev' alias**: Updated on every develop branch push, for testing only (never set as default)
 - The version selector in documentation navigation shows all available versions
 
 **Monitoring Deployments:**
@@ -972,7 +1121,7 @@ Use the mike commands documented in the "Deployment Workflow" subsection above f
 - Material for MkDocs versioning: https://squidfunk.github.io/mkdocs-material/setup/setting-up-versioning/
 - Semantic Versioning: https://semver.org/
 
-**Note:** GitHub Actions will automate this process in a future phase, automatically deploying 'dev' on develop branch pushes, 'latest' on main branch pushes, and stable versions on tag creation.
+**Note:** Documentation deployment is fully automated via GitHub Actions. See the "Automated Deployment with GitHub Actions" section above for details on how the workflow deploys documentation on branch pushes and tag creation.
 
 ## Future Enhancements
 
