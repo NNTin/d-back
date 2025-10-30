@@ -453,7 +453,7 @@ Los alias son nombres simbólicos que apuntan a versiones específicas:
 
 #### Flujo de Trabajo de Despliegue
 
-Proceso de despliegue manual (GitHub Actions automatizará esto en una fase futura):
+Proceso de despliegue manual (para pruebas locales o cuando sea necesario):
 
 **Para lanzamientos estables:**
 ```bash
@@ -473,6 +473,109 @@ mike deploy <commit-sha> latest --push --update-aliases
 # Después de fusionar a develop
 mike deploy <commit-sha> dev --push --update-aliases
 ```
+
+**Nota:** Estos comandos son para despliegue manual. El despliegue automatizado mediante GitHub Actions es el enfoque recomendado para producción (vea "Despliegue Automatizado con GitHub Actions" más abajo).
+
+#### Despliegue Automatizado con GitHub Actions
+
+El despliegue de la documentación está automatizado mediante GitHub Actions. El workflow está definido en `.github/workflows/docs.yml` y maneja todos los despliegues de producción.
+
+**Descripción General:**
+
+- La documentación se despliega automáticamente en pushes a main, develop y creación de tags
+- El workflow gestiona el versionado con mike y despliega a GitHub Pages
+- El despliegue manual usando mike localmente sigue disponible para pruebas
+- Los tres idiomas (inglés, español, alemán) se construyen y despliegan juntos
+
+**Activadores Automáticos:**
+
+1. **Creación de tag (v*)**: Crea una versión estable
+   - Ejemplo: Tag `v0.0.15` despliega versión `0.0.15` con alias `stable`
+   - Las versiones estables son permanentes e inmutables
+   - Comando ejecutado: `mike deploy 0.0.15 stable --push --update-aliases`
+
+2. **Push a main**: Despliega prerelease 'latest'
+   - Representa el estado actual listo para producción
+   - Se establece como la versión predeterminada que ven los usuarios
+   - Comando ejecutado: `mike deploy <commit-sha> latest --push --update-aliases`
+
+3. **Push a develop**: Despliega prerelease 'dev'
+   - Representa el estado actual de desarrollo
+   - Se usa para probar cambios de documentación antes del lanzamiento
+   - No se establece como predeterminado (dev es solo para pruebas)
+   - Comando ejecutado: `mike deploy <commit-sha> dev --push --update-aliases`
+
+4. **Activación manual**: Disponible mediante `workflow_dispatch` en la interfaz de GitHub Actions
+   - Útil para pruebas o re-despliegue de documentación
+   - Acceso mediante: Repositorio → pestaña Actions → workflow Documentation → Run workflow
+
+**Proceso del Workflow:**
+
+1. **Checkout repository**: Obtiene el historial completo de git (requerido para que mike acceda a la rama gh-pages)
+2. **Set up Python 3.11**: Instala Python con caché de pip para construcciones más rápidas
+3. **Install dependencies**: Ejecuta `pip install -e .[docs]` para instalar mkdocs-material, mkdocs-static-i18n, mkdocstrings y mike desde setup.cfg
+4. **Configure git**: Configura el usuario de git para commits automatizados a la rama gh-pages
+5. **Determine version**: Analiza el tipo de activador (tag, main o develop) para decidir la estrategia de despliegue
+6. **Deploy with mike**: Ejecuta el comando mike apropiado para desplegar documentación versionada a la rama gh-pages
+7. **GitHub Pages sirve documentación actualizada**: Los cambios aparecen en 1-2 minutos en https://nntin.github.io/d-back/
+
+**Estrategia de Versiones:**
+
+- **Versiones estables** (desde tags): Permanentes, inmutables, representan lanzamientos oficiales
+- **Alias 'latest'**: Actualizado en cada push a la rama main, establecido como predeterminado para usuarios
+- **Alias 'dev'**: Actualizado en cada push a la rama develop, solo para pruebas
+- El selector de versión en la navegación de la documentación muestra todas las versiones disponibles
+
+**Monitoreo de Despliegues:**
+
+- **Ver ejecuciones de workflow**: Repositorio → pestaña Actions → workflow Documentation
+- **Verificar estado de despliegue**: Ver el badge Documentation Status en README.md
+- **Logs de workflow**: Información detallada de despliegue disponible en cada ejecución de workflow
+- **Despliegues fallidos**: Los mensajes de error aparecen en los logs de workflow con información para solución de problemas
+
+**Configuración de GitHub Pages:**
+
+Configuración inicial (solo se necesita una vez):
+
+1. Ir a: Repository Settings → Pages
+2. Establecer Source: Deploy from a branch
+3. Establecer Branch: `gh-pages` (creado automáticamente por la primera ejecución del workflow)
+4. Hacer clic en Save
+5. La documentación estará disponible en: https://nntin.github.io/d-back/
+6. Los cambios aparecen en 1-2 minutos después de completarse el workflow
+
+**Despliegue Manual (si es necesario):**
+
+El workflow automatizado maneja la mayoría de escenarios de despliegue. El despliegue manual puede ser necesario para:
+
+- Probar cambios de documentación localmente antes de hacer push
+- Solucionar problemas de despliegue que requieran troubleshooting local
+- Desplegar desde una rama local para propósitos de prueba
+
+Use los comandos mike documentados en la subsección "Flujo de Trabajo de Despliegue" arriba para despliegue manual.
+
+**Solución de Problemas del Workflow:**
+
+**Problema:** El workflow falla en git push a gh-pages
+- **Solución**: Verifique que Actions tenga permisos de escritura
+  - Ir a: Settings → Actions → General → Workflow permissions
+  - Seleccionar: "Read and write permissions"
+  - Hacer clic en Save
+
+**Problema:** La versión desplegada no aparece en el selector de versión
+- **Solución**: Verifique que la condición del activador coincidió con la rama o tag esperado
+- **Solución**: Revise los logs de workflow para confirmar que el despliegue se completó exitosamente
+- **Solución**: Asegúrese de que al menos dos versiones estén desplegadas para que aparezca el selector
+
+**Problema:** Contenido antiguo aparece en versión recién desplegada
+- **Solución**: Limpie la caché del navegador y recargue
+- **Solución**: Verifique que el workflow se completó exitosamente en la pestaña Actions
+- **Solución**: Verifique que se desplegó la versión correcta revisando los logs de workflow
+
+**Problema:** La rama gh-pages no se creó
+- **Solución**: Revise los logs de workflow para errores durante el primer despliegue
+- **Solución**: Verifique que Actions tenga permisos de escritura (vea el primer problema arriba)
+- **Solución**: Active manualmente el workflow mediante workflow_dispatch para reintentar
 
 #### Mejores Prácticas
 

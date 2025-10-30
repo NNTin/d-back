@@ -453,7 +453,7 @@ Aliase sind symbolische Namen, die auf bestimmte Versionen verweisen:
 
 #### Deployment-Workflow
 
-Manueller Deployment-Prozess (GitHub Actions wird dies in einer zukünftigen Phase automatisieren):
+Manueller Deployment-Prozess (für lokale Tests oder wenn benötigt):
 
 **Für stabile Releases:**
 ```bash
@@ -473,6 +473,109 @@ mike deploy <commit-sha> latest --push --update-aliases
 # Nach Merge zu develop
 mike deploy <commit-sha> dev --push --update-aliases
 ```
+
+**Hinweis:** Diese Befehle sind für manuelles Deployment. Automatisiertes Deployment über GitHub Actions ist der empfohlene Ansatz für Produktion (siehe "Automatisiertes Deployment mit GitHub Actions" unten).
+
+#### Automatisiertes Deployment mit GitHub Actions
+
+Das Deployment der Dokumentation ist über GitHub Actions automatisiert. Der Workflow ist in `.github/workflows/docs.yml` definiert und verwaltet alle Produktions-Deployments.
+
+**Übersicht:**
+
+- Dokumentation wird automatisch bei Pushes zu main, develop und Tag-Erstellung deployed
+- Der Workflow verwaltet die Versionierung mit mike und deployed zu GitHub Pages
+- Manuelles Deployment mit mike lokal ist weiterhin für Tests verfügbar
+- Alle drei Sprachen (Englisch, Spanisch, Deutsch) werden zusammen gebaut und deployed
+
+**Automatische Auslöser:**
+
+1. **Tag-Erstellung (v*)**: Erstellt eine stabile Version
+   - Beispiel: Tag `v0.0.15` deployed Version `0.0.15` mit Alias `stable`
+   - Stabile Versionen sind permanent und unveränderlich
+   - Ausgeführter Befehl: `mike deploy 0.0.15 stable --push --update-aliases`
+
+2. **Push zu main**: Deployed 'latest' Prerelease
+   - Repräsentiert den aktuellen produktionsbereiten Zustand
+   - Wird als Standardversion festgelegt, die Benutzer sehen
+   - Ausgeführter Befehl: `mike deploy <commit-sha> latest --push --update-aliases`
+
+3. **Push zu develop**: Deployed 'dev' Prerelease
+   - Repräsentiert den aktuellen Entwicklungszustand
+   - Wird zum Testen von Dokumentationsänderungen vor der Veröffentlichung verwendet
+   - Wird nicht als Standard festgelegt (dev ist nur zum Testen)
+   - Ausgeführter Befehl: `mike deploy <commit-sha> dev --push --update-aliases`
+
+4. **Manuelle Auslösung**: Verfügbar über `workflow_dispatch` in der GitHub Actions UI
+   - Nützlich zum Testen oder erneuten Deployment von Dokumentation
+   - Zugriff über: Repository → Actions tab → Documentation workflow → Run workflow
+
+**Workflow-Prozess:**
+
+1. **Checkout repository**: Holt die vollständige Git-Historie (erforderlich, damit mike auf den gh-pages-Branch zugreifen kann)
+2. **Set up Python 3.11**: Installiert Python mit pip-Caching für schnellere Builds
+3. **Install dependencies**: Führt `pip install -e .[docs]` aus, um mkdocs-material, mkdocs-static-i18n, mkdocstrings und mike aus setup.cfg zu installieren
+4. **Configure git**: Richtet den Git-Benutzer für automatische Commits zum gh-pages-Branch ein
+5. **Determine version**: Analysiert den Auslösertyp (tag, main oder develop), um die Deployment-Strategie zu bestimmen
+6. **Deploy with mike**: Führt den entsprechenden mike-Befehl aus, um versionierte Dokumentation zum gh-pages-Branch zu deployen
+7. **GitHub Pages stellt aktualisierte Dokumentation bereit**: Änderungen erscheinen innerhalb von 1-2 Minuten unter https://nntin.github.io/d-back/
+
+**Versionsstrategie:**
+
+- **Stabile Versionen** (von Tags): Permanent, unveränderlich, repräsentieren offizielle Releases
+- **'latest' Alias**: Bei jedem Push zum main-Branch aktualisiert, als Standard für Benutzer festgelegt
+- **'dev' Alias**: Bei jedem Push zum develop-Branch aktualisiert, nur zum Testen
+- Der Versionsauswähler in der Dokumentationsnavigation zeigt alle verfügbaren Versionen
+
+**Deployments überwachen:**
+
+- **Workflow-Ausführungen anzeigen**: Repository → Actions tab → Documentation workflow
+- **Deployment-Status prüfen**: Siehe den Documentation Status Badge in README.md
+- **Workflow-Logs**: Detaillierte Deployment-Informationen verfügbar in jeder Workflow-Ausführung
+- **Fehlgeschlagene Deployments**: Fehlermeldungen erscheinen in Workflow-Logs mit Troubleshooting-Informationen
+
+**GitHub Pages-Konfiguration:**
+
+Erstmalige Einrichtung (nur einmal erforderlich):
+
+1. Gehen Sie zu: Repository Settings → Pages
+2. Setzen Sie Source: Deploy from a branch
+3. Setzen Sie Branch: `gh-pages` (automatisch bei erster Workflow-Ausführung erstellt)
+4. Klicken Sie auf Save
+5. Dokumentation wird verfügbar sein unter: https://nntin.github.io/d-back/
+6. Änderungen erscheinen innerhalb von 1-2 Minuten nach Abschluss des Workflows
+
+**Manuelles Deployment (falls benötigt):**
+
+Der automatisierte Workflow verwaltet die meisten Deployment-Szenarien. Manuelles Deployment kann erforderlich sein für:
+
+- Testen von Dokumentationsänderungen lokal vor dem Pushen
+- Beheben von Deployment-Problemen, die lokales Troubleshooting erfordern
+- Deployment von einem lokalen Branch zu Testzwecken
+
+Verwenden Sie die mike-Befehle, die im Unterabschnitt "Deployment-Workflow" oben dokumentiert sind, für manuelles Deployment.
+
+**Workflow-Probleme beheben:**
+
+**Problem:** Workflow schlägt bei git push zu gh-pages fehl
+- **Lösung**: Überprüfen Sie, dass Actions Schreibberechtigungen haben
+  - Gehen Sie zu: Settings → Actions → General → Workflow permissions
+  - Wählen Sie: "Read and write permissions"
+  - Klicken Sie auf Save
+
+**Problem:** Deployed Version erscheint nicht im Versionsauswähler
+- **Lösung**: Überprüfen Sie, dass die Auslöserbedingung mit dem erwarteten Branch oder Tag übereinstimmte
+- **Lösung**: Prüfen Sie Workflow-Logs, um zu bestätigen, dass das Deployment erfolgreich abgeschlossen wurde
+- **Lösung**: Stellen Sie sicher, dass mindestens zwei Versionen deployed sind, damit der Auswähler erscheint
+
+**Problem:** Alter Inhalt erscheint in neu deployter Version
+- **Lösung**: Leeren Sie den Browser-Cache und laden Sie neu
+- **Lösung**: Überprüfen Sie, dass der Workflow erfolgreich im Actions tab abgeschlossen wurde
+- **Lösung**: Überprüfen Sie, dass die korrekte Version deployed wurde, indem Sie die Workflow-Logs prüfen
+
+**Problem:** gh-pages-Branch wurde nicht erstellt
+- **Lösung**: Überprüfen Sie Workflow-Logs auf Fehler während des ersten Deployments
+- **Lösung**: Überprüfen Sie, dass Actions Schreibberechtigungen haben (siehe erstes Problem oben)
+- **Lösung**: Lösen Sie den Workflow manuell über workflow_dispatch aus, um es erneut zu versuchen
 
 #### Best Practices
 

@@ -811,7 +811,7 @@ Aliases are symbolic names that point to specific versions:
 
 #### Deployment Workflow
 
-Manual deployment process (GitHub Actions will automate this in a future phase):
+Manual deployment process (for local testing or when needed):
 
 **For stable releases:**
 ```bash
@@ -831,6 +831,109 @@ mike deploy <commit-sha> latest --push --update-aliases
 # After merging to develop
 mike deploy <commit-sha> dev --push --update-aliases
 ```
+
+**Note:** These commands are for manual deployment. Automated deployment via GitHub Actions is the recommended approach for production (see "Automated Deployment with GitHub Actions" below).
+
+#### Automated Deployment with GitHub Actions
+
+Documentation deployment is automated via GitHub Actions. The workflow is defined in `.github/workflows/docs.yml` and handles all production deployments.
+
+**Overview:**
+
+- Documentation deploys automatically on pushes to main, develop, and tag creation
+- The workflow manages versioning with mike and deploys to GitHub Pages
+- Manual deployment using mike locally is still available for testing
+- All three languages (English, Spanish, German) are built and deployed together
+
+**Automatic Triggers:**
+
+1. **Tag creation (v*)**: Creates a stable version
+   - Example: Tag `v0.0.15` deploys version `0.0.15` with alias `stable`
+   - Stable versions are permanent and immutable
+   - Command executed: `mike deploy 0.0.15 stable --push --update-aliases`
+
+2. **Push to main**: Deploys 'latest' prerelease
+   - Represents the current production-ready state
+   - Set as the default version users see
+   - Command executed: `mike deploy <commit-sha> latest --push --update-aliases`
+
+3. **Push to develop**: Deploys 'dev' prerelease
+   - Represents the current development state
+   - Used for testing documentation changes before release
+   - Not set as default (dev is for testing only)
+   - Command executed: `mike deploy <commit-sha> dev --push --update-aliases`
+
+4. **Manual trigger**: Available via `workflow_dispatch` in GitHub Actions UI
+   - Useful for testing or re-deploying documentation
+   - Access via: Repository → Actions tab → Documentation workflow → Run workflow
+
+**Workflow Process:**
+
+1. **Checkout repository**: Fetches full git history (required for mike to access gh-pages branch)
+2. **Set up Python 3.11**: Installs Python with pip caching for faster builds
+3. **Install dependencies**: Runs `pip install -e .[docs]` to install mkdocs-material, mkdocs-static-i18n, mkdocstrings, and mike from setup.cfg
+4. **Configure git**: Sets up git user for automated commits to gh-pages branch
+5. **Determine version**: Analyzes the trigger type (tag, main, or develop) to decide deployment strategy
+6. **Deploy with mike**: Executes appropriate mike command to deploy versioned documentation to gh-pages branch
+7. **GitHub Pages serves updated documentation**: Changes appear within 1-2 minutes at https://nntin.github.io/d-back/
+
+**Version Strategy:**
+
+- **Stable versions** (from tags): Permanent, immutable, represent official releases
+- **'latest' alias**: Updated on every main branch push, set as default for users
+- **'dev' alias**: Updated on every develop branch push, for testing only
+- The version selector in documentation navigation shows all available versions
+
+**Monitoring Deployments:**
+
+- **View workflow runs**: Repository → Actions tab → Documentation workflow
+- **Check deployment status**: See the Documentation Status badge in README.md
+- **Workflow logs**: Detailed deployment information available in each workflow run
+- **Failed deployments**: Error messages appear in workflow logs with troubleshooting information
+
+**GitHub Pages Configuration:**
+
+First-time setup (only needed once):
+
+1. Go to: Repository Settings → Pages
+2. Set Source: Deploy from a branch
+3. Set Branch: `gh-pages` (created automatically by first workflow run)
+4. Click Save
+5. Documentation will be available at: https://nntin.github.io/d-back/
+6. Changes appear within 1-2 minutes after workflow completion
+
+**Manual Deployment (if needed):**
+
+The automated workflow handles most deployment scenarios. Manual deployment may be needed for:
+
+- Testing documentation changes locally before pushing
+- Fixing deployment issues that require local troubleshooting
+- Deploying from a local branch for testing purposes
+
+Use the mike commands documented in the "Deployment Workflow" subsection above for manual deployment.
+
+**Troubleshooting Workflow Issues:**
+
+**Issue:** Workflow fails on git push to gh-pages
+- **Solution**: Check that Actions have write permissions
+  - Go to: Settings → Actions → General → Workflow permissions
+  - Select: "Read and write permissions"
+  - Click Save
+
+**Issue:** Deployed version not appearing in version selector
+- **Solution**: Verify the trigger condition matched the expected branch or tag
+- **Solution**: Check workflow logs to confirm deployment completed successfully
+- **Solution**: Ensure at least two versions are deployed for selector to appear
+
+**Issue:** Old content appearing in newly deployed version
+- **Solution**: Clear browser cache and reload
+- **Solution**: Check that workflow completed successfully in Actions tab
+- **Solution**: Verify the correct version was deployed by checking workflow logs
+
+**Issue:** gh-pages branch not created
+- **Solution**: Check workflow logs for errors during first deployment
+- **Solution**: Verify Actions have write permissions (see first issue above)
+- **Solution**: Manually trigger workflow via workflow_dispatch to retry
 
 #### Best Practices
 

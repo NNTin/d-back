@@ -8,6 +8,7 @@
 ![Build Status](https://github.com/NNTin/d-back/actions/workflows/test.yml/badge.svg)
 ![PyPI](https://img.shields.io/pypi/v/d-back)
 [![Documentation](https://img.shields.io/badge/docs-mkdocs-blue)](https://nntin.github.io/d-back/)
+[![Documentation Status](https://github.com/NNTin/d-back/actions/workflows/docs.yml/badge.svg)](https://github.com/NNTin/d-back/actions/workflows/docs.yml)
 
 ## 📚 Documentation
 
