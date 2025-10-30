@@ -58,7 +58,7 @@ async def get_my_servers():
     }
 
 server = WebSocketServer()
-server.on_get_server_data = get_my_servers
+server.on_get_server_data(get_my_servers)
 ```
 
 **Use Case**: Integrate with the Discord API to fetch the list of servers your bot is in, or fetch from a database of configured servers.
@@ -108,7 +108,7 @@ async def my_user_data_provider(server_id: str):
     }
 
 server = WebSocketServer()
-server.on_get_user_data = my_user_data_provider
+server.on_get_user_data(my_user_data_provider)
 ```
 
 **Use Case**: Fetch real Discord member data, query a database, or implement custom presence tracking.
@@ -488,7 +488,7 @@ async def safe_user_data_provider(server_id: str):
         return {}
 
 server = WebSocketServer()
-server.on_get_user_data = safe_user_data_provider
+server.on_get_user_data(safe_user_data_provider)
 ```
 
 ### Error Handling Checklist

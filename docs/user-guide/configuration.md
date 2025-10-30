@@ -224,10 +224,10 @@ d-back comes with pre-configured mock Discord servers for development and testin
 
 | Server Name | Server ID | Description | User Count |
 |-------------|-----------|-------------|------------|
-| **d-world server** | `232769614004748288` | Main development server with diverse user activity | 50+ users |
-| **docs server** | `482241773318701056` | Documentation server with moderate activity | 10 users |
-| **oauth2 server** | `123456789012345678` | Protected server for testing OAuth2 flows | Varies |
-| **my repos server** | `987654321098765432` | Repository showcase server | 5 users |
+| **d-world server** | `232769614004748288` | Main development server with diverse user activity | 4 users |
+| **docs server** | `482241773318701056` | Documentation server with moderate activity | 1 user |
+| **oauth2 server** | `123456789012345678` | Protected server for testing OAuth2 flows | 1 user |
+| **my repos server** | `987654321098765432` | Repository showcase server | 21 users |
 
 ### Using Mock Servers
 
@@ -363,8 +363,8 @@ Follow these recommendations for optimal d-back configuration:
     )
     
     # Configure callbacks for real data
-    server.on_get_user_data = real_discord_data_provider
-    server.on_validate_discord_user = oauth2_validator
+    server.on_get_user_data(real_discord_data_provider)
+    server.on_validate_discord_user(oauth2_validator)
     
     # Start server
     await server.start()

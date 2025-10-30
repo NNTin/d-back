@@ -139,7 +139,7 @@ def get_highest_role_color(role_ids: list) -> str:
 from d_back.server import WebSocketServer
 
 server = WebSocketServer(port=3000, host="localhost")
-server.on_get_user_data = get_user_data
+server.on_get_user_data(get_user_data)
 ```
 
 ## Creating a Custom Server Data Provider
@@ -188,7 +188,7 @@ async def get_server_data() -> Dict[str, Any]:
         return {}
 
 server = WebSocketServer()
-server.on_get_server_data = get_server_data
+server.on_get_server_data(get_server_data)
 ```
 
 ## Discord API Integration
@@ -282,8 +282,8 @@ async def get_discord_servers() -> Dict[str, Any]:
         return {}
 
 # Register callbacks
-ws_server.on_get_user_data = get_discord_user_data
-ws_server.on_get_server_data = get_discord_servers
+ws_server.on_get_user_data(get_discord_user_data)
+ws_server.on_get_server_data(get_discord_servers)
 
 # Discord bot events
 @bot.event
@@ -433,8 +433,8 @@ async def main():
     
     # Create server with database callbacks
     server = WebSocketServer(port=3000, host="0.0.0.0")
-    server.on_get_user_data = db.get_user_data
-    server.on_get_server_data = db.get_server_data
+    server.on_get_user_data(db.get_user_data)
+    server.on_get_server_data(db.get_server_data)
     
     await server.start()
 ```
@@ -654,7 +654,7 @@ async def test_user_data_provider():
 async def test_server_with_custom_provider():
     """Test WebSocketServer with custom data provider."""
     server = WebSocketServer(port=3001, host="localhost")
-    server.on_get_user_data = get_user_data
+    server.on_get_user_data(get_user_data)
     
     # Start server
     await server.start()
@@ -773,7 +773,7 @@ class PooledProvider:
 async def main():
     async with PooledProvider() as provider:
         server = WebSocketServer()
-        server.on_get_user_data = provider.get_user_data
+        server.on_get_user_data(provider.get_user_data)
         await server.start()
 ```
 

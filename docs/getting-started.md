@@ -232,10 +232,10 @@ d-back comes with pre-configured mock Discord servers for development and testin
 
 The available mock servers are:
 
-- **d-world server** (`232769614004748288`): Main development server with 50+ active users across different statuses
-- **docs server** (`482241773318701056`): Documentation server with 10 users
-- **oauth2 server** (`123456789012345678`): Protected server for testing OAuth2 authentication flows
-- **my repos server** (`987654321098765432`): Repository showcase server with 5 users
+- **d-world server** (`232769614004748288`): Main development server with 4 active users across different statuses
+- **docs server** (`482241773318701056`): Documentation server with 1 user
+- **oauth2 server** (`123456789012345678`): Protected server for testing OAuth2 authentication flows with 1 user
+- **my repos server** (`987654321098765432`): Repository showcase server with 21 users
 
 !!! tip "Perfect for Development"
     Mock data is ideal for:
