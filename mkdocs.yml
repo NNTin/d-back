@@ -37,6 +37,46 @@ theme:
 
 plugins:
   - search
+  - i18n:
+      docs_structure: suffix
+      reconfigure_material: true
+      reconfigure_search: true
+      fallback_to_default: true
+      languages:
+        - locale: en
+          name: English
+          default: true
+          build: true
+        - locale: es
+          name: Español
+          build: true
+          site_name: "Documentación de d-back"
+          site_description: "Servidor WebSocket para integración de Discord con simulación de vida ambiental d-zone"
+          nav_translations:
+            Home: Inicio
+            Getting Started: Primeros Pasos
+            User Guide: Guía del Usuario
+            Overview: Resumen
+            Configuration: Configuración
+            Callbacks & Customization: Callbacks y Personalización
+            Custom Data Providers: Proveedores de Datos Personalizados
+            API Reference: Referencia de API
+            Developer Guide: Guía del Desarrollador
+        - locale: de
+          name: Deutsch
+          build: true
+          site_name: "d-back Dokumentation"
+          site_description: "WebSocket-Server für Discord-Integration mit d-zone Ambient-Life-Simulation"
+          nav_translations:
+            Home: Startseite
+            Getting Started: Erste Schritte
+            User Guide: Benutzerhandbuch
+            Overview: Übersicht
+            Configuration: Konfiguration
+            Callbacks & Customization: Callbacks & Anpassung
+            Custom Data Providers: Benutzerdefinierte Datenanbieter
+            API Reference: API-Referenz
+            Developer Guide: Entwicklerhandbuch
   - mkdocstrings:
       handlers:
         python:

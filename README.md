@@ -1,6 +1,45 @@
 # d-back  
 
-![Last Commit](https://img.shields.io/github/last-commit/NNTin/d-back) 
+![Last Commit](https://i## 📚 Documentation
+
+Comprehensive documentation is available online in **English, Spanish (Español), and German (Deutsch)**, including API reference, user guides, and examples.
+
+### Quick Links
+
+- **[English Documentation](https://nntin.github.io/d-back/)** - Full documentation in English
+- **[Spanish Documentation](https://nntin.github.io/d-back/es/)** - Documentación completa en español
+- **[German Documentation](https://nntin.github.io/d-back/de/)** - Vollständige Dokumentation auf Deutsch
+
+The documentation is available in multiple languages. Use the language selector in the navigation to switch between languages.
+
+### Documentation Sections
+
+- **Getting Started**: Quick installation and first steps
+- **User Guide**: Configuration, callbacks, and customization
+- **API Reference**: Detailed API documentation with examples
+- **Developer Guide**: Contributing guidelines and architecture
+
+### Building Documentation Locally
+
+Build and serve the documentation locally (all languages):
+
+```bash
+# Install documentation dependencies
+pip install -e .[docs]
+
+# Serve documentation locally with live reload (all languages)
+mkdocs serve
+
+# Build documentation (generates site/ directory with all languages)
+mkdocs build
+```
+
+After running `mkdocs serve`, access the documentation at:
+- English: `http://127.0.0.1:8000/`
+- Spanish: `http://127.0.0.1:8000/es/`
+- German: `http://127.0.0.1:8000/de/`
+
+**Note:** The documentation uses mkdocs-static-i18n for multilingual support with Material for MkDocs theme./last-commit/NNTin/d-back) 
 ![Open Pull Requests](https://img.shields.io/github/issues-pr/NNTin/d-back)
 ![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)
 ![Stars](https://img.shields.io/github/stars/NNTin/d-back)
