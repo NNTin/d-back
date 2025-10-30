@@ -1,0 +1,52 @@
+name: Documentation
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  deploy-docs:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: Install dependencies
+        run: pip install -e .[docs]
+
+      - name: Configure Git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Determine version and deploy
+        run: |
+          if [[ $GITHUB_REF == refs/tags/v* ]]; then
+            VERSION=${GITHUB_REF#refs/tags/v}
+            echo "Deploying stable version: $VERSION"
+            mike deploy $VERSION stable --push --update-aliases
+            mike set-default latest --push
+          elif [[ $GITHUB_REF == refs/heads/main ]]; then
+            echo "Deploying latest prerelease from main"
+            mike deploy <commit-sha> latest --push --update-aliases
+            mike set-default latest --push
+          elif [[ $GITHUB_REF == refs/heads/develop ]]; then
+            echo "Deploying dev prerelease from develop"
+            mike deploy <commit-sha> dev --push --update-aliases
+          fi

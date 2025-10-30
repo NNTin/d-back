@@ -1,3 +1,38 @@
+"""WebSocket Server Implementation for D-Zone/D-World Discord Integration.
+
+This module provides the core WebSocket server functionality for real-time communication
+with Discord-like applications. It handles WebSocket connections, HTTP static file serving,
+message broadcasting, user presence updates, and OAuth2 authentication.
+
+The server supports:
+    - WebSocket connections for real-time bidirectional communication
+    - HTTP static file serving on the same port (websockets 10.0+)
+    - Multiple Discord server configurations
+    - User authentication via Discord OAuth2
+    - Custom callback registration for data providers
+    - Mock data generation for testing and development
+
+Example:
+    Basic server setup::
+
+        from d_back.server import WebSocketServer
+        
+        server = WebSocketServer(port=3000, host="localhost")
+        await server.run_forever()
+
+    With custom callbacks::
+
+        def get_servers():
+            return {"server_id": {"id": "server_id", "name": "My Server"}}
+        
+        def get_users(server_id):
+            return {"user123": {"uid": "user123", "username": "TestUser"}}
+        
+        server = WebSocketServer()
+        server.on_get_server_data(get_servers)
+        server.on_get_user_data(get_users)
+        await server.run_forever()
+"""
 import asyncio
 import websockets
 import json
@@ -6,29 +41,102 @@ import random
 import mimetypes
 import argparse
 from pathlib import Path
-from typing import Dict, Any
+from typing import Dict, Any, Callable, Awaitable, Optional, Tuple
 
 from .mock import MockDataProvider
 
 
 class WebSocketServer:
-    """WebSocket server to manage connections and broadcast messages."""
+    """WebSocket server for managing real-time connections and broadcasting messages.
+
+    This server handles WebSocket connections for Discord-like applications, providing
+    real-time communication, user presence management, message broadcasting, and
+    static file serving. It supports custom data providers through callback registration
+    and includes mock data functionality for testing.
+
+    The server automatically detects websockets library version and enables HTTP support
+    when available (websockets 10.0+ with Python 3.8+).
+
+    Attributes:
+        port (int): The port number the server listens on.
+        host (str): The hostname or IP address the server binds to.
+        server: The websockets server instance.
+        connections (set): Set of active WebSocket connections.
+        static_dir (Path): Directory path for serving static files.
+        mock_provider (MockDataProvider): Provider for mock test data.
+
+    Example:
+        Basic usage::
+
+            server = WebSocketServer(port=3000, host="localhost")
+            await server.run_forever()
+
+        With custom data callbacks::
+
+            def get_servers():
+                return {
+                    "server1": {"id": "server1", "name": "My Server", "default": True}
+                }
+            
+            def get_users(server_id):
+                return {
+                    "user123": {
+                        "uid": "user123",
+                        "username": "JohnDoe",
+                        "status": "online",
+                        "roleColor": "#3498db"
+                    }
+                }
+            
+            server = WebSocketServer()
+            server.on_get_server_data(get_servers)
+            server.on_get_user_data(get_users)
+            await server.run_forever()
+    """
     
     def __init__(self, port: int = 3000, host: str = "localhost"):
+        """Initialize the WebSocket server.
+
+        Args:
+            port: The port number to listen on. Defaults to 3000.
+            host: The hostname or IP address to bind to. Defaults to "localhost".
+                  Use "0.0.0.0" to accept connections from any interface.
+
+        Note:
+            The server initializes with mock data provider by default. Register custom
+            callbacks using on_get_server_data() and on_get_user_data() to override
+            mock data behavior.
+        """
         self.port = port
         self.host = host
         self.server = None  # WebSocket server instance
         self.connections: set = set()  # Store active connections
-        self._on_get_server_data = None  # Callback for getting server data
-        self._on_get_user_data = None  # Callback for getting user data
-        self._on_static_request = None  # Callback for custom static file handling
+        self._on_get_server_data: Optional[Callable[[], Awaitable[Dict[str, Dict[str, Any]]]]] = None
+        self._on_get_user_data: Optional[Callable[[str], Awaitable[Dict[str, Dict[str, Any]]]]] = None
+        self._on_static_request: Optional[Callable[[str], Awaitable[Optional[Tuple[str, str]]]]] = None
         self.static_dir = Path(__file__).parent / "dist"  # Default static directory
-        self._on_validate_discord_user = None  # Callback for validating Discord OAuth users
-        self._on_get_client_id = None  # Callback for getting OAuth2 client ID
+        self._on_validate_discord_user: Optional[Callable[[str, Dict[str, Any], str], Awaitable[bool]]] = None
+        self._on_get_client_id: Optional[Callable[[str], Awaitable[str]]] = None
         self.mock_provider = MockDataProvider(self)  # Mock data provider
     
     async def start(self) -> None:
-        """Start the WebSocket server."""
+        """Start the WebSocket server and wait for it to close.
+
+        This method initializes the websockets server with the configured host and port,
+        registers the connection handler and HTTP request processor, and then waits
+        for the server to close.
+
+        Returns:
+            None
+
+        Raises:
+            OSError: If the port is already in use or network binding fails.
+            Exception: For other server startup failures.
+
+        Note:
+            This method blocks until the server is stopped. Use run_forever() for
+            a more convenient async context manager approach.
+        """
         self.server = await websockets.serve(
             self._handler, 
             self.host, 
@@ -39,14 +147,51 @@ class WebSocketServer:
         await self.server.wait_closed()
   
     async def stop(self) -> None:
-        """Stop the WebSocket server."""
+        """Gracefully stop the WebSocket server.
+
+        This method closes the server and waits for all existing connections to terminate.
+        Active connections are allowed to finish their current operations before shutdown.
+
+        Returns:
+            None
+
+        Note:
+            After calling this method, the server can be restarted by calling start() again.
+        """
         if self.server:
             self.server.close()
             await self.server.wait_closed()
             print("WebSocket server stopped")
 
     async def broadcast_message(self, server: str, uid: str, message: str, channel: str) -> None:
-        """Broadcast a message to all connected clients on the specified server."""
+        """Broadcast a chat message to all clients connected to the specified server.
+
+        Sends a message from a user to all WebSocket clients currently connected to
+        the same Discord server. Automatically handles connection failures and removes
+        closed connections.
+
+        Args:
+            server: The Discord server ID where the message is sent.
+            uid: The user ID of the message sender.
+            message: The text content of the message.
+            channel: The channel ID where the message is posted.
+
+        Returns:
+            None
+
+        Raises:
+            websockets.ConnectionClosed: When attempting to send to a closed connection
+                (handled internally, connection is removed).
+
+        Examples:
+
+            await server.broadcast_message(
+                server="232769614004748288",
+                uid="user123",
+                message="Hello everyone!",
+                channel="general"
+            )
+        """
         # Filter connections to only include those connected to the specified server
         # Use discordServer like the original implementation
         server_connections = [ws for ws in self.connections if hasattr(ws, 'discordServer') and ws.discordServer == server]
@@ -82,33 +227,168 @@ class WebSocketServer:
                 # Optionally remove problematic connections
                 self.connections.discard(websocket)
 
-    def on_get_server_data(self, callback):
-        """Allow external code to register a callback"""
+    def on_get_server_data(self, callback: Callable[[], Awaitable[Dict[str, Dict[str, Any]]]]) -> None:
+        """Register a callback to provide server configuration data.
+
+        The callback function will be called to retrieve the list of available Discord
+        servers and their configurations. This overrides the default mock data provider.
+
+        Args:
+            callback: An async callable that returns a dictionary of server configurations.
+                Expected signature: async def callback() -> Dict[str, Dict[str, Any]]
+                Each server dict should contain: id, name, default (bool), passworded (bool)
+
+        Returns:
+            None
+
+        Examples:
+
+            async def get_servers():
+                return {
+                    "server1": {
+                        "id": "server1",
+                        "name": "My Server",
+                        "default": True,
+                        "passworded": False
+                    }
+                }
+            
+            server.on_get_server_data(get_servers)
+        """
         self._on_get_server_data = callback
     
-    def on_get_user_data(self, callback):
-        """Allow external code to register a callback"""
+    def on_get_user_data(self, callback: Callable[[str], Awaitable[Dict[str, Dict[str, Any]]]]) -> None:
+        """Register a callback to provide user data for a specific server.
+
+        The callback function will be called to retrieve user information for clients
+        connecting to a Discord server. This overrides the default mock data provider.
+
+        Args:
+            callback: An async callable that takes a server ID and returns user data.
+                Expected signature: async def callback(server_id: str) -> Dict[str, Dict[str, Any]]
+                Each user dict should contain: uid, username, status, roleColor
+
+        Returns:
+            None
+
+        Examples:
+
+            async def get_users(server_id):
+                return {
+                    "user123": {
+                        "uid": "user123",
+                        "username": "JohnDoe",
+                        "status": "online",
+                        "roleColor": "#3498db"
+                    }
+                }
+            
+            server.on_get_user_data(get_users)
+        """
         self._on_get_user_data = callback
 
-    def on_static_request(self, callback):
-        """Allow external code to register a callback for custom static file handling.
+    def on_static_request(self, callback: Callable[[str], Awaitable[Optional[Tuple[str, str]]]]) -> None:
+        """Register a callback for custom static file handling.
         
-        The callback should take a path parameter and return either:
-        - None: Let default handler process the request
-        - (content_type, content): Return custom content
+        The callback function allows you to serve custom content for specific paths,
+        overriding the default static file handler. Return None to use default handling.
+
+        Args:
+            callback: An async callable that takes a path and returns custom content.
+                Expected signature: async def callback(path: str) -> Optional[Tuple[str, str]]
+                Return None to let default handler process the request, or
+                return (content_type, content) to serve custom content.
+
+        Returns:
+            None
+
+        Examples:
+
+            async def custom_handler(path):
+                if path == "/api/custom":
+                    return "application/json", '{"status": "ok"}'
+                return None  # Let default handler take over
+            
+            server.on_static_request(custom_handler)
         """
         self._on_static_request = callback
 
-    def on_validate_discord_user(self, callback):
-        """Allow external code to register a Discord user validation callback"""
+    def on_validate_discord_user(self, callback: Callable[[str, Dict[str, Any], str], Awaitable[bool]]) -> None:
+        """Register a callback to validate Discord OAuth users.
+
+        The callback function will be called to verify Discord OAuth tokens and
+        validate user permissions for accessing the WebSocket server.
+
+        Args:
+            callback: An async callable that validates a Discord OAuth token and user info.
+                Expected signature: async def callback(token: str, user_info: Dict[str, Any], server_id: str) -> bool
+                Should return True if the user is valid and authorized.
+
+        Returns:
+            None
+
+        Examples:
+
+            async def validate_user(token, user_info, server_id):
+                # Verify token with Discord API
+                # Check user permissions for the specific server
+                return is_valid and is_authorized
+            
+            server.on_validate_discord_user(validate_user)
+        """
         self._on_validate_discord_user = callback
 
-    def on_get_client_id(self, callback):
-        """Allow external code to register a callback to get OAuth2 client ID"""
+    def on_get_client_id(self, callback: Callable[[str], Awaitable[str]]) -> None:
+        """Register a callback to provide the OAuth2 client ID.
+
+        The callback function should return the Discord OAuth2 application client ID
+        used for authentication. This is sent to connecting clients for OAuth flow.
+
+        Args:
+            callback: An async callable that returns the OAuth2 client ID for a server.
+                Expected signature: async def callback(server_id: str) -> str
+                Should return the Discord application client ID string.
+
+        Returns:
+            None
+
+        Examples:
+
+            async def get_client_id(server_id):
+                return "123456789012345678"
+            
+            server.on_get_client_id(get_client_id)
+        """
         self._on_get_client_id = callback
 
     async def run_forever(self) -> None:
-        """Run the server forever."""
+        """Run the server forever with automatic HTTP support detection.
+
+        This method starts the WebSocket server and automatically detects whether
+        HTTP static file serving is supported based on the Python version and websockets
+        library version. Falls back to WebSocket-only mode if HTTP support is unavailable.
+
+        HTTP support requires:
+            - Python 3.8 or higher
+            - websockets 10.0 or higher
+            - Available HTTP import modules (websockets.http11 or websockets.http)
+
+        Returns:
+            None
+
+        Raises:
+            Exception: If server fails to start on the configured host and port.
+            KeyboardInterrupt: When server is interrupted by user (handled gracefully).
+
+        Examples:
+
+            server = WebSocketServer(port=3000)
+            await server.run_forever()  # Runs until interrupted
+
+        Note:
+            This method runs indefinitely until interrupted. Use asyncio.create_task()
+            if you need to run other async operations concurrently.
+        """
         # For Python 3.8+ compatibility, start with WebSocket-only mode
         # and only try HTTP if we're confident it will work
         has_http_support = False
@@ -295,7 +575,23 @@ class WebSocketServer:
             return None
 
     async def _process_request(self, path, request_headers):
-        """Process incoming WebSocket connection requests and HTTP requests for static files."""
+        """Process incoming HTTP and WebSocket upgrade requests.
+
+        Determines whether an incoming request is a WebSocket upgrade or HTTP request
+        and routes it appropriately. Handles different parameter formats across various
+        websockets library versions (10.x, 13.x, 15.x).
+
+        Args:
+            path: Request path string or connection object (version-dependent)
+            request_headers: Headers object or Request object (version-dependent)
+
+        Returns:
+            Response: HTTP response object for static file requests
+            None: For WebSocket upgrade requests (allows handshake to proceed)
+
+        Raises:
+            Exception: Logs errors but attempts fallback to static file serving
+        """
         
         # Handle different parameter types across websockets versions
         actual_path = path
@@ -395,7 +691,21 @@ class WebSocketServer:
             return http_response
 
     async def _serve_static_file(self, path: str):
-        """Serve static files for HTTP requests."""
+        """Serve static files and handle special API endpoints via HTTP.
+
+        Serves files from the static directory, processes custom static request callbacks,
+        and handles the /api/version endpoint. Includes security checks to prevent
+        directory traversal attacks.
+
+        Args:
+            path: URL path requested by the client
+
+        Returns:
+            Response: HTTP response object with appropriate status, headers, and content
+
+        Raises:
+            Exception: Returns 500 Internal Server Error response on failures
+        """
         try:
             # Get HTTP classes for compatibility
             use_new_http, Response, Headers, websockets_version = self._get_http_classes()
@@ -462,7 +772,17 @@ class WebSocketServer:
             return self._create_http_response(500, "Internal Server Error", "text/plain", b"Internal Server Error", use_new_http, Response, Headers, websockets_version)
 
     async def _serve_version_api(self):
-        """Serve version information as JSON API."""
+        """Serve package version information as JSON API endpoint.
+
+        Handles GET requests to /api/version and returns the current package
+        version in JSON format.
+
+        Returns:
+            Response: HTTP response with JSON containing {"version": "x.y.z"}
+
+        Raises:
+            Exception: Returns 500 Internal Server Error response on failures
+        """
         try:
             # Get HTTP classes for compatibility
             use_new_http, Response, Headers, websockets_version = self._get_http_classes()
@@ -483,7 +803,23 @@ class WebSocketServer:
             return self._create_http_response(500, "Internal Server Error", "text/plain", b"Internal Server Error", use_new_http, Response, Headers, websockets_version)
 
     async def _handler(self, websocket, path=None) -> None:
-        """Handle WebSocket connections and messages."""
+        """Handle WebSocket connections, authentication, and message routing.
+
+        Main WebSocket connection handler that manages the connection lifecycle,
+        sends initial server list, processes incoming messages, and handles errors.
+        Automatically cleans up connections on disconnect.
+
+        Args:
+            websocket: WebSocket connection object
+            path: Optional URL path from the connection (may be None)
+
+        Returns:
+            None
+
+        Raises:
+            websockets.ConnectionClosed: Handled gracefully on disconnect
+            Exception: Logged and cleaned up
+        """
         print(f"[CONNECT] Client connected to path: {path}")
         # Store the connection
         self.connections.add(websocket)
@@ -543,7 +879,26 @@ class WebSocketServer:
             self.connections.discard(websocket)
 
     async def _handle_connect(self, websocket, data: Dict[str, Any]) -> None:
-        """Handle client connect requests."""
+        """Handle client connection requests to Discord servers with authentication.
+
+        Processes connection requests, validates authentication (OAuth2 or legacy password),
+        retrieves user data for the requested server, and sends join confirmation. Starts
+        mock data providers if using default mock data.
+
+        Args:
+            websocket: WebSocket connection object
+            data: Connection request data containing:
+                - server: Server ID to connect to
+                - password: Optional legacy password
+                - discordToken: Optional OAuth2 access token
+                - discordUser: Optional OAuth2 user information
+
+        Returns:
+            None
+
+        Raises:
+            Exception: Sends error message to client on failure
+        """
         server_id = data["data"].get("server", "default")
         password = data["data"].get("password", None)  # Legacy password support
         discord_token = data["data"].get("discordToken", None)  # OAuth2 token
@@ -666,7 +1021,22 @@ class WebSocketServer:
             asyncio.create_task(self.mock_provider.periodic_status_updates(websocket))
 
     async def _validate_discord_oauth(self, token: str, user_info: Dict[str, Any], discord_server_id: str) -> bool:
-        """Validate Discord OAuth2 token and check if user has access to the server."""
+        """Validate Discord OAuth2 token and verify user server membership.
+
+        Checks OAuth2 token validity and user information. Uses custom validation
+        callback if registered, otherwise provides mock validation for testing.
+
+        Args:
+            token: Discord OAuth2 access token
+            user_info: Discord user information dict containing id, username, etc.
+            discord_server_id: Discord server ID to validate access for
+
+        Returns:
+            bool: True if token is valid and user has access, False otherwise
+
+        Raises:
+            Exception: Returns False on validation errors
+        """
         try:
             # In a real implementation, you would:
             # 1. Validate the token with Discord API
@@ -699,7 +1069,42 @@ class WebSocketServer:
             return False
 
     async def broadcast_presence(self, server: str, uid: str, status: str, username: str = None, role_color: str = None, delete: bool = False) -> None:
-        """Broadcast a presence update to all connected clients on the specified server."""
+        """Broadcast a user presence update to all clients connected to a server.
+
+        Sends presence information (online status, username, role color) to all
+        WebSocket connections associated with the specified Discord server. Used
+        to notify clients when users come online, go offline, or change status.
+
+        Args:
+            server: Discord server ID to broadcast to
+            uid: User ID whose presence is being updated
+            status: User's current status ("online", "idle", "dnd", "offline")
+            username: Optional username to include in the update
+            role_color: Optional hex color code for the user's role (e.g., "#ff6b6b")
+            delete: If True, indicates the user should be removed from the presence list
+
+        Returns:
+            None
+
+        Examples:
+
+            # Broadcast user coming online
+            await server.broadcast_presence(
+                server="232769614004748288",
+                uid="123456789012345001",
+                status="online",
+                username="vegeta897",
+                role_color="#ff6b6b"
+            )
+            
+            # Broadcast user going offline
+            await server.broadcast_presence(
+                server="232769614004748288",
+                uid="123456789012345001",
+                status="offline",
+                delete=True
+            )
+        """
         # Filter connections to only include those connected to the specified server
         server_connections = [ws for ws in self.connections if hasattr(ws, 'discordServer') and ws.discordServer == server]
         
@@ -743,7 +1148,27 @@ class WebSocketServer:
                 self.connections.discard(websocket)
 
     async def broadcast_client_id_update(self, server: str, client_id: str) -> None:
-        """Broadcast a client ID update to all connected clients on the specified server."""
+        """Broadcast an OAuth2 client ID update to all clients connected to a server.
+
+        Sends the Discord OAuth2 application client ID to all WebSocket connections
+        associated with the specified Discord server. Used to dynamically update
+        the client ID for OAuth authentication flows.
+
+        Args:
+            server: Discord server ID to broadcast to
+            client_id: Discord OAuth2 application client ID to send
+
+        Returns:
+            None
+
+        Examples:
+
+            # Update client ID for all connections to a server
+            await server.broadcast_client_id_update(
+                server="232769614004748288",
+                client_id="123456789012345678"
+            )
+        """
         # Filter connections to only include those connected to the specified server
         server_connections = [ws for ws in self.connections if hasattr(ws, 'discordServer') and ws.discordServer == server]
         
@@ -778,7 +1203,23 @@ class WebSocketServer:
 
 
 def parse_args():
-    """Parse command-line arguments."""
+    """Parse command-line arguments for the D-Back WebSocket server.
+
+    Provides command-line interface for configuring server parameters including
+    port, host, static file directory, and version information.
+
+    Returns:
+        argparse.Namespace: Parsed arguments containing:
+            - port (int): Server port number (default: 3000)
+            - host (str): Server hostname (default: 'localhost')
+            - static_dir (str): Custom static files directory (default: None)
+
+    Examples:
+
+        $ python -m d_back --port 8080 --host 0.0.0.0
+        $ python -m d_back --static-dir ./my-static-files
+        $ python -m d_back --version
+    """
     parser = argparse.ArgumentParser(
         description='D-Back WebSocket Server',
         formatter_class=argparse.ArgumentDefaultsHelpFormatter
@@ -809,7 +1250,19 @@ def parse_args():
     return parser.parse_args()
 
 def get_version():
-    """Get the current version of d_back."""
+    """Get the current version of the d_back package.
+
+    Attempts to retrieve the version from the package's __version__ attribute.
+    Falls back to "unknown" if the version cannot be determined.
+
+    Returns:
+        str: The package version string (e.g., "0.0.12") or "unknown".
+
+    Examples:
+
+        >>> get_version()
+        '0.0.12'
+    """
     try:
         from . import __version__
         return __version__
@@ -817,7 +1270,33 @@ def get_version():
         return "unknown"
 
 async def main():
-    """Main async entry point."""
+    """Main async entry point for the D-Back WebSocket server.
+
+    Parses command-line arguments, initializes the WebSocket server with the
+    specified configuration, and starts the server in run-forever mode.
+
+    This function handles:
+        - Argument parsing for port, host, and static directory
+        - Server initialization and configuration
+        - Static directory validation
+        - Server startup and lifecycle management
+
+    Returns:
+        None
+
+    Raises:
+        Exception: If server fails to start or encounters fatal errors.
+        KeyboardInterrupt: Propagated from server interruption.
+
+    Examples:
+
+        # Run with default settings
+        await main()
+
+    Note:
+        This is the primary entry point when running d_back as a module.
+        Use main_sync() for synchronous execution from __main__.
+    """
     args = parse_args()
     
     print(f"Starting D-Back WebSocket Server v{get_version()}")
@@ -841,7 +1320,23 @@ async def main():
     await server.run_forever()
 
 def main_sync():
-    """Synchronous entry point for the server."""
+    """Synchronous entry point wrapper for the D-Back WebSocket server.
+
+    Wraps the async main() function in asyncio.run() to provide a synchronous
+    entry point. Handles KeyboardInterrupt gracefully for clean server shutdown.
+
+    Returns:
+        None
+
+    Examples:
+
+        if __name__ == "__main__":
+            main_sync()
+
+    Note:
+        This is the entry point used when running as a script or via setuptools
+        console_scripts. It ensures proper async context management.
+    """
     try:
         asyncio.run(main())
     except KeyboardInterrupt:

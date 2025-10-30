@@ -69,3 +69,8 @@ coverage.xml
 
 
 /allure-results/
+
+# MkDocs documentation
+/site/
+.mkdocs_cache/
+
