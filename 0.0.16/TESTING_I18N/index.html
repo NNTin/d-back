@@ -1,0 +1,1496 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="WebSocket server for Discord integration with d-zone ambient life simulation">
+      
+      
+        <meta name="author" content="Tin Nguyen">
+      
+      
+        <link rel="canonical" href="https://nntin.github.io/d-back/0.0.16/TESTING_I18N/">
+      
+      
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.22">
+    
+    
+      
+        <title>Testing Multilingual Documentation - d-back Documentation</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.84d31ad4.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/_mkdocstrings.css">
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="blue">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#testing-multilingual-documentation" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      <div data-md-color-scheme="default" data-md-component="outdated" hidden>
+        
+      </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="d-back Documentation" class="md-header__button md-logo" aria-label="d-back Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            d-back Documentation
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Testing Multilingual Documentation
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="blue"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="blue"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+      <div class="md-header__option">
+  <div class="md-select">
+    
+    <button class="md-header__button md-icon" aria-label="Select language">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m12.87 15.07-2.54-2.51.03-.03A17.5 17.5 0 0 0 14.07 6H17V4h-7V2H8v2H1v2h11.17C11.5 7.92 10.44 9.75 9 11.35 8.07 10.32 7.3 9.19 6.69 8h-2c.73 1.63 1.73 3.17 2.98 4.56l-5.09 5.02L4 19l5-5 3.11 3.11zM18.5 10h-2L12 22h2l1.12-3h4.75L21 22h2zm-2.62 7 1.62-4.33L19.12 17z"/></svg>
+    </button>
+    <div class="md-select__inner">
+      <ul class="md-select__list">
+        
+          <li class="md-select__item">
+            <a href="./" hreflang="en" class="md-select__link">
+              English
+            </a>
+          </li>
+        
+          <li class="md-select__item">
+            <a href="../es/TESTING_I18N/" hreflang="es" class="md-select__link">
+              Español
+            </a>
+          </li>
+        
+          <li class="md-select__item">
+            <a href="../de/TESTING_I18N/" hreflang="de" class="md-select__link">
+              Deutsch
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</div>
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/NNTin/d-back" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    NNTin/d-back
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href=".." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../getting-started/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Getting Started
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../user-guide/" class="md-tabs__link">
+          
+  
+  
+  User Guide
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../api-reference/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  API Reference
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../developer-guide/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Developer Guide
+
+      </a>
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="d-back Documentation" class="md-nav__button md-logo" aria-label="d-back Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    d-back Documentation
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/NNTin/d-back" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    NNTin/d-back
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Home
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../getting-started/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Getting Started
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    User Guide
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            User Guide
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../user-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Overview
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../user-guide/configuration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Configuration
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../user-guide/callbacks/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Callbacks & Customization
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../user-guide/custom-data-providers/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Custom Data Providers
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../api-reference/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    API Reference
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../developer-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Developer Guide
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#prerequisites" class="md-nav__link">
+    <span class="md-ellipsis">
+      Prerequisites
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#local-testing" class="md-nav__link">
+    <span class="md-ellipsis">
+      Local Testing
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Local Testing">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-serve-documentation-locally" class="md-nav__link">
+    <span class="md-ellipsis">
+      1. Serve Documentation Locally
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-test-language-switching" class="md-nav__link">
+    <span class="md-ellipsis">
+      2. Test Language Switching
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-test-fallback-behavior" class="md-nav__link">
+    <span class="md-ellipsis">
+      3. Test Fallback Behavior
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-test-all-pages" class="md-nav__link">
+    <span class="md-ellipsis">
+      4. Test All Pages
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#build-testing" class="md-nav__link">
+    <span class="md-ellipsis">
+      Build Testing
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Build Testing">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-build-all-languages" class="md-nav__link">
+    <span class="md-ellipsis">
+      1. Build All Languages
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-verify-build-output" class="md-nav__link">
+    <span class="md-ellipsis">
+      2. Verify Build Output
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-verify-html-language-links" class="md-nav__link">
+    <span class="md-ellipsis">
+      3. Verify HTML Language Links
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-serve-built-site" class="md-nav__link">
+    <span class="md-ellipsis">
+      4. Serve Built Site
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#validation-checklist" class="md-nav__link">
+    <span class="md-ellipsis">
+      Validation Checklist
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#common-issues-and-solutions" class="md-nav__link">
+    <span class="md-ellipsis">
+      Common Issues and Solutions
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Common Issues and Solutions">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#issue-language-selector-not-appearing" class="md-nav__link">
+    <span class="md-ellipsis">
+      Issue: Language Selector Not Appearing
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#issue-translations-not-loading" class="md-nav__link">
+    <span class="md-ellipsis">
+      Issue: Translations Not Loading
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#issue-navigation-not-translated" class="md-nav__link">
+    <span class="md-ellipsis">
+      Issue: Navigation Not Translated
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#issue-search-not-working-in-translated-versions" class="md-nav__link">
+    <span class="md-ellipsis">
+      Issue: Search Not Working in Translated Versions
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#issue-build-errors" class="md-nav__link">
+    <span class="md-ellipsis">
+      Issue: Build Errors
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#testing-commands-summary" class="md-nav__link">
+    <span class="md-ellipsis">
+      Testing Commands Summary
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#testing-mike-versioning" class="md-nav__link">
+    <span class="md-ellipsis">
+      Testing Mike Versioning
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Testing Mike Versioning">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#prerequisites_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      Prerequisites
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#testing-version-deployment" class="md-nav__link">
+    <span class="md-ellipsis">
+      Testing Version Deployment
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#verification-checklist" class="md-nav__link">
+    <span class="md-ellipsis">
+      Verification Checklist
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#testing-version-switching" class="md-nav__link">
+    <span class="md-ellipsis">
+      Testing Version Switching
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#testing-multilingual-versioning" class="md-nav__link">
+    <span class="md-ellipsis">
+      Testing Multilingual Versioning
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cleanup-test-versions" class="md-nav__link">
+    <span class="md-ellipsis">
+      Cleanup Test Versions
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#common-issues" class="md-nav__link">
+    <span class="md-ellipsis">
+      Common Issues
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#next-steps" class="md-nav__link">
+    <span class="md-ellipsis">
+      Next Steps
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#additional-testing-advanced" class="md-nav__link">
+    <span class="md-ellipsis">
+      Additional Testing (Advanced)
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Additional Testing (Advanced)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#test-seo-and-alternate-links" class="md-nav__link">
+    <span class="md-ellipsis">
+      Test SEO and Alternate Links
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#test-search-functionality" class="md-nav__link">
+    <span class="md-ellipsis">
+      Test Search Functionality
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#test-mobile-responsiveness" class="md-nav__link">
+    <span class="md-ellipsis">
+      Test Mobile Responsiveness
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#reporting-issues" class="md-nav__link">
+    <span class="md-ellipsis">
+      Reporting Issues
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#conclusion" class="md-nav__link">
+    <span class="md-ellipsis">
+      Conclusion
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="testing-multilingual-documentation">Testing Multilingual Documentation<a class="headerlink" href="#testing-multilingual-documentation" title="Permanent link">&para;</a></h1>
+<p>This guide provides comprehensive instructions for testing the mkdocs-static-i18n multilingual documentation implementation for d-back.</p>
+<h2 id="prerequisites">Prerequisites<a class="headerlink" href="#prerequisites" title="Permanent link">&para;</a></h2>
+<p>Before testing, ensure the following are installed:</p>
+<ol>
+<li>
+<p><strong>Install mkdocs-static-i18n</strong>:
+   <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span>.<span class="o">[</span>docs<span class="o">]</span>
+</code></pre></div></p>
+</li>
+<li>
+<p><strong>Verify installation</strong>:
+   <div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>pip<span class="w"> </span>list<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>mkdocs-static-i18n
+</code></pre></div></p>
+</li>
+</ol>
+<p>You should see output similar to:
+   <div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>mkdocs-static-i18n    1.2.0
+</code></pre></div></p>
+<h2 id="local-testing">Local Testing<a class="headerlink" href="#local-testing" title="Permanent link">&para;</a></h2>
+<h3 id="1-serve-documentation-locally">1. Serve Documentation Locally<a class="headerlink" href="#1-serve-documentation-locally" title="Permanent link">&para;</a></h3>
+<p>Start the MkDocs development server:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>mkdocs<span class="w"> </span>serve
+</code></pre></div>
+<p><strong>Expected Output:</strong>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>INFO     -  Building documentation...
+<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>INFO     -  [i18n] enabling 3 language(s): [&#39;en&#39;, &#39;es&#39;, &#39;de&#39;]
+<a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>INFO     -  [i18n] default/main language: en
+<a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>INFO     -  Cleaning site directory
+<a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>INFO     -  Documentation built in 2.34 seconds
+<a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a>INFO     -  [00:00:00] Watching paths for changes: &#39;docs&#39;, &#39;mkdocs.yml&#39;
+<a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a>INFO     -  [00:00:00] Serving on http://127.0.0.1:8000/
+</code></pre></div></p>
+<p><strong>Expected Behavior:</strong>
+- Server starts on <code>http://127.0.0.1:8000/</code>
+- Default language (English) loads
+- Language selector appears in the top navigation bar (Material theme header)</p>
+<h3 id="2-test-language-switching">2. Test Language Switching<a class="headerlink" href="#2-test-language-switching" title="Permanent link">&para;</a></h3>
+<p>In your browser, navigate to <code>http://127.0.0.1:8000/</code>:</p>
+<ol>
+<li><strong>Locate the language selector</strong> in the top navigation bar (next to the search icon)</li>
+<li><strong>Click the language selector dropdown</strong></li>
+<li><strong>Select "Español"</strong>:</li>
+<li>URL should change to <code>/es/</code></li>
+<li>Page content should be in Spanish</li>
+<li>Navigation items should be translated (e.g., "Inicio", "Primeros Pasos")</li>
+<li><strong>Select "Deutsch"</strong>:</li>
+<li>URL should change to <code>/de/</code></li>
+<li>Page content should be in German</li>
+<li>Navigation items should be translated (e.g., "Startseite", "Erste Schritte")</li>
+<li><strong>Select "English"</strong>:</li>
+<li>URL should return to <code>/</code></li>
+<li>Page content should be in English</li>
+</ol>
+<p><strong>What to Check:</strong>
+- ✅ Navigation items are properly translated
+- ✅ Page content matches the selected language
+- ✅ Code examples remain in English (universal)
+- ✅ Links work correctly across language versions
+- ✅ No broken links or 404 errors</p>
+<h3 id="3-test-fallback-behavior">3. Test Fallback Behavior<a class="headerlink" href="#3-test-fallback-behavior" title="Permanent link">&para;</a></h3>
+<p>The configuration includes <code>fallback_to_default: true</code>, which means:</p>
+<ul>
+<li>If a translation file is missing, the English version will be displayed</li>
+<li>The language selector should still work</li>
+<li>No errors should occur</li>
+</ul>
+<p>To test this (optional):
+1. Temporarily rename a translation file (e.g., <code>getting-started.es.md</code> → <code>getting-started.es.md.bak</code>)
+2. Reload the Spanish version
+3. The English content should display
+4. Restore the file after testing</p>
+<h3 id="4-test-all-pages">4. Test All Pages<a class="headerlink" href="#4-test-all-pages" title="Permanent link">&para;</a></h3>
+<p>Navigate through all documentation pages in each language:</p>
+<p><strong>English (<code>/</code>):</strong>
+- Home (<code>/</code>)
+- Getting Started (<code>/getting-started/</code>)
+- User Guide (<code>/user-guide/</code>)
+  - Overview (<code>/user-guide/</code>)
+  - Configuration (<code>/user-guide/configuration/</code>)
+  - Callbacks &amp; Customization (<code>/user-guide/callbacks/</code>)
+  - Custom Data Providers (<code>/user-guide/custom-data-providers/</code>)
+- API Reference (<code>/api-reference/</code>)
+- Developer Guide (<code>/developer-guide/</code>)</p>
+<p><strong>Spanish (<code>/es/</code>):</strong>
+- Inicio (<code>/es/</code>)
+- Primeros Pasos (<code>/es/getting-started/</code>)
+- Guía del Usuario (<code>/es/user-guide/</code>)
+  - Resumen (<code>/es/user-guide/</code>)
+  - Configuración (<code>/es/user-guide/configuration/</code>)
+  - Callbacks y Personalización (<code>/es/user-guide/callbacks/</code>)
+  - Proveedores de Datos Personalizados (<code>/es/user-guide/custom-data-providers/</code>)
+- Referencia de API (<code>/es/api-reference/</code>)
+- Guía del Desarrollador (<code>/es/developer-guide/</code>)</p>
+<p><strong>German (<code>/de/</code>):</strong>
+- Startseite (<code>/de/</code>)
+- Erste Schritte (<code>/de/getting-started/</code>)
+- Benutzerhandbuch (<code>/de/user-guide/</code>)
+  - Übersicht (<code>/de/user-guide/</code>)
+  - Konfiguration (<code>/de/user-guide/configuration/</code>)
+  - Callbacks &amp; Anpassung (<code>/de/user-guide/callbacks/</code>)
+  - Benutzerdefinierte Datenanbieter (<code>/de/user-guide/custom-data-providers/</code>)
+- API-Referenz (<code>/de/api-reference/</code>)
+- Entwicklerhandbuch (<code>/de/developer-guide/</code>)</p>
+<h2 id="build-testing">Build Testing<a class="headerlink" href="#build-testing" title="Permanent link">&para;</a></h2>
+<h3 id="1-build-all-languages">1. Build All Languages<a class="headerlink" href="#1-build-all-languages" title="Permanent link">&para;</a></h3>
+<p>Build the complete documentation site:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>mkdocs<span class="w"> </span>build
+</code></pre></div>
+<p><strong>Expected Output:</strong>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>INFO     -  Cleaning site directory
+<a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>INFO     -  Building documentation to directory: /path/to/d-back/site
+<a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>INFO     -  [i18n] enabling 3 language(s): [&#39;en&#39;, &#39;es&#39;, &#39;de&#39;]
+<a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a>INFO     -  [i18n] default/main language: en
+<a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a>INFO     -  [i18n] building site for &#39;en&#39; to &#39;site/&#39;
+<a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a>INFO     -  [i18n] building site for &#39;es&#39; to &#39;site/es&#39;
+<a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a>INFO     -  [i18n] building site for &#39;de&#39; to &#39;site/de&#39;
+<a id="__codelineno-6-8" name="__codelineno-6-8" href="#__codelineno-6-8"></a>INFO     -  Documentation built in 3.21 seconds
+</code></pre></div></p>
+<h3 id="2-verify-build-output">2. Verify Build Output<a class="headerlink" href="#2-verify-build-output" title="Permanent link">&para;</a></h3>
+<p>Check that all three language versions were built:</p>
+<p><strong>Windows PowerShell:</strong>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="nb">Get-ChildItem</span> <span class="n">site</span> <span class="n">-Directory</span>
+</code></pre></div></p>
+<p><strong>macOS/Linux:</strong>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>ls<span class="w"> </span>-la<span class="w"> </span>site/
+</code></pre></div></p>
+<p><strong>Expected Structure:</strong>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>site/
+<a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>├── index.html             # English (default)
+<a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a>├── getting-started/
+<a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a>├── user-guide/
+<a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a>├── api-reference/
+<a id="__codelineno-9-6" name="__codelineno-9-6" href="#__codelineno-9-6"></a>├── developer-guide/
+<a id="__codelineno-9-7" name="__codelineno-9-7" href="#__codelineno-9-7"></a>├── es/                    # Spanish
+<a id="__codelineno-9-8" name="__codelineno-9-8" href="#__codelineno-9-8"></a>│   ├── index.html
+<a id="__codelineno-9-9" name="__codelineno-9-9" href="#__codelineno-9-9"></a>│   ├── getting-started/
+<a id="__codelineno-9-10" name="__codelineno-9-10" href="#__codelineno-9-10"></a>│   ├── user-guide/
+<a id="__codelineno-9-11" name="__codelineno-9-11" href="#__codelineno-9-11"></a>│   ├── api-reference/
+<a id="__codelineno-9-12" name="__codelineno-9-12" href="#__codelineno-9-12"></a>│   └── developer-guide/
+<a id="__codelineno-9-13" name="__codelineno-9-13" href="#__codelineno-9-13"></a>└── de/                    # German
+<a id="__codelineno-9-14" name="__codelineno-9-14" href="#__codelineno-9-14"></a>    ├── index.html
+<a id="__codelineno-9-15" name="__codelineno-9-15" href="#__codelineno-9-15"></a>    ├── getting-started/
+<a id="__codelineno-9-16" name="__codelineno-9-16" href="#__codelineno-9-16"></a>    ├── user-guide/
+<a id="__codelineno-9-17" name="__codelineno-9-17" href="#__codelineno-9-17"></a>    ├── api-reference/
+<a id="__codelineno-9-18" name="__codelineno-9-18" href="#__codelineno-9-18"></a>    └── developer-guide/
+</code></pre></div></p>
+<h3 id="3-verify-html-language-links">3. Verify HTML Language Links<a class="headerlink" href="#3-verify-html-language-links" title="Permanent link">&para;</a></h3>
+<p>Check that alternate language links are present in the HTML:</p>
+<p><strong>Check English page:</strong>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a>grep<span class="w"> </span>-A<span class="w"> </span><span class="m">5</span><span class="w"> </span><span class="s1">&#39;&lt;link rel=&quot;alternate&quot;&#39;</span><span class="w"> </span>site/index.html
+</code></pre></div></p>
+<p><strong>Expected Result:</strong>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a><span class="p">&lt;</span><span class="nt">link</span> <span class="na">rel</span><span class="o">=</span><span class="s">&quot;alternate&quot;</span> <span class="na">hreflang</span><span class="o">=</span><span class="s">&quot;en&quot;</span> <span class="na">href</span><span class="o">=</span><span class="s">&quot;/d-back/&quot;</span> <span class="p">/&gt;</span>
+<a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a><span class="p">&lt;</span><span class="nt">link</span> <span class="na">rel</span><span class="o">=</span><span class="s">&quot;alternate&quot;</span> <span class="na">hreflang</span><span class="o">=</span><span class="s">&quot;es&quot;</span> <span class="na">href</span><span class="o">=</span><span class="s">&quot;/d-back/es/&quot;</span> <span class="p">/&gt;</span>
+<a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a><span class="p">&lt;</span><span class="nt">link</span> <span class="na">rel</span><span class="o">=</span><span class="s">&quot;alternate&quot;</span> <span class="na">hreflang</span><span class="o">=</span><span class="s">&quot;de&quot;</span> <span class="na">href</span><span class="o">=</span><span class="s">&quot;/d-back/de/&quot;</span> <span class="p">/&gt;</span>
+</code></pre></div></p>
+<h3 id="4-serve-built-site">4. Serve Built Site<a class="headerlink" href="#4-serve-built-site" title="Permanent link">&para;</a></h3>
+<p>Test the built site locally:</p>
+<p><strong>Windows PowerShell:</strong>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a><span class="n">python</span> <span class="n">-m</span> <span class="n">http</span><span class="p">.</span><span class="n">server</span> <span class="n">8000</span> <span class="p">-</span><span class="n">-directory</span> <span class="n">site</span>
+</code></pre></div></p>
+<p><strong>macOS/Linux:</strong>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a><span class="nb">cd</span><span class="w"> </span>site<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>python<span class="w"> </span>-m<span class="w"> </span>http.server<span class="w"> </span><span class="m">8000</span>
+</code></pre></div></p>
+<p>Navigate to <code>http://localhost:8000</code> and test language switching as before.</p>
+<h2 id="validation-checklist">Validation Checklist<a class="headerlink" href="#validation-checklist" title="Permanent link">&para;</a></h2>
+<p>Use this checklist to validate the implementation:</p>
+<ul>
+<li>[ ] <strong>Language selector appears</strong> in the navigation bar</li>
+<li>[ ] <strong>All three languages selectable</strong> (English, Español, Deutsch)</li>
+<li>[ ] <strong>Navigation items translated correctly</strong> according to <code>nav_translations</code> in <code>mkdocs.yml</code></li>
+<li>[ ] <strong>Page content is translated</strong> (except code examples)</li>
+<li>[ ] <strong>Code examples remain in English</strong> (universal programming language)</li>
+<li>[ ] <strong>Links work across languages</strong> (relative links resolve correctly)</li>
+<li>[ ] <strong>Search works in each language</strong> (Material theme search)</li>
+<li>[ ] <strong>Fallback to English works</strong> for missing translations</li>
+<li>[ ] <strong>No console errors</strong> in browser developer tools</li>
+<li>[ ] <strong>Material theme features work</strong> in all languages (navigation, search, dark mode)</li>
+<li>[ ] <strong>Build completes successfully</strong> without errors or warnings</li>
+<li>[ ] <strong>All three language directories exist</strong> in <code>site/</code> after build</li>
+<li>[ ] <strong>Alternate language links present</strong> in HTML <code>&lt;head&gt;</code> tags</li>
+</ul>
+<h2 id="common-issues-and-solutions">Common Issues and Solutions<a class="headerlink" href="#common-issues-and-solutions" title="Permanent link">&para;</a></h2>
+<h3 id="issue-language-selector-not-appearing">Issue: Language Selector Not Appearing<a class="headerlink" href="#issue-language-selector-not-appearing" title="Permanent link">&para;</a></h3>
+<p><strong>Symptoms:</strong> Language selector is missing from the navigation bar</p>
+<p><strong>Solutions:</strong>
+1. Verify <code>reconfigure_material: true</code> is set in <code>mkdocs.yml</code>:
+   <div class="highlight"><pre><span></span><code><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a><span class="nt">plugins</span><span class="p">:</span>
+<a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a><span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">i18n</span><span class="p">:</span>
+<a id="__codelineno-14-3" name="__codelineno-14-3" href="#__codelineno-14-3"></a><span class="w">      </span><span class="nt">reconfigure_material</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+</code></pre></div>
+2. Check that <code>navigation.instant</code> feature is NOT enabled in theme features (it conflicts with language switcher)
+3. Clear browser cache and reload: <code>Ctrl+Shift+R</code> (Windows/Linux) or <code>Cmd+Shift+R</code> (macOS)
+4. Rebuild with clean: <code>mkdocs build --clean</code></p>
+<h3 id="issue-translations-not-loading">Issue: Translations Not Loading<a class="headerlink" href="#issue-translations-not-loading" title="Permanent link">&para;</a></h3>
+<p><strong>Symptoms:</strong> Clicking language selector doesn't change content, or shows 404 errors</p>
+<p><strong>Solutions:</strong>
+1. Verify file naming follows suffix pattern: <code>index.es.md</code>, <code>index.de.md</code> (not folder structure)
+2. Check that files are in the correct directory (<code>docs/</code>, not <code>docs/es/</code> or <code>docs/de/</code>)
+3. Verify file extensions are <code>.md</code> not <code>.markdown</code>
+4. Rebuild: <code>mkdocs build --clean</code>
+5. Check MkDocs console output for build warnings</p>
+<h3 id="issue-navigation-not-translated">Issue: Navigation Not Translated<a class="headerlink" href="#issue-navigation-not-translated" title="Permanent link">&para;</a></h3>
+<p><strong>Symptoms:</strong> Navigation items remain in English in translated versions</p>
+<p><strong>Solutions:</strong>
+1. Verify <code>nav_translations</code> are correctly defined in <code>mkdocs.yml</code> for both <code>es</code> and <code>de</code>
+2. Check that navigation item names in <code>nav_translations</code> match EXACTLY the names in the <code>nav</code> section
+3. Verify YAML indentation is correct (use spaces, not tabs)
+4. Rebuild and check console output for warnings</p>
+<h3 id="issue-search-not-working-in-translated-versions">Issue: Search Not Working in Translated Versions<a class="headerlink" href="#issue-search-not-working-in-translated-versions" title="Permanent link">&para;</a></h3>
+<p><strong>Symptoms:</strong> Search returns no results or only English results in Spanish/German versions</p>
+<p><strong>Solutions:</strong>
+1. Verify <code>reconfigure_search: true</code> is set in <code>mkdocs.yml</code>:
+   <div class="highlight"><pre><span></span><code><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a><span class="nt">plugins</span><span class="p">:</span>
+<a id="__codelineno-15-2" name="__codelineno-15-2" href="#__codelineno-15-2"></a><span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">i18n</span><span class="p">:</span>
+<a id="__codelineno-15-3" name="__codelineno-15-3" href="#__codelineno-15-3"></a><span class="w">      </span><span class="nt">reconfigure_search</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+</code></pre></div>
+2. Check that <code>search</code> plugin is listed BEFORE <code>i18n</code> plugin in <code>plugins</code> list
+3. Rebuild with clean: <code>mkdocs build --clean</code></p>
+<h3 id="issue-build-errors">Issue: Build Errors<a class="headerlink" href="#issue-build-errors" title="Permanent link">&para;</a></h3>
+<p><strong>Symptoms:</strong> <code>mkdocs build</code> fails with errors</p>
+<p><strong>Solutions:</strong>
+1. Check MkDocs version: <code>mkdocs --version</code> (should be 1.5.0+)
+2. Check mkdocs-static-i18n version: <code>pip show mkdocs-static-i18n</code> (should be 1.2.0+)
+3. Verify YAML syntax in <code>mkdocs.yml</code> is valid
+4. Check for typos in language locales: must be <code>en</code>, <code>es</code>, <code>de</code> (not <code>en-US</code>, <code>es-ES</code>, etc.)
+5. Reinstall dependencies: <code>pip install -e .[docs] --force-reinstall</code></p>
+<h2 id="testing-commands-summary">Testing Commands Summary<a class="headerlink" href="#testing-commands-summary" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a><span class="c1"># Install dependencies</span>
+<a id="__codelineno-16-2" name="__codelineno-16-2" href="#__codelineno-16-2"></a>pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span>.<span class="o">[</span>docs<span class="o">]</span>
+<a id="__codelineno-16-3" name="__codelineno-16-3" href="#__codelineno-16-3"></a>
+<a id="__codelineno-16-4" name="__codelineno-16-4" href="#__codelineno-16-4"></a><span class="c1"># Verify installation</span>
+<a id="__codelineno-16-5" name="__codelineno-16-5" href="#__codelineno-16-5"></a>pip<span class="w"> </span>list<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>mkdocs-static-i18n
+<a id="__codelineno-16-6" name="__codelineno-16-6" href="#__codelineno-16-6"></a>
+<a id="__codelineno-16-7" name="__codelineno-16-7" href="#__codelineno-16-7"></a><span class="c1"># Serve locally with live reload</span>
+<a id="__codelineno-16-8" name="__codelineno-16-8" href="#__codelineno-16-8"></a>mkdocs<span class="w"> </span>serve
+<a id="__codelineno-16-9" name="__codelineno-16-9" href="#__codelineno-16-9"></a>
+<a id="__codelineno-16-10" name="__codelineno-16-10" href="#__codelineno-16-10"></a><span class="c1"># Build all languages</span>
+<a id="__codelineno-16-11" name="__codelineno-16-11" href="#__codelineno-16-11"></a>mkdocs<span class="w"> </span>build
+<a id="__codelineno-16-12" name="__codelineno-16-12" href="#__codelineno-16-12"></a>
+<a id="__codelineno-16-13" name="__codelineno-16-13" href="#__codelineno-16-13"></a><span class="c1"># Clean build (removes site/ directory first)</span>
+<a id="__codelineno-16-14" name="__codelineno-16-14" href="#__codelineno-16-14"></a>mkdocs<span class="w"> </span>build<span class="w"> </span>--clean
+<a id="__codelineno-16-15" name="__codelineno-16-15" href="#__codelineno-16-15"></a>
+<a id="__codelineno-16-16" name="__codelineno-16-16" href="#__codelineno-16-16"></a><span class="c1"># Serve built site</span>
+<a id="__codelineno-16-17" name="__codelineno-16-17" href="#__codelineno-16-17"></a>python<span class="w"> </span>-m<span class="w"> </span>http.server<span class="w"> </span><span class="m">8000</span><span class="w"> </span>--directory<span class="w"> </span>site
+</code></pre></div>
+<h2 id="testing-mike-versioning">Testing Mike Versioning<a class="headerlink" href="#testing-mike-versioning" title="Permanent link">&para;</a></h2>
+<p>This section explains how to test mike versioning locally with the multilingual setup.</p>
+<h3 id="prerequisites_1">Prerequisites<a class="headerlink" href="#prerequisites_1" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Ensure mike is installed: <code>pip list | grep mike</code></li>
+<li>Verify mkdocs.yml has <code>extra.version.provider: mike</code> configured</li>
+</ul>
+<h3 id="testing-version-deployment">Testing Version Deployment<a class="headerlink" href="#testing-version-deployment" title="Permanent link">&para;</a></h3>
+<p>Deploy test versions to verify mike integration:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a><span class="c1"># Deploy a test version</span>
+<a id="__codelineno-17-2" name="__codelineno-17-2" href="#__codelineno-17-2"></a>mike<span class="w"> </span>deploy<span class="w"> </span><span class="m">0</span>.0.14-test
+<a id="__codelineno-17-3" name="__codelineno-17-3" href="#__codelineno-17-3"></a>
+<a id="__codelineno-17-4" name="__codelineno-17-4" href="#__codelineno-17-4"></a><span class="c1"># Deploy with alias</span>
+<a id="__codelineno-17-5" name="__codelineno-17-5" href="#__codelineno-17-5"></a>mike<span class="w"> </span>deploy<span class="w"> </span><span class="m">0</span>.0.15-test<span class="w"> </span>latest
+<a id="__codelineno-17-6" name="__codelineno-17-6" href="#__codelineno-17-6"></a>
+<a id="__codelineno-17-7" name="__codelineno-17-7" href="#__codelineno-17-7"></a><span class="c1"># Set default version</span>
+<a id="__codelineno-17-8" name="__codelineno-17-8" href="#__codelineno-17-8"></a>mike<span class="w"> </span>set-default<span class="w"> </span>latest
+<a id="__codelineno-17-9" name="__codelineno-17-9" href="#__codelineno-17-9"></a>
+<a id="__codelineno-17-10" name="__codelineno-17-10" href="#__codelineno-17-10"></a><span class="c1"># List all versions</span>
+<a id="__codelineno-17-11" name="__codelineno-17-11" href="#__codelineno-17-11"></a>mike<span class="w"> </span>list
+<a id="__codelineno-17-12" name="__codelineno-17-12" href="#__codelineno-17-12"></a>
+<a id="__codelineno-17-13" name="__codelineno-17-13" href="#__codelineno-17-13"></a><span class="c1"># Serve versioned docs</span>
+<a id="__codelineno-17-14" name="__codelineno-17-14" href="#__codelineno-17-14"></a>mike<span class="w"> </span>serve
+</code></pre></div>
+<h3 id="verification-checklist">Verification Checklist<a class="headerlink" href="#verification-checklist" title="Permanent link">&para;</a></h3>
+<ul>
+<li>[ ] Version selector appears in top navigation bar</li>
+<li>[ ] Language selector appears alongside version selector</li>
+<li>[ ] Both selectors work independently without conflicts</li>
+<li>[ ] All three languages (English, Spanish, German) work in each version</li>
+<li>[ ] Switching versions preserves the selected language</li>
+<li>[ ] Switching languages preserves the selected version</li>
+<li>[ ] URLs follow pattern: <code>/version/language/</code> (e.g., <code>/latest/es/</code>, <code>/0.0.14/de/</code>)</li>
+<li>[ ] Default version loads correctly</li>
+<li>[ ] Version aliases resolve correctly</li>
+</ul>
+<h3 id="testing-version-switching">Testing Version Switching<a class="headerlink" href="#testing-version-switching" title="Permanent link">&para;</a></h3>
+<ol>
+<li>
+<p>Deploy multiple test versions:
+   <div class="highlight"><pre><span></span><code><a id="__codelineno-18-1" name="__codelineno-18-1" href="#__codelineno-18-1"></a>mike<span class="w"> </span>deploy<span class="w"> </span><span class="m">0</span>.0.14-test
+<a id="__codelineno-18-2" name="__codelineno-18-2" href="#__codelineno-18-2"></a>mike<span class="w"> </span>deploy<span class="w"> </span><span class="m">0</span>.0.15-test<span class="w"> </span>latest
+<a id="__codelineno-18-3" name="__codelineno-18-3" href="#__codelineno-18-3"></a>mike<span class="w"> </span>deploy<span class="w"> </span>dev-test<span class="w"> </span>dev
+<a id="__codelineno-18-4" name="__codelineno-18-4" href="#__codelineno-18-4"></a>mike<span class="w"> </span>set-default<span class="w"> </span>latest
+</code></pre></div></p>
+</li>
+<li>
+<p>Serve and test:
+   <div class="highlight"><pre><span></span><code><a id="__codelineno-19-1" name="__codelineno-19-1" href="#__codelineno-19-1"></a>mike<span class="w"> </span>serve
+</code></pre></div></p>
+</li>
+<li>
+<p>Visit http://localhost:8000 and verify:</p>
+</li>
+<li>Default version (latest) loads</li>
+<li>Version selector shows all three versions</li>
+<li>Clicking each version switches correctly</li>
+<li>Language selector works in each version</li>
+</ol>
+<h3 id="testing-multilingual-versioning">Testing Multilingual Versioning<a class="headerlink" href="#testing-multilingual-versioning" title="Permanent link">&para;</a></h3>
+<p><strong>Test English version:</strong>
+- Visit http://localhost:8000/latest/
+- Verify content is in English
+- Switch to version 0.0.14-test
+- Verify English content loads</p>
+<p><strong>Test Spanish version:</strong>
+- Visit http://localhost:8000/latest/es/
+- Verify content is in Spanish
+- Switch to version 0.0.14-test
+- Verify Spanish content loads</p>
+<p><strong>Test German version:</strong>
+- Visit http://localhost:8000/latest/de/
+- Verify content is in German
+- Switch to version 0.0.14-test
+- Verify German content loads</p>
+<h3 id="cleanup-test-versions">Cleanup Test Versions<a class="headerlink" href="#cleanup-test-versions" title="Permanent link">&para;</a></h3>
+<p>After testing, clean up test versions:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-20-1" name="__codelineno-20-1" href="#__codelineno-20-1"></a><span class="c1"># Delete test versions</span>
+<a id="__codelineno-20-2" name="__codelineno-20-2" href="#__codelineno-20-2"></a>mike<span class="w"> </span>delete<span class="w"> </span><span class="m">0</span>.0.14-test
+<a id="__codelineno-20-3" name="__codelineno-20-3" href="#__codelineno-20-3"></a>mike<span class="w"> </span>delete<span class="w"> </span><span class="m">0</span>.0.15-test
+<a id="__codelineno-20-4" name="__codelineno-20-4" href="#__codelineno-20-4"></a>mike<span class="w"> </span>delete<span class="w"> </span>dev-test
+<a id="__codelineno-20-5" name="__codelineno-20-5" href="#__codelineno-20-5"></a>
+<a id="__codelineno-20-6" name="__codelineno-20-6" href="#__codelineno-20-6"></a><span class="c1"># Verify deletion</span>
+<a id="__codelineno-20-7" name="__codelineno-20-7" href="#__codelineno-20-7"></a>mike<span class="w"> </span>list
+</code></pre></div>
+<h3 id="common-issues">Common Issues<a class="headerlink" href="#common-issues" title="Permanent link">&para;</a></h3>
+<p><strong>Issue:</strong> Version selector not appearing
+- Solution: Deploy at least two versions
+- Solution: Verify <code>extra.version.provider: mike</code> in mkdocs.yml</p>
+<p><strong>Issue:</strong> Language selector disappears when using mike
+- Solution: Verify <code>reconfigure_material: true</code> in i18n plugin configuration
+- Solution: Ensure mkdocs-static-i18n is installed</p>
+<p><strong>Issue:</strong> URLs not working correctly
+- Solution: Check that both mike and i18n plugins are properly configured
+- Solution: Clear browser cache and retry</p>
+<p><strong>Note:</strong> This testing is for local development only. GitHub Actions will handle automated deployment in production.</p>
+<h2 id="next-steps">Next Steps<a class="headerlink" href="#next-steps" title="Permanent link">&para;</a></h2>
+<p>After successful local testing:</p>
+<ol>
+<li><strong>Commit changes</strong> to your feature branch</li>
+<li><strong>Push to GitHub</strong></li>
+<li><strong>Create Pull Request</strong> for review</li>
+<li><strong>GitHub Actions</strong> (if configured) will automatically build and deploy to GitHub Pages</li>
+<li><strong>Future phase</strong>: Consider integrating Crowdin for community-driven translations</li>
+<li><strong>Future phase</strong>: Set up automated deployment workflow</li>
+</ol>
+<h2 id="additional-testing-advanced">Additional Testing (Advanced)<a class="headerlink" href="#additional-testing-advanced" title="Permanent link">&para;</a></h2>
+<h3 id="test-seo-and-alternate-links">Test SEO and Alternate Links<a class="headerlink" href="#test-seo-and-alternate-links" title="Permanent link">&para;</a></h3>
+<p>Use browser developer tools to verify alternate language links:</p>
+<ol>
+<li>Open browser developer tools (<code>F12</code>)</li>
+<li>Navigate to the Elements/Inspector tab</li>
+<li>Search for <code>&lt;link rel="alternate"</code></li>
+<li>Verify all three languages are listed with correct <code>hreflang</code> and <code>href</code> attributes</li>
+</ol>
+<h3 id="test-search-functionality">Test Search Functionality<a class="headerlink" href="#test-search-functionality" title="Permanent link">&para;</a></h3>
+<ol>
+<li>In each language version, use the search bar</li>
+<li>Search for a term that appears in documentation (e.g., "WebSocket", "server", "callback")</li>
+<li>Verify search results are relevant and in the correct language</li>
+<li>Verify search doesn't return duplicate results across languages</li>
+</ol>
+<h3 id="test-mobile-responsiveness">Test Mobile Responsiveness<a class="headerlink" href="#test-mobile-responsiveness" title="Permanent link">&para;</a></h3>
+<ol>
+<li>Open documentation in browser</li>
+<li>Open developer tools (<code>F12</code>)</li>
+<li>Toggle device toolbar (mobile view)</li>
+<li>Test language selector on mobile devices</li>
+<li>Verify navigation and content are properly responsive</li>
+</ol>
+<h2 id="reporting-issues">Reporting Issues<a class="headerlink" href="#reporting-issues" title="Permanent link">&para;</a></h2>
+<p>If you encounter issues during testing:</p>
+<ol>
+<li><strong>Check this guide first</strong> for solutions</li>
+<li><strong>Review MkDocs console output</strong> for error messages</li>
+<li><strong>Check browser console</strong> for JavaScript errors</li>
+<li><strong>Create a GitHub Issue</strong> with:</li>
+<li>Description of the problem</li>
+<li>Steps to reproduce</li>
+<li>Expected vs actual behavior</li>
+<li>Console output or error messages</li>
+<li>Environment details (OS, Python version, MkDocs version)</li>
+</ol>
+<h2 id="conclusion">Conclusion<a class="headerlink" href="#conclusion" title="Permanent link">&para;</a></h2>
+<p>The multilingual documentation implementation is complete when:</p>
+<ul>
+<li>✅ All pages exist in all three languages (English, Spanish, German)</li>
+<li>✅ Language selector works correctly</li>
+<li>✅ Navigation is properly translated</li>
+<li>✅ Build completes without errors</li>
+<li>✅ All validation checklist items are checked</li>
+</ul>
+<p>Happy testing! 🚀</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      Copyright &copy; 2025 Tin Nguyen
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        
+<div class="md-social">
+  
+    
+    
+    
+    
+    <a href="https://github.com/NNTin/d-back" target="_blank" rel="noopener" title="d-back on GitHub" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+    </a>
+  
+    
+    
+    
+    
+    <a href="https://pypi.org/project/d-back/" target="_blank" rel="noopener" title="d-back on PyPI" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.8 200.5c-7.7-30.9-22.3-54.2-53.4-54.2h-40.1v47.4c0 36.8-31.2 67.8-66.8 67.8H172.7c-29.2 0-53.4 25-53.4 54.3v101.8c0 29 25.2 46 53.4 54.3 33.8 9.9 66.3 11.7 106.8 0 26.9-7.8 53.4-23.5 53.4-54.3v-40.7H226.2v-13.6h160.2c31.1 0 42.6-21.7 53.4-54.2 11.2-33.5 10.7-65.7 0-108.6M286.2 444.7a20.4 20.4 0 1 1 0-40.7 20.4 20.4 0 1 1 0 40.7M167.8 248.1h106.8c29.7 0 53.4-24.5 53.4-54.3V91.9c0-29-24.4-50.7-53.4-55.6-35.8-5.9-74.7-5.6-106.8.1-45.2 8-53.4 24.7-53.4 55.6v40.7h106.9v13.6h-147c-31.1 0-58.3 18.7-66.8 54.2-9.8 40.7-10.2 66.1 0 108.6 7.6 31.6 25.7 54.2 56.8 54.2H101v-48.8c0-35.3 30.5-66.4 66.8-66.4m-6.6-183.4a20.4 20.4 0 1 1 0 40.8 20.4 20.4 0 1 1 0-40.8"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      <script id="__config" type="application/json">{"base": "..", "features": ["navigation.tabs", "navigation.sections", "navigation.expand", "navigation.top", "search.suggest", "search.highlight", "content.code.copy", "content.code.annotate"], "search": "../assets/javascripts/workers/search.973d3a69.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.f55a23d4.min.js"></script>
+      
+    
+  </body>
+</html>
