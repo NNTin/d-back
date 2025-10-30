@@ -241,6 +241,151 @@ Benötigte GitHub-Secrets (Repository → Settings → Secrets and variables →
 - `CROWDIN_PROJECT_ID` — Crowdin-Projekt-ID
 - `CROWDIN_PERSONAL_TOKEN` — Crowdin-Personal-Access-Token
 
+#### GitHub-Secrets einrichten
+
+Erstellen Sie die erforderlichen Secrets für die Crowdin-Integration:
+
+1. **Crowdin-Anmeldeinformationen erhalten:**
+   - **Project ID:** 
+     - Melden Sie sich bei Crowdin an
+     - Navigieren Sie zu Ihrem Projekt
+     - Gehen Sie zu Settings → API
+     - Kopieren Sie die Project ID (numerischer Wert)
+   - **Personal Access Token:**
+     - Gehen Sie zu Account Settings → API
+     - Klicken Sie auf "New Token"
+     - Name: "d-back GitHub Actions"
+     - Scopes: Wählen Sie "Projects" (read/write)
+     - Klicken Sie auf "Create"
+     - Kopieren Sie das Token sofort (es wird nicht erneut angezeigt)
+
+2. **Secrets zum GitHub-Repository hinzufügen:**
+   - Navigieren Sie zu: Repository → Settings → Secrets and variables → Actions
+   - Klicken Sie auf "New repository secret"
+   - Fügen Sie `CROWDIN_PROJECT_ID` hinzu:
+     - Name: `CROWDIN_PROJECT_ID`
+     - Value: Ihre Crowdin-Projekt-ID (numerisch)
+     - Klicken Sie auf "Add secret"
+   - Fügen Sie `CROWDIN_PERSONAL_TOKEN` hinzu:
+     - Name: `CROWDIN_PERSONAL_TOKEN`
+     - Value: Ihr Crowdin-Personal-Access-Token
+     - Klicken Sie auf "Add secret"
+
+3. **Secrets überprüfen:**
+   - Die Secrets sollten in der Repository-Secrets-Liste erscheinen
+   - Secret-Werte sind verborgen und können nach der Erstellung nicht angezeigt werden
+   - Nur Repository-Administratoren können Secrets verwalten
+
+**Wichtige Sicherheitshinweise:**
+- Committen Sie niemals Tokens oder Projekt-IDs in das Repository
+- Tokens haben vollen Zugriff auf Ihr Crowdin-Projekt - halten Sie sie sicher
+- Rotieren Sie Tokens regelmäßig aus Sicherheitsgründen
+- Verwenden Sie Repository-Secrets, nicht Environment-Secrets (für repository-spezifischen Zugriff)
+
+#### GitHub Actions Workflow
+
+**Übersicht:**
+
+Die Crowdin-Synchronisation ist über GitHub Actions automatisiert. Der Workflow ist in `.github/workflows/crowdin.yml` definiert und verwaltet:
+- Upload von englischen Quelldateien zu Crowdin bei Dokumentationsaktualisierungen
+- Download von Übersetzungen und Erstellung von Pull Requests zur Überprüfung
+
+**Workflow-Auslöser:**
+
+1. **Automatischer Upload (Push zu main):**
+   - Wird ausgelöst, wenn Dokumentationsdateien zur main-Branch gepusht werden
+   - Lädt neue/geänderte englische Quelldateien zu Crowdin hoch
+   - Übersetzer werden über neuen zu übersetzenden Inhalt benachrichtigt
+   - Läuft automatisch - keine manuelle Intervention erforderlich
+
+2. **Manueller Download (workflow_dispatch):**
+   - Wird manuell von der GitHub Actions UI ausgelöst
+   - Lädt fertiggestellte Übersetzungen von Crowdin herunter
+   - Erstellt einen Pull Request mit Übersetzungsaktualisierungen
+   - Ermöglicht Überprüfung vor dem Mergen der Übersetzungen
+
+**Funktionsweise:**
+
+1. **Quellen-Upload-Prozess:**
+   - Entwickler merged Dokumentationsänderungen zur main-Branch
+   - GitHub Actions erkennt Änderungen in `docs/**/*.md`-Dateien
+   - Workflow lädt geänderte englische Dateien zu Crowdin hoch
+   - Crowdin analysiert Änderungen und benachrichtigt Übersetzer
+   - Übersetzer sehen neue/geänderte Strings im Crowdin-Editor
+
+2. **Übersetzungs-Download-Prozess:**
+   - Maintainer löst den Workflow manuell von der GitHub Actions UI aus
+   - Workflow lädt fertiggestellte Übersetzungen von Crowdin herunter
+   - Erstellt einen neuen Branch: `crowdin-translations`
+   - Erstellt einen Pull Request mit Titel: "docs: update translations from Crowdin"
+   - PR enthält Labels: documentation, translations, crowdin
+   - Maintainer überprüft und merged den PR
+
+**Workflow testen:**
+
+1. **Quellen-Upload testen:**
+   - Machen Sie eine kleine Änderung an einer englischen Dokumentationsdatei (z.B.: fügen Sie einen Satz zu `docs/index.md` hinzu)
+   - Committen und pushen Sie zur main-Branch
+   - Navigieren Sie zu: Repository → Actions → Crowdin Sync workflow
+   - Überprüfen Sie, dass der Workflow erfolgreich läuft
+   - Prüfen Sie das Crowdin-Projekt, um zu bestätigen, dass der neue Inhalt erscheint
+
+2. **Übersetzungs-Download testen:**
+   - Stellen Sie sicher, dass einige Übersetzungen in Crowdin fertiggestellt sind
+   - Navigieren Sie zu: Repository → Actions → Crowdin Sync workflow
+   - Klicken Sie auf die Schaltfläche "Run workflow"
+   - Wählen Sie den Branch "main"
+   - Klicken Sie auf "Run workflow"
+   - Warten Sie, bis der Workflow abgeschlossen ist
+   - Prüfen Sie den Pull Requests-Tab auf einen neuen PR von Crowdin
+   - Überprüfen Sie den PR und mergen Sie ihn, wenn die Übersetzungen korrekt aussehen
+
+**Workflow überwachen:**
+
+- **Workflow-Ausführungen anzeigen:** Repository → Actions → Crowdin Sync
+- **Workflow-Status prüfen:** Siehe Status-Badge (kann zum README hinzugefügt werden)
+- **Workflow-Logs:** Klicken Sie auf eine beliebige Workflow-Ausführung, um detaillierte Logs zu sehen
+- **Fehlgeschlagene Workflows:** Fehlermeldungen erscheinen in Logs mit Troubleshooting-Informationen
+
+**Workflow-Probleme beheben:**
+
+**Problem:** Workflow schlägt mit "Authentication failed" fehl
+- **Lösung:** Überprüfen Sie, dass die Secrets `CROWDIN_PROJECT_ID` und `CROWDIN_PERSONAL_TOKEN` korrekt gesetzt sind
+- **Lösung:** Prüfen Sie, dass das Personal Access Token den Scope "Projects" aktiviert hat
+- **Lösung:** Stellen Sie sicher, dass das Token nicht abgelaufen ist (Tokens laufen standardmäßig nicht ab, können aber widerrufen werden)
+
+**Problem:** Workflow läuft, aber keine Dateien werden zu Crowdin hochgeladen
+- **Lösung:** Prüfen Sie, dass geänderte Dateien mit den Mustern in `crowdin.yml` übereinstimmen (`/docs/**/*.md`)
+- **Lösung:** Überprüfen Sie, dass Dateien nicht in der Ignorierliste in `crowdin.yml` sind
+- **Lösung:** Prüfen Sie Workflow-Logs auf Dateierkennungsmeldungen
+
+**Problem:** Übersetzungs-PR wird nicht erstellt
+- **Lösung:** Stellen Sie sicher, dass der Workflow über workflow_dispatch (manuelle Auslösung) ausgelöst wurde
+- **Lösung:** Überprüfen Sie, dass es fertiggestellte Übersetzungen in Crowdin zum Download gibt
+- **Lösung:** Prüfen Sie, dass GitHub Actions Schreibberechtigungen für Pull Requests hat
+- **Lösung:** Überprüfen Sie Workflow-Logs auf PR-Erstellungsfehler
+
+**Problem:** PR erstellt, aber Übersetzungen fehlen
+- **Lösung:** Überprüfen Sie, dass Übersetzungen in Crowdin als "approved" markiert sind (falls Approval-Workflow aktiviert ist)
+- **Lösung:** Prüfen Sie, dass Übersetzungsdateien mit dem Muster in `crowdin.yml` übereinstimmen
+- **Lösung:** Stellen Sie sicher, dass Übersetzer Übersetzungen für alle Sprachen (Spanisch und Deutsch) fertiggestellt haben
+
+**Lokalisierungs-Branch:**
+
+Der Workflow erstellt einen Branch namens `crowdin-translations` für Übersetzungsaktualisierungen:
+- Dieser Branch wird automatisch vom Workflow erstellt/aktualisiert
+- Jeder Übersetzungs-Download überschreibt diesen Branch mit den neuesten Übersetzungen
+- Der Branch wird als Quelle für den Pull Request verwendet
+- Nach dem Mergen des PR kann der Branch gelöscht werden (GitHub bietet diese Option an)
+- Der Workflow erstellt den Branch beim nächsten Übersetzungs-Download neu
+
+**Best Practices:**
+- Führen Sie Übersetzungs-Downloads regelmäßig (z.B. wöchentlich) durch, um Übersetzungen aktuell zu halten
+- Überprüfen Sie Übersetzungs-PRs sorgfältig vor dem Mergen
+- Testen Sie den Dokumentations-Build lokal nach dem Mergen von Übersetzungen
+- Koordinieren Sie mit Übersetzern über Übersetzungsfristen
+- Verwenden Sie Crowdins Approval-Workflow für Qualitätskontrolle (optional)
+
 ### Übersetzungs-Workflow
 
 1. Änderungen an den englischen Quelldateien (z. B. `docs/index.md`, `docs/getting-started.md`) vornehmen und einen Pull Request eröffnen.

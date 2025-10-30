@@ -9,10 +9,13 @@
 ![PyPI](https://img.shields.io/pypi/v/d-back)
 [![Documentation](https://img.shields.io/badge/docs-mkdocs-blue)](https://nntin.github.io/d-back/)
 [![Documentation Status](https://github.com/NNTin/d-back/actions/workflows/docs.yml/badge.svg)](https://github.com/NNTin/d-back/actions/workflows/docs.yml)
+[![Crowdin Sync](https://github.com/NNTin/d-back/actions/workflows/crowdin.yml/badge.svg)](https://github.com/NNTin/d-back/actions/workflows/crowdin.yml)
 
 ## 📚 Documentation
 
 Comprehensive documentation is available online in **English, Spanish (Español), and German (Deutsch)**, including API reference, user guides, and examples.
+
+Translations are automatically synchronized with Crowdin. The Crowdin Sync workflow uploads source files and downloads completed translations.
 
 ### Quick Links
 
