@@ -6,8 +6,8 @@ on:
       - main
     paths:
       - 'docs/**/*.md'
-      - '!docs/**/*.es.md'
-      - '!docs/**/*.de.md'
+      - '!docs/**/*.??.md'
+      - '!docs/**/*.??-*.md'
       - 'mkdocs.yml'
       - 'crowdin.yml'
   workflow_dispatch:
