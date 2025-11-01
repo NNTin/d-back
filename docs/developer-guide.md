@@ -1,6 +1,6 @@
 # Developer Guide
 
-Welcome to the d-back developer guide! Thank you for your interest in contributing to this project. This guide covers everything you need to know to get started with development, understand the architecture, run tests, and submit contributions.
+Welcome to the d-back developer guide! Thank you for your interest in contributing to this project. This guide covers everything to get started with development, understand the architecture, run tests, and submit contributions.
 
 ## Introduction
 
