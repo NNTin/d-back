@@ -1,0 +1,2511 @@
+
+<!doctype html>
+<html lang="es" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Servidor WebSocket para integración de Discord con simulación de vida ambiental d-zone">
+      
+      
+        <meta name="author" content="Tin Nguyen">
+      
+      
+        <link rel="canonical" href="https://nntin.github.io/d-back/0.0.17/es/developer-guide/">
+      
+      
+        <link rel="prev" href="../api-reference/">
+      
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.23">
+    
+    
+      
+        <title>Guía del Desarrollador - Documentación de d-back</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.84d31ad4.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/_mkdocstrings.css">
+    
+      <link rel="stylesheet" href="../../assets/_mkdocstrings.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="blue">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#guia-del-desarrollador" class="md-skip">
+          Saltar a contenido
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      <div data-md-color-scheme="default" data-md-component="outdated" hidden>
+        
+      </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Cabecera">
+    <a href="../" title="Documentación de d-back" class="md-header__button md-logo" aria-label="Documentación de d-back" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Documentación de d-back
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Guía del Desarrollador
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="blue"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="blue"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+      <div class="md-header__option">
+  <div class="md-select">
+    
+    <button class="md-header__button md-icon" aria-label="Seleccionar idioma">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m12.87 15.07-2.54-2.51.03-.03A17.5 17.5 0 0 0 14.07 6H17V4h-7V2H8v2H1v2h11.17C11.5 7.92 10.44 9.75 9 11.35 8.07 10.32 7.3 9.19 6.69 8h-2c.73 1.63 1.73 3.17 2.98 4.56l-5.09 5.02L4 19l5-5 3.11 3.11zM18.5 10h-2L12 22h2l1.12-3h4.75L21 22h2zm-2.62 7 1.62-4.33L19.12 17z"/></svg>
+    </button>
+    <div class="md-select__inner">
+      <ul class="md-select__list">
+        
+          <li class="md-select__item">
+            <a href="../../developer-guide/" hreflang="en" class="md-select__link">
+              English
+            </a>
+          </li>
+        
+          <li class="md-select__item">
+            <a href="./" hreflang="es" class="md-select__link">
+              Español
+            </a>
+          </li>
+        
+          <li class="md-select__item">
+            <a href="../../de/developer-guide/" hreflang="de" class="md-select__link">
+              Deutsch
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</div>
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Búsqueda" placeholder="Búsqueda" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Buscar">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Limpiar" aria-label="Limpiar" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Inicializando búsqueda
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/NNTin/d-back" title="Ir al repositorio" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    NNTin/d-back
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Pestañas" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Inicio
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../getting-started/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Primeros Pasos
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../user-guide/" class="md-tabs__link">
+          
+  
+  
+  Guía del Usuario
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../api-reference/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Referencia de API
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    <li class="md-tabs__item md-tabs__item--active">
+      <a href="./" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Guía del Desarrollador
+
+      </a>
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navegación" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../" title="Documentación de d-back" class="md-nav__button md-logo" aria-label="Documentación de d-back" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Documentación de d-back
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/NNTin/d-back" title="Ir al repositorio" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    NNTin/d-back
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Inicio
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../getting-started/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Primeros Pasos
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Guía del Usuario
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            Guía del Usuario
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../user-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Resumen
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../user-guide/configuration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Configuración
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../user-guide/callbacks/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Callbacks y Personalización
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../user-guide/custom-data-providers/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Proveedores de Datos Personalizados
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../api-reference/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Referencia de API
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    Guía del Desarrollador
+    
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    Guía del Desarrollador
+    
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Tabla de contenidos">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Tabla de contenidos
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#introduccion" class="md-nav__link">
+    <span class="md-ellipsis">
+      Introducción
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#primeros-pasos-con-el-desarrollo" class="md-nav__link">
+    <span class="md-ellipsis">
+      Primeros Pasos con el Desarrollo
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Primeros Pasos con el Desarrollo">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#configuracion-del-entorno-de-desarrollo" class="md-nav__link">
+    <span class="md-ellipsis">
+      Configuración del Entorno de Desarrollo
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#arquitectura-del-proyecto" class="md-nav__link">
+    <span class="md-ellipsis">
+      Arquitectura del Proyecto
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Arquitectura del Proyecto">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#estructura-de-directorios" class="md-nav__link">
+    <span class="md-ellipsis">
+      Estructura de Directorios
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#componentes-principales" class="md-nav__link">
+    <span class="md-ellipsis">
+      Componentes Principales
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#pruebas" class="md-nav__link">
+    <span class="md-ellipsis">
+      Pruebas
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Pruebas">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#estructura-de-pruebas" class="md-nav__link">
+    <span class="md-ellipsis">
+      Estructura de Pruebas
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ejecutar-pruebas" class="md-nav__link">
+    <span class="md-ellipsis">
+      Ejecutar Pruebas
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#escribir-pruebas" class="md-nav__link">
+    <span class="md-ellipsis">
+      Escribir Pruebas
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#directrices-de-contribucion" class="md-nav__link">
+    <span class="md-ellipsis">
+      Directrices de Contribución
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Directrices de Contribución">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#flujo-de-trabajo-de-git" class="md-nav__link">
+    <span class="md-ellipsis">
+      Flujo de Trabajo de Git
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#formato-de-mensaje-de-commit" class="md-nav__link">
+    <span class="md-ellipsis">
+      Formato de Mensaje de Commit
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#estilo-de-codigo" class="md-nav__link">
+    <span class="md-ellipsis">
+      Estilo de Código
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#flujo-de-trabajo-de-desarrollo" class="md-nav__link">
+    <span class="md-ellipsis">
+      Flujo de Trabajo de Desarrollo
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Flujo de Trabajo de Desarrollo">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#ciclo-de-desarrollo-local" class="md-nav__link">
+    <span class="md-ellipsis">
+      Ciclo de Desarrollo Local
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#construir-documentacion-localmente" class="md-nav__link">
+    <span class="md-ellipsis">
+      Construir Documentación Localmente
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#traduccion-de-documentacion" class="md-nav__link">
+    <span class="md-ellipsis">
+      Traducción de Documentación
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Traducción de Documentación">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#descripcion-general" class="md-nav__link">
+    <span class="md-ellipsis">
+      Descripción General
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#configuracion-del-proyecto-crowdin" class="md-nav__link">
+    <span class="md-ellipsis">
+      Configuración del Proyecto Crowdin
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Configuración del Proyecto Crowdin">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#configuracion-de-secretos-de-github" class="md-nav__link">
+    <span class="md-ellipsis">
+      Configuración de Secretos de GitHub
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#flujo-de-trabajo-de-github-actions" class="md-nav__link">
+    <span class="md-ellipsis">
+      Flujo de Trabajo de GitHub Actions
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#flujo-de-trabajo-de-traduccion" class="md-nav__link">
+    <span class="md-ellipsis">
+      Flujo de Trabajo de Traducción
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#estructura-de-archivos" class="md-nav__link">
+    <span class="md-ellipsis">
+      Estructura de Archivos
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#que-se-traduce" class="md-nav__link">
+    <span class="md-ellipsis">
+      Qué se Traduce
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#archivos-excluidos" class="md-nav__link">
+    <span class="md-ellipsis">
+      Archivos Excluidos
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#probar-traducciones-localmente" class="md-nav__link">
+    <span class="md-ellipsis">
+      Probar Traducciones Localmente
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mejores-practicas-de-traduccion" class="md-nav__link">
+    <span class="md-ellipsis">
+      Mejores Prácticas de Traducción
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#agregar-nuevos-idiomas" class="md-nav__link">
+    <span class="md-ellipsis">
+      Agregar Nuevos Idiomas
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#solucion-de-problemas" class="md-nav__link">
+    <span class="md-ellipsis">
+      Solución de Problemas
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#recursos" class="md-nav__link">
+    <span class="md-ellipsis">
+      Recursos
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#depuracion" class="md-nav__link">
+    <span class="md-ellipsis">
+      Depuración
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Depuración">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#registro-de-depuracion" class="md-nav__link">
+    <span class="md-ellipsis">
+      Registro de Depuración
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#depurar-conexiones-websocket" class="md-nav__link">
+    <span class="md-ellipsis">
+      Depurar Conexiones WebSocket
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#proceso-de-lanzamiento" class="md-nav__link">
+    <span class="md-ellipsis">
+      Proceso de Lanzamiento
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Proceso de Lanzamiento">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#versionado-de-documentacion" class="md-nav__link">
+    <span class="md-ellipsis">
+      Versionado de Documentación
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Versionado de Documentación">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#estrategia-de-versionado" class="md-nav__link">
+    <span class="md-ellipsis">
+      Estrategia de Versionado
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pruebas-locales" class="md-nav__link">
+    <span class="md-ellipsis">
+      Pruebas Locales
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#alias-de-versiones" class="md-nav__link">
+    <span class="md-ellipsis">
+      Alias de Versiones
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#flujo-de-trabajo-de-despliegue" class="md-nav__link">
+    <span class="md-ellipsis">
+      Flujo de Trabajo de Despliegue
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#despliegue-automatizado-con-github-actions" class="md-nav__link">
+    <span class="md-ellipsis">
+      Despliegue Automatizado con GitHub Actions
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mejores-practicas" class="md-nav__link">
+    <span class="md-ellipsis">
+      Mejores Prácticas
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#solucion-de-problemas_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      Solución de Problemas
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#recursos_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      Recursos
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#mejoras-futuras" class="md-nav__link">
+    <span class="md-ellipsis">
+      Mejoras Futuras
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#obtener-ayuda" class="md-nav__link">
+    <span class="md-ellipsis">
+      Obtener Ayuda
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#licencia" class="md-nav__link">
+    <span class="md-ellipsis">
+      Licencia
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#que-sigue" class="md-nav__link">
+    <span class="md-ellipsis">
+      ¿Qué Sigue?
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Tabla de contenidos">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Tabla de contenidos
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#introduccion" class="md-nav__link">
+    <span class="md-ellipsis">
+      Introducción
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#primeros-pasos-con-el-desarrollo" class="md-nav__link">
+    <span class="md-ellipsis">
+      Primeros Pasos con el Desarrollo
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Primeros Pasos con el Desarrollo">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#configuracion-del-entorno-de-desarrollo" class="md-nav__link">
+    <span class="md-ellipsis">
+      Configuración del Entorno de Desarrollo
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#arquitectura-del-proyecto" class="md-nav__link">
+    <span class="md-ellipsis">
+      Arquitectura del Proyecto
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Arquitectura del Proyecto">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#estructura-de-directorios" class="md-nav__link">
+    <span class="md-ellipsis">
+      Estructura de Directorios
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#componentes-principales" class="md-nav__link">
+    <span class="md-ellipsis">
+      Componentes Principales
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#pruebas" class="md-nav__link">
+    <span class="md-ellipsis">
+      Pruebas
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Pruebas">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#estructura-de-pruebas" class="md-nav__link">
+    <span class="md-ellipsis">
+      Estructura de Pruebas
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ejecutar-pruebas" class="md-nav__link">
+    <span class="md-ellipsis">
+      Ejecutar Pruebas
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#escribir-pruebas" class="md-nav__link">
+    <span class="md-ellipsis">
+      Escribir Pruebas
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#directrices-de-contribucion" class="md-nav__link">
+    <span class="md-ellipsis">
+      Directrices de Contribución
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Directrices de Contribución">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#flujo-de-trabajo-de-git" class="md-nav__link">
+    <span class="md-ellipsis">
+      Flujo de Trabajo de Git
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#formato-de-mensaje-de-commit" class="md-nav__link">
+    <span class="md-ellipsis">
+      Formato de Mensaje de Commit
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#estilo-de-codigo" class="md-nav__link">
+    <span class="md-ellipsis">
+      Estilo de Código
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#flujo-de-trabajo-de-desarrollo" class="md-nav__link">
+    <span class="md-ellipsis">
+      Flujo de Trabajo de Desarrollo
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Flujo de Trabajo de Desarrollo">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#ciclo-de-desarrollo-local" class="md-nav__link">
+    <span class="md-ellipsis">
+      Ciclo de Desarrollo Local
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#construir-documentacion-localmente" class="md-nav__link">
+    <span class="md-ellipsis">
+      Construir Documentación Localmente
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#traduccion-de-documentacion" class="md-nav__link">
+    <span class="md-ellipsis">
+      Traducción de Documentación
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Traducción de Documentación">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#descripcion-general" class="md-nav__link">
+    <span class="md-ellipsis">
+      Descripción General
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#configuracion-del-proyecto-crowdin" class="md-nav__link">
+    <span class="md-ellipsis">
+      Configuración del Proyecto Crowdin
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Configuración del Proyecto Crowdin">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#configuracion-de-secretos-de-github" class="md-nav__link">
+    <span class="md-ellipsis">
+      Configuración de Secretos de GitHub
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#flujo-de-trabajo-de-github-actions" class="md-nav__link">
+    <span class="md-ellipsis">
+      Flujo de Trabajo de GitHub Actions
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#flujo-de-trabajo-de-traduccion" class="md-nav__link">
+    <span class="md-ellipsis">
+      Flujo de Trabajo de Traducción
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#estructura-de-archivos" class="md-nav__link">
+    <span class="md-ellipsis">
+      Estructura de Archivos
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#que-se-traduce" class="md-nav__link">
+    <span class="md-ellipsis">
+      Qué se Traduce
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#archivos-excluidos" class="md-nav__link">
+    <span class="md-ellipsis">
+      Archivos Excluidos
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#probar-traducciones-localmente" class="md-nav__link">
+    <span class="md-ellipsis">
+      Probar Traducciones Localmente
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mejores-practicas-de-traduccion" class="md-nav__link">
+    <span class="md-ellipsis">
+      Mejores Prácticas de Traducción
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#agregar-nuevos-idiomas" class="md-nav__link">
+    <span class="md-ellipsis">
+      Agregar Nuevos Idiomas
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#solucion-de-problemas" class="md-nav__link">
+    <span class="md-ellipsis">
+      Solución de Problemas
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#recursos" class="md-nav__link">
+    <span class="md-ellipsis">
+      Recursos
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#depuracion" class="md-nav__link">
+    <span class="md-ellipsis">
+      Depuración
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Depuración">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#registro-de-depuracion" class="md-nav__link">
+    <span class="md-ellipsis">
+      Registro de Depuración
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#depurar-conexiones-websocket" class="md-nav__link">
+    <span class="md-ellipsis">
+      Depurar Conexiones WebSocket
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#proceso-de-lanzamiento" class="md-nav__link">
+    <span class="md-ellipsis">
+      Proceso de Lanzamiento
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Proceso de Lanzamiento">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#versionado-de-documentacion" class="md-nav__link">
+    <span class="md-ellipsis">
+      Versionado de Documentación
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Versionado de Documentación">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#estrategia-de-versionado" class="md-nav__link">
+    <span class="md-ellipsis">
+      Estrategia de Versionado
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pruebas-locales" class="md-nav__link">
+    <span class="md-ellipsis">
+      Pruebas Locales
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#alias-de-versiones" class="md-nav__link">
+    <span class="md-ellipsis">
+      Alias de Versiones
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#flujo-de-trabajo-de-despliegue" class="md-nav__link">
+    <span class="md-ellipsis">
+      Flujo de Trabajo de Despliegue
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#despliegue-automatizado-con-github-actions" class="md-nav__link">
+    <span class="md-ellipsis">
+      Despliegue Automatizado con GitHub Actions
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mejores-practicas" class="md-nav__link">
+    <span class="md-ellipsis">
+      Mejores Prácticas
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#solucion-de-problemas_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      Solución de Problemas
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#recursos_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      Recursos
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#mejoras-futuras" class="md-nav__link">
+    <span class="md-ellipsis">
+      Mejoras Futuras
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#obtener-ayuda" class="md-nav__link">
+    <span class="md-ellipsis">
+      Obtener Ayuda
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#licencia" class="md-nav__link">
+    <span class="md-ellipsis">
+      Licencia
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#que-sigue" class="md-nav__link">
+    <span class="md-ellipsis">
+      ¿Qué Sigue?
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="guia-del-desarrollador">Guía del Desarrollador<a class="headerlink" href="#guia-del-desarrollador" title="Permanent link">&para;</a></h1>
+<p>¡Bienvenido a la guía del desarrollador de d-back! Esta guía proporciona toda la información que necesita para contribuir al proyecto, comprender su arquitectura y seguir las mejores prácticas de desarrollo.</p>
+<h2 id="introduccion">Introducción<a class="headerlink" href="#introduccion" title="Permanent link">&para;</a></h2>
+<p>d-back es un servidor WebSocket de código abierto para integración de Discord con simulación de vida ambiental d-zone. Agradecemos contribuciones de la comunidad y esta guía le ayudará a comenzar.</p>
+<h2 id="primeros-pasos-con-el-desarrollo">Primeros Pasos con el Desarrollo<a class="headerlink" href="#primeros-pasos-con-el-desarrollo" title="Permanent link">&para;</a></h2>
+<h3 id="configuracion-del-entorno-de-desarrollo">Configuración del Entorno de Desarrollo<a class="headerlink" href="#configuracion-del-entorno-de-desarrollo" title="Permanent link">&para;</a></h3>
+<ol>
+<li>
+<p><strong>Fork y clone el repositorio</strong>:
+   <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/YOUR_USERNAME/d-back.git
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="nb">cd</span><span class="w"> </span>d-back
+</code></pre></div></p>
+</li>
+<li>
+<p><strong>Crear un entorno virtual</strong>:
+   <div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>python<span class="w"> </span>-m<span class="w"> </span>venv<span class="w"> </span>.venv
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="nb">source</span><span class="w"> </span>.venv/bin/activate<span class="w">  </span><span class="c1"># En Windows: .venv\Scripts\activate</span>
+</code></pre></div></p>
+</li>
+<li>
+<p><strong>Instalar dependencias de desarrollo</strong>:
+   <div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span>.<span class="o">[</span>docs<span class="o">]</span>
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>pip<span class="w"> </span>install<span class="w"> </span>pytest<span class="w"> </span>pytest-asyncio<span class="w"> </span>websockets
+</code></pre></div></p>
+</li>
+<li>
+<p><strong>Verificar instalación</strong>:
+   <div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>python<span class="w"> </span>-m<span class="w"> </span>d_back<span class="w"> </span>--version
+</code></pre></div></p>
+</li>
+</ol>
+<h2 id="arquitectura-del-proyecto">Arquitectura del Proyecto<a class="headerlink" href="#arquitectura-del-proyecto" title="Permanent link">&para;</a></h2>
+<h3 id="estructura-de-directorios">Estructura de Directorios<a class="headerlink" href="#estructura-de-directorios" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>d-back/
+<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>├── d_back/               # Código fuente principal
+<a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>│   ├── __init__.py       # Metadatos del paquete
+<a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>│   ├── __main__.py       # Punto de entrada CLI
+<a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>│   ├── server.py         # Clase WebSocketServer principal
+<a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a>│   └── mock/
+<a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a>│       ├── __init__.py
+<a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a>│       └── data.py       # MockDataProvider
+<a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a>├── docs/                 # Documentación MkDocs
+<a id="__codelineno-4-10" name="__codelineno-4-10" href="#__codelineno-4-10"></a>│   ├── index.md
+<a id="__codelineno-4-11" name="__codelineno-4-11" href="#__codelineno-4-11"></a>│   ├── getting-started.md
+<a id="__codelineno-4-12" name="__codelineno-4-12" href="#__codelineno-4-12"></a>│   ├── user-guide/
+<a id="__codelineno-4-13" name="__codelineno-4-13" href="#__codelineno-4-13"></a>│   └── api-reference.md
+<a id="__codelineno-4-14" name="__codelineno-4-14" href="#__codelineno-4-14"></a>├── tests/                # Pruebas pytest
+<a id="__codelineno-4-15" name="__codelineno-4-15" href="#__codelineno-4-15"></a>│   ├── test_dis_connect.py
+<a id="__codelineno-4-16" name="__codelineno-4-16" href="#__codelineno-4-16"></a>│   └── helpers/
+<a id="__codelineno-4-17" name="__codelineno-4-17" href="#__codelineno-4-17"></a>│       └── mock_websocket_client.py
+<a id="__codelineno-4-18" name="__codelineno-4-18" href="#__codelineno-4-18"></a>├── pyproject.toml        # Metadatos del proyecto
+<a id="__codelineno-4-19" name="__codelineno-4-19" href="#__codelineno-4-19"></a>├── setup.cfg             # Configuración de setuptools
+<a id="__codelineno-4-20" name="__codelineno-4-20" href="#__codelineno-4-20"></a>├── mkdocs.yml            # Configuración de MkDocs
+<a id="__codelineno-4-21" name="__codelineno-4-21" href="#__codelineno-4-21"></a>└── README.md
+</code></pre></div>
+<h3 id="componentes-principales">Componentes Principales<a class="headerlink" href="#componentes-principales" title="Permanent link">&para;</a></h3>
+<p><strong>WebSocketServer</strong> (<code>d_back/server.py</code>):
+- Maneja conexiones WebSocket y solicitudes HTTP
+- Gestiona callbacks personalizables para recuperación de datos
+- Proporciona métodos de difusión para actualizaciones en tiempo real
+- Soporta servicio de archivos estáticos</p>
+<p><strong>MockDataProvider</strong> (<code>d_back/mock/data.py</code>):
+- Genera datos de usuario y servidor simulados realistas
+- Ejecuta tareas periódicas en segundo plano (cambios de presencia, mensajes)
+- Proporciona 4 servidores preconfigurados con datos variados
+- Usado automáticamente cuando no se registran callbacks personalizados</p>
+<p><strong>Módulo CLI</strong> (<code>d_back/__main__.py</code>):
+- Parsing de argumentos de línea de comandos
+- Punto de entrada para ejecutar el servidor
+- Manejo de señales de apagado gracioso</p>
+<h2 id="pruebas">Pruebas<a class="headerlink" href="#pruebas" title="Permanent link">&para;</a></h2>
+<h3 id="estructura-de-pruebas">Estructura de Pruebas<a class="headerlink" href="#estructura-de-pruebas" title="Permanent link">&para;</a></h3>
+<p>Las pruebas están organizadas en el directorio <code>tests/</code>:</p>
+<ul>
+<li><code>test_dis_connect.py</code>: Pruebas de conectividad WebSocket y flujo de mensajes</li>
+<li><code>helpers/mock_websocket_client.py</code>: Cliente WebSocket simulado para pruebas</li>
+</ul>
+<h3 id="ejecutar-pruebas">Ejecutar Pruebas<a class="headerlink" href="#ejecutar-pruebas" title="Permanent link">&para;</a></h3>
+<p>Ejecutar todas las pruebas:
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>pytest
+</code></pre></div></p>
+<p>Ejecutar pruebas específicas:
+<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>pytest<span class="w"> </span>tests/test_dis_connect.py
+</code></pre></div></p>
+<p>Con salida detallada:
+<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>pytest<span class="w"> </span>-v
+</code></pre></div></p>
+<p>Con cobertura:
+<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>pytest<span class="w"> </span>--cov<span class="o">=</span>d_back
+</code></pre></div></p>
+<h3 id="escribir-pruebas">Escribir Pruebas<a class="headerlink" href="#escribir-pruebas" title="Permanent link">&para;</a></h3>
+<p>Las pruebas usan <code>pytest</code> y <code>pytest-asyncio</code> para funcionalidad asíncrona:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="kn">import</span><span class="w"> </span><span class="nn">pytest</span>
+<a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a><span class="kn">from</span><span class="w"> </span><span class="nn">d_back.server</span><span class="w"> </span><span class="kn">import</span> <span class="n">WebSocketServer</span>
+<a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a>
+<a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a><span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">asyncio</span>
+<a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">test_server_startup</span><span class="p">():</span>
+<a id="__codelineno-9-6" name="__codelineno-9-6" href="#__codelineno-9-6"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Test server starts and stops correctly.&quot;&quot;&quot;</span>
+<a id="__codelineno-9-7" name="__codelineno-9-7" href="#__codelineno-9-7"></a>    <span class="n">server</span> <span class="o">=</span> <span class="n">WebSocketServer</span><span class="p">(</span><span class="n">port</span><span class="o">=</span><span class="mi">3001</span><span class="p">,</span> <span class="n">host</span><span class="o">=</span><span class="s2">&quot;localhost&quot;</span><span class="p">)</span>
+<a id="__codelineno-9-8" name="__codelineno-9-8" href="#__codelineno-9-8"></a>    <span class="k">await</span> <span class="n">server</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+<a id="__codelineno-9-9" name="__codelineno-9-9" href="#__codelineno-9-9"></a>
+<a id="__codelineno-9-10" name="__codelineno-9-10" href="#__codelineno-9-10"></a>    <span class="c1"># Test server is running</span>
+<a id="__codelineno-9-11" name="__codelineno-9-11" href="#__codelineno-9-11"></a>    <span class="k">assert</span> <span class="n">server</span><span class="o">.</span><span class="n">websocket</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+<a id="__codelineno-9-12" name="__codelineno-9-12" href="#__codelineno-9-12"></a>
+<a id="__codelineno-9-13" name="__codelineno-9-13" href="#__codelineno-9-13"></a>    <span class="c1"># Clean shutdown</span>
+<a id="__codelineno-9-14" name="__codelineno-9-14" href="#__codelineno-9-14"></a>    <span class="k">await</span> <span class="n">server</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
+</code></pre></div>
+<h2 id="directrices-de-contribucion">Directrices de Contribución<a class="headerlink" href="#directrices-de-contribucion" title="Permanent link">&para;</a></h2>
+<h3 id="flujo-de-trabajo-de-git">Flujo de Trabajo de Git<a class="headerlink" href="#flujo-de-trabajo-de-git" title="Permanent link">&para;</a></h3>
+<ol>
+<li>
+<p><strong>Crear una rama de característica</strong>:
+   <div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a>git<span class="w"> </span>checkout<span class="w"> </span>-b<span class="w"> </span>feature/mi-nueva-caracteristica
+</code></pre></div></p>
+</li>
+<li>
+<p><strong>Hacer cambios y commit</strong>:
+   <div class="highlight"><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>git<span class="w"> </span>add<span class="w"> </span>.
+<a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a>git<span class="w"> </span>commit<span class="w"> </span>-m<span class="w"> </span><span class="s2">&quot;Add: Mi nueva característica&quot;</span>
+</code></pre></div></p>
+</li>
+<li>
+<p><strong>Push a tu fork</strong>:
+   <div class="highlight"><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a>git<span class="w"> </span>push<span class="w"> </span>origin<span class="w"> </span>feature/mi-nueva-caracteristica
+</code></pre></div></p>
+</li>
+<li>
+<p><strong>Crear Pull Request</strong> en GitHub</p>
+</li>
+</ol>
+<h3 id="formato-de-mensaje-de-commit">Formato de Mensaje de Commit<a class="headerlink" href="#formato-de-mensaje-de-commit" title="Permanent link">&para;</a></h3>
+<p>Use mensajes de commit claros y descriptivos:</p>
+<ul>
+<li><code>Add: Nueva característica o funcionalidad</code></li>
+<li><code>Fix: Corrección de bug</code></li>
+<li><code>Update: Actualización de funcionalidad existente</code></li>
+<li><code>Docs: Cambios de documentación</code></li>
+<li><code>Test: Agregar o actualizar pruebas</code></li>
+<li><code>Refactor: Refactorización de código</code></li>
+</ul>
+<p>Ejemplos:
+<div class="highlight"><pre><span></span><code><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a>Add: OAuth2 validation callback support
+<a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a>Fix: WebSocket connection timeout issue
+<a id="__codelineno-13-3" name="__codelineno-13-3" href="#__codelineno-13-3"></a>Update: Improve mock data generator performance
+<a id="__codelineno-13-4" name="__codelineno-13-4" href="#__codelineno-13-4"></a>Docs: Add custom data providers guide
+</code></pre></div></p>
+<h3 id="estilo-de-codigo">Estilo de Código<a class="headerlink" href="#estilo-de-codigo" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Seguir <a href="https://pep8.org/">PEP 8</a> para estilo de código Python</li>
+<li>Usar type hints para parámetros de función y valores de retorno</li>
+<li>Escribir docstrings estilo Google para todas las funciones públicas</li>
+<li>Mantener líneas bajo 100 caracteres cuando sea posible</li>
+</ul>
+<p>Ejemplo de docstring:
+<div class="highlight"><pre><span></span><code><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">on_get_user_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">server_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+<a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Retrieve user data for a Discord server.</span>
+<a id="__codelineno-14-3" name="__codelineno-14-3" href="#__codelineno-14-3"></a>
+<a id="__codelineno-14-4" name="__codelineno-14-4" href="#__codelineno-14-4"></a><span class="sd">    Args:</span>
+<a id="__codelineno-14-5" name="__codelineno-14-5" href="#__codelineno-14-5"></a><span class="sd">        server_id: Discord server ID (snowflake format)</span>
+<a id="__codelineno-14-6" name="__codelineno-14-6" href="#__codelineno-14-6"></a>
+<a id="__codelineno-14-7" name="__codelineno-14-7" href="#__codelineno-14-7"></a><span class="sd">    Returns:</span>
+<a id="__codelineno-14-8" name="__codelineno-14-8" href="#__codelineno-14-8"></a><span class="sd">        Dictionary mapping user IDs to user data objects</span>
+<a id="__codelineno-14-9" name="__codelineno-14-9" href="#__codelineno-14-9"></a>
+<a id="__codelineno-14-10" name="__codelineno-14-10" href="#__codelineno-14-10"></a><span class="sd">    Example:</span>
+<a id="__codelineno-14-11" name="__codelineno-14-11" href="#__codelineno-14-11"></a><span class="sd">        ```python</span>
+<a id="__codelineno-14-12" name="__codelineno-14-12" href="#__codelineno-14-12"></a><span class="sd">        users = await server.on_get_user_data(&quot;232769614004748288&quot;)</span>
+<a id="__codelineno-14-13" name="__codelineno-14-13" href="#__codelineno-14-13"></a><span class="sd">        ```</span>
+<a id="__codelineno-14-14" name="__codelineno-14-14" href="#__codelineno-14-14"></a><span class="sd">    &quot;&quot;&quot;</span>
+<a id="__codelineno-14-15" name="__codelineno-14-15" href="#__codelineno-14-15"></a>    <span class="k">pass</span>
+</code></pre></div></p>
+<h2 id="flujo-de-trabajo-de-desarrollo">Flujo de Trabajo de Desarrollo<a class="headerlink" href="#flujo-de-trabajo-de-desarrollo" title="Permanent link">&para;</a></h2>
+<h3 id="ciclo-de-desarrollo-local">Ciclo de Desarrollo Local<a class="headerlink" href="#ciclo-de-desarrollo-local" title="Permanent link">&para;</a></h3>
+<ol>
+<li><strong>Hacer cambios de código</strong></li>
+<li><strong>Ejecutar pruebas</strong>: <code>pytest</code></li>
+<li><strong>Actualizar documentación</strong> si es necesario</li>
+<li><strong>Probar localmente</strong>: <code>python -m d_back</code></li>
+<li><strong>Commit y push cambios</strong></li>
+</ol>
+<h3 id="construir-documentacion-localmente">Construir Documentación Localmente<a class="headerlink" href="#construir-documentacion-localmente" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a><span class="c1"># Install docs dependencies</span>
+<a id="__codelineno-15-2" name="__codelineno-15-2" href="#__codelineno-15-2"></a>pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span>.<span class="o">[</span>docs<span class="o">]</span>
+<a id="__codelineno-15-3" name="__codelineno-15-3" href="#__codelineno-15-3"></a>
+<a id="__codelineno-15-4" name="__codelineno-15-4" href="#__codelineno-15-4"></a><span class="c1"># Serve docs with live reload</span>
+<a id="__codelineno-15-5" name="__codelineno-15-5" href="#__codelineno-15-5"></a>mkdocs<span class="w"> </span>serve
+<a id="__codelineno-15-6" name="__codelineno-15-6" href="#__codelineno-15-6"></a>
+<a id="__codelineno-15-7" name="__codelineno-15-7" href="#__codelineno-15-7"></a><span class="c1"># Build docs</span>
+<a id="__codelineno-15-8" name="__codelineno-15-8" href="#__codelineno-15-8"></a>mkdocs<span class="w"> </span>build
+</code></pre></div>
+<p>Acceder a docs en <code>http://127.0.0.1:8000/</code></p>
+<h2 id="traduccion-de-documentacion">Traducción de Documentación<a class="headerlink" href="#traduccion-de-documentacion" title="Permanent link">&para;</a></h2>
+<h3 id="descripcion-general">Descripción General<a class="headerlink" href="#descripcion-general" title="Permanent link">&para;</a></h3>
+<p>La documentación de d-back está disponible en varios idiomas (English, Spanish, German). Usamos Crowdin para gestionar traducciones de forma colaborativa. El inglés es el idioma fuente: realice los cambios en los archivos en inglés primero. Las traducciones se sincronizan mediante Crowdin y GitHub Actions. El proyecto usa <code>mkdocs-static-i18n</code> con la estructura de sufijos (por ejemplo, <code>index.es.md</code>, <code>index.de.md</code>).</p>
+<h3 id="configuracion-del-proyecto-crowdin">Configuración del Proyecto Crowdin<a class="headerlink" href="#configuracion-del-proyecto-crowdin" title="Permanent link">&para;</a></h3>
+<ol>
+<li>Crear un proyecto en Crowdin: https://crowdin.com y seleccionar <strong>Markdown</strong> como tipo de archivo.</li>
+<li>Establecer English como idioma fuente y añadir Spanish (<code>es</code>) y German (<code>de</code>) como idiomas objetivo.</li>
+<li>Instalar la aplicación Crowdin GitHub en el repositorio o configurar Crowdin CLI con GitHub Actions. El archivo <code>crowdin.yml</code> en la raíz del repositorio define los patrones de archivos y opciones del parser.</li>
+</ol>
+<p>Secrets de GitHub necesarios (Repository → Settings → Secrets and variables → Actions):</p>
+<ul>
+<li><code>CROWDIN_PROJECT_ID</code> — ID del proyecto Crowdin</li>
+<li><code>CROWDIN_PERSONAL_TOKEN</code> — Token de acceso personal de Crowdin</li>
+</ul>
+<h4 id="configuracion-de-secretos-de-github">Configuración de Secretos de GitHub<a class="headerlink" href="#configuracion-de-secretos-de-github" title="Permanent link">&para;</a></h4>
+<p>Cree los secretos necesarios para la integración de Crowdin:</p>
+<ol>
+<li><strong>Obtener Credenciales de Crowdin:</strong></li>
+<li><strong>Project ID:</strong> <ul>
+<li>Inicie sesión en Crowdin</li>
+<li>Navegue a su proyecto</li>
+<li>Vaya a Settings → API</li>
+<li>Copie el Project ID (valor numérico)</li>
+</ul>
+</li>
+<li>
+<p><strong>Personal Access Token:</strong></p>
+<ul>
+<li>Vaya a Account Settings → API</li>
+<li>Haga clic en "New Token"</li>
+<li>Nombre: "d-back GitHub Actions"</li>
+<li>Scopes: Seleccione "Projects" (read/write)</li>
+<li>Haga clic en "Create"</li>
+<li>Copie el token inmediatamente (no se mostrará nuevamente)</li>
+</ul>
+</li>
+<li>
+<p><strong>Añadir Secretos al Repositorio de GitHub:</strong></p>
+</li>
+<li>Navegue a: Repository → Settings → Secrets and variables → Actions</li>
+<li>Haga clic en "New repository secret"</li>
+<li>Añada <code>CROWDIN_PROJECT_ID</code>:<ul>
+<li>Name: <code>CROWDIN_PROJECT_ID</code></li>
+<li>Value: Su ID de proyecto de Crowdin (numérico)</li>
+<li>Haga clic en "Add secret"</li>
+</ul>
+</li>
+<li>
+<p>Añada <code>CROWDIN_PERSONAL_TOKEN</code>:</p>
+<ul>
+<li>Name: <code>CROWDIN_PERSONAL_TOKEN</code></li>
+<li>Value: Su token de acceso personal de Crowdin</li>
+<li>Haga clic en "Add secret"</li>
+</ul>
+</li>
+<li>
+<p><strong>Verificar Secretos:</strong></p>
+</li>
+<li>Los secretos deben aparecer en la lista de secretos del repositorio</li>
+<li>Los valores de los secretos están ocultos y no se pueden ver después de la creación</li>
+<li>Solo los administradores del repositorio pueden gestionar secretos</li>
+</ol>
+<p><strong>Notas de Seguridad Importantes:</strong>
+- Nunca haga commit de tokens o IDs de proyecto al repositorio
+- Los tokens tienen acceso completo a su proyecto de Crowdin - manténgalos seguros
+- Rote los tokens periódicamente por seguridad
+- Use secretos de repositorio, no secretos de entorno (para acceso específico del repositorio)</p>
+<h4 id="flujo-de-trabajo-de-github-actions">Flujo de Trabajo de GitHub Actions<a class="headerlink" href="#flujo-de-trabajo-de-github-actions" title="Permanent link">&para;</a></h4>
+<p><strong>Descripción General:</strong></p>
+<p>La sincronización con Crowdin está automatizada mediante GitHub Actions. El workflow está definido en <code>.github/workflows/crowdin.yml</code> y maneja:
+- Subida de archivos fuente en inglés a Crowdin cuando se actualiza la documentación
+- Descarga de traducciones y creación de pull requests para revisión</p>
+<p><strong>Activadores del Workflow:</strong></p>
+<ol>
+<li><strong>Subida Automática (Push a main):</strong></li>
+<li>Se activa cuando se hacen push de archivos de documentación a la rama main</li>
+<li>Sube archivos fuente en inglés nuevos/modificados a Crowdin</li>
+<li>Los traductores son notificados del nuevo contenido a traducir</li>
+<li>
+<p>Se ejecuta automáticamente - no se necesita intervención manual</p>
+</li>
+<li>
+<p><strong>Descarga Manual (workflow_dispatch):</strong></p>
+</li>
+<li>Se activa manualmente desde la interfaz de GitHub Actions</li>
+<li>Descarga traducciones completadas de Crowdin</li>
+<li>Crea un pull request con actualizaciones de traducción</li>
+<li>Permite revisión antes de fusionar las traducciones</li>
+</ol>
+<p><strong>Cómo Funciona:</strong></p>
+<ol>
+<li><strong>Proceso de Subida de Fuentes:</strong></li>
+<li>El desarrollador fusiona cambios de documentación a la rama main</li>
+<li>GitHub Actions detecta cambios en archivos <code>docs/**/*.md</code></li>
+<li>El workflow sube archivos en inglés modificados a Crowdin</li>
+<li>Crowdin analiza los cambios y notifica a los traductores</li>
+<li>
+<p>Los traductores ven cadenas nuevas/modificadas en el editor de Crowdin</p>
+</li>
+<li>
+<p><strong>Proceso de Descarga de Traducciones:</strong></p>
+</li>
+<li>El mantenedor activa manualmente el workflow desde la interfaz de GitHub Actions</li>
+<li>El workflow descarga traducciones completadas de Crowdin</li>
+<li>Crea una nueva rama: <code>crowdin-translations</code></li>
+<li>Crea un pull request con título: "docs: update translations from Crowdin"</li>
+<li>El PR incluye etiquetas: documentation, translations, crowdin</li>
+<li>El mantenedor revisa y fusiona el PR</li>
+</ol>
+<p><strong>Probar el Workflow:</strong></p>
+<ol>
+<li><strong>Probar Subida de Fuentes:</strong></li>
+<li>Haga un pequeño cambio a un archivo de documentación en inglés (ej: añada una oración a <code>docs/index.md</code>)</li>
+<li>Haga commit y push a la rama main</li>
+<li>Navegue a: Repository → Actions → Crowdin Sync workflow</li>
+<li>Verifique que el workflow se ejecute exitosamente</li>
+<li>
+<p>Revise el proyecto de Crowdin para confirmar que aparece el nuevo contenido</p>
+</li>
+<li>
+<p><strong>Probar Descarga de Traducciones:</strong></p>
+</li>
+<li>Asegúrese de que algunas traducciones estén completadas en Crowdin</li>
+<li>Navegue a: Repository → Actions → Crowdin Sync workflow</li>
+<li>Haga clic en el botón "Run workflow"</li>
+<li>Seleccione la rama "main"</li>
+<li>Haga clic en "Run workflow"</li>
+<li>Espere a que el workflow se complete</li>
+<li>Revise la pestaña Pull Requests para un nuevo PR de Crowdin</li>
+<li>Revise el PR y fusiónelo si las traducciones se ven correctas</li>
+</ol>
+<p><strong>Monitorear el Workflow:</strong></p>
+<ul>
+<li><strong>Ver ejecuciones de workflow:</strong> Repository → Actions → Crowdin Sync</li>
+<li><strong>Verificar estado de workflow:</strong> Ver el badge de estado (se puede añadir al README)</li>
+<li><strong>Logs de workflow:</strong> Haga clic en cualquier ejecución de workflow para ver logs detallados</li>
+<li><strong>Workflows fallidos:</strong> Los mensajes de error aparecen en los logs con información de troubleshooting</li>
+</ul>
+<p><strong>Solución de Problemas del Workflow:</strong></p>
+<p><strong>Problema:</strong> El workflow falla con "Authentication failed"
+- <strong>Solución:</strong> Verifique que los secretos <code>CROWDIN_PROJECT_ID</code> y <code>CROWDIN_PERSONAL_TOKEN</code> estén configurados correctamente
+- <strong>Solución:</strong> Verifique que el token de acceso personal tenga el scope "Projects" habilitado
+- <strong>Solución:</strong> Asegúrese de que el token no haya expirado (los tokens no expiran por defecto, pero pueden ser revocados)</p>
+<p><strong>Problema:</strong> El workflow se ejecuta pero no se suben archivos a Crowdin
+- <strong>Solución:</strong> Verifique que los archivos modificados coincidan con los patrones en <code>crowdin.yml</code> (<code>/docs/**/*.md</code>)
+- <strong>Solución:</strong> Verifique que los archivos no estén en la lista de ignorados en <code>crowdin.yml</code>
+- <strong>Solución:</strong> Revise los logs del workflow para mensajes de detección de archivos</p>
+<p><strong>Problema:</strong> No se crea el PR de traducción
+- <strong>Solución:</strong> Asegúrese de que el workflow fue activado mediante workflow_dispatch (activación manual)
+- <strong>Solución:</strong> Verifique que hay traducciones completadas en Crowdin para descargar
+- <strong>Solución:</strong> Verifique que GitHub Actions tiene permisos de escritura para pull requests
+- <strong>Solución:</strong> Revise los logs del workflow para errores de creación de PR</p>
+<p><strong>Problema:</strong> Se crea el PR pero faltan traducciones
+- <strong>Solución:</strong> Verifique que las traducciones estén marcadas como "approved" en Crowdin (si el workflow de aprobación está habilitado)
+- <strong>Solución:</strong> Verifique que los archivos de traducción coincidan con el patrón en <code>crowdin.yml</code>
+- <strong>Solución:</strong> Asegúrese de que los traductores completaron traducciones para todos los idiomas (español y alemán)</p>
+<p><strong>Rama de Localización:</strong></p>
+<p>El workflow crea una rama llamada <code>crowdin-translations</code> para actualizaciones de traducción:
+- Esta rama es creada/actualizada automáticamente por el workflow
+- Cada descarga de traducción sobrescribe esta rama con las últimas traducciones
+- La rama se usa como fuente para el pull request
+- Después de fusionar el PR, la rama puede ser eliminada (GitHub ofrece esta opción)
+- El workflow recreará la rama en la próxima descarga de traducción</p>
+<p><strong>Mejores Prácticas:</strong>
+- Ejecute descargas de traducción periódicamente (ej: semanalmente) para mantener las traducciones actualizadas
+- Revise los PRs de traducción cuidadosamente antes de fusionar
+- Pruebe la construcción de la documentación localmente después de fusionar traducciones
+- Coordine con los traductores sobre fechas límite de traducción
+- Use el workflow de aprobación de Crowdin para control de calidad (opcional)</p>
+<h3 id="flujo-de-trabajo-de-traduccion">Flujo de Trabajo de Traducción<a class="headerlink" href="#flujo-de-trabajo-de-traduccion" title="Permanent link">&para;</a></h3>
+<ol>
+<li>Edite los archivos fuente en inglés (por ejemplo: <code>docs/index.md</code>, <code>docs/getting-started.md</code>) y envíe un pull request.</li>
+<li>Tras la fusión en <code>main</code>, Crowdin detectará cadenas nuevas o cambiadas y notificará a los traductores.</li>
+<li>Los traductores traducen el contenido en el editor de Crowdin. Crowdin preserva bloques de código, código en línea y el formato Markdown.</li>
+<li>Las traducciones se sincronizan de nuevo al repositorio mediante la integración Crowdin ↔ GitHub o GitHub Actions. Crowdin abrirá PRs con las actualizaciones de traducción para que los mantenedores las revisen y fusionen.</li>
+</ol>
+<h3 id="estructura-de-archivos">Estructura de Archivos<a class="headerlink" href="#estructura-de-archivos" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Inglés (fuente): <code>docs/index.md</code>, <code>docs/getting-started.md</code>, <code>docs/user-guide/configuration.md</code></li>
+<li>Spanish: <code>docs/index.es.md</code>, <code>docs/getting-started.es.md</code>, <code>docs/user-guide/configuration.es.md</code></li>
+<li>German: <code>docs/index.de.md</code>, <code>docs/getting-started.de.md</code>, <code>docs/user-guide/configuration.de.md</code></li>
+</ul>
+<h3 id="que-se-traduce">Qué se Traduce<a class="headerlink" href="#que-se-traduce" title="Permanent link">&para;</a></h3>
+<p>Se debe traducir:</p>
+<ul>
+<li>Texto explicativo, títulos y encabezados</li>
+<li>Mensajes y guías dirigidas al usuario</li>
+<li>Descripciones relacionadas con ejemplos (no los bloques de código)</li>
+</ul>
+<p>No se debe traducir:</p>
+<ul>
+<li>Bloques de código e inline code</li>
+<li>Nombres de funciones y clases</li>
+<li>Rutas de archivo y URLs</li>
+<li>Claves y valores de configuración</li>
+<li>Nombres de proyecto y términos técnicos (por ejemplo: d-back, d-zone, WebSocket, OAuth2)</li>
+</ul>
+<h3 id="archivos-excluidos">Archivos Excluidos<a class="headerlink" href="#archivos-excluidos" title="Permanent link">&para;</a></h3>
+<p>Los siguientes archivos están excluidos de la traducción en Crowdin:</p>
+<ul>
+<li><code>docs/VERCEL_SETUP.md</code></li>
+<li><code>docs/TESTING_I18N.md</code></li>
+<li><code>docs/.pages</code></li>
+<li>Archivos de la referencia de la API (generados por mkdocstrings)</li>
+</ul>
+<h3 id="probar-traducciones-localmente">Probar Traducciones Localmente<a class="headerlink" href="#probar-traducciones-localmente" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a><span class="c1"># Install documentation dependencies</span>
+<a id="__codelineno-16-2" name="__codelineno-16-2" href="#__codelineno-16-2"></a>pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span>.<span class="o">[</span>docs<span class="o">]</span>
+<a id="__codelineno-16-3" name="__codelineno-16-3" href="#__codelineno-16-3"></a>
+<a id="__codelineno-16-4" name="__codelineno-16-4" href="#__codelineno-16-4"></a><span class="c1"># Serve documentation locally with all languages</span>
+<a id="__codelineno-16-5" name="__codelineno-16-5" href="#__codelineno-16-5"></a>mkdocs<span class="w"> </span>serve
+<a id="__codelineno-16-6" name="__codelineno-16-6" href="#__codelineno-16-6"></a>
+<a id="__codelineno-16-7" name="__codelineno-16-7" href="#__codelineno-16-7"></a><span class="c1"># Build documentation (generates site/ directory with all languages)</span>
+<a id="__codelineno-16-8" name="__codelineno-16-8" href="#__codelineno-16-8"></a>mkdocs<span class="w"> </span>build
+</code></pre></div>
+<p>Ver vistas por idioma:</p>
+<ul>
+<li>English: <code>http://127.0.0.1:8000/</code></li>
+<li>Spanish: <code>http://127.0.0.1:8000/es/</code></li>
+<li>German: <code>http://127.0.0.1:8000/de/</code></li>
+</ul>
+<h3 id="mejores-practicas-de-traduccion">Mejores Prácticas de Traducción<a class="headerlink" href="#mejores-practicas-de-traduccion" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Use un tono formal (usted) en el contenido dirigido a usuarios.</li>
+<li>Mantenga términos técnicos y nombres de proyecto en inglés.</li>
+<li>Preservar el formato Markdown, bloques de código y código en línea.</li>
+<li>Probar localmente las traducciones antes de enviarlas.</li>
+</ul>
+<h3 id="agregar-nuevos-idiomas">Agregar Nuevos Idiomas<a class="headerlink" href="#agregar-nuevos-idiomas" title="Permanent link">&para;</a></h3>
+<p>Para añadir un nuevo idioma:</p>
+<ol>
+<li>Actualice <code>mkdocs.yml</code> para incluir el nuevo idioma en la configuración i18n.</li>
+<li>Actualice <code>crowdin.yml</code> con el nuevo <code>two_letters_code</code>.</li>
+<li>Añada el idioma en la configuración del proyecto Crowdin.</li>
+<li>Cree archivos de traducción iniciales siguiendo el patrón de sufijos.</li>
+<li>Actualice esta sección con los detalles del nuevo idioma.</li>
+</ol>
+<h3 id="solucion-de-problemas">Solución de Problemas<a class="headerlink" href="#solucion-de-problemas" title="Permanent link">&para;</a></h3>
+<p>Problemas comunes:</p>
+<ul>
+<li>Traducciones no aparecen en Crowdin: verifique que los patrones en <code>crowdin.yml</code> coincidan con los archivos comprometidos y que no estén en <code>ignore</code>.</li>
+<li>Traducciones no sincronizan a GitHub: revise los logs de Actions y verifique los secrets <code>CROWDIN_PROJECT_ID</code> y <code>CROWDIN_PERSONAL_TOKEN</code>.</li>
+<li>Formato roto: revise las traducciones en el editor de Crowdin y compruebe que los bloques de código estén preservados.</li>
+</ul>
+<h3 id="recursos">Recursos<a class="headerlink" href="#recursos" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Crowdin documentation: https://support.crowdin.com/</li>
+<li>mkdocs-static-i18n: https://github.com/ultrabug/mkdocs-static-i18n</li>
+<li>Material for MkDocs i18n: https://squidfunk.github.io/mkdocs-material/setup/changing-the-language/</li>
+</ul>
+<h2 id="depuracion">Depuración<a class="headerlink" href="#depuracion" title="Permanent link">&para;</a></h2>
+<h3 id="registro-de-depuracion">Registro de Depuración<a class="headerlink" href="#registro-de-depuracion" title="Permanent link">&para;</a></h3>
+<p>Agregar declaraciones de impresión o usar logging:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a><span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+<a id="__codelineno-17-2" name="__codelineno-17-2" href="#__codelineno-17-2"></a>
+<a id="__codelineno-17-3" name="__codelineno-17-3" href="#__codelineno-17-3"></a><span class="n">logging</span><span class="o">.</span><span class="n">basicConfig</span><span class="p">(</span><span class="n">level</span><span class="o">=</span><span class="n">logging</span><span class="o">.</span><span class="n">DEBUG</span><span class="p">)</span>
+<a id="__codelineno-17-4" name="__codelineno-17-4" href="#__codelineno-17-4"></a><span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+<a id="__codelineno-17-5" name="__codelineno-17-5" href="#__codelineno-17-5"></a>
+<a id="__codelineno-17-6" name="__codelineno-17-6" href="#__codelineno-17-6"></a><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Starting WebSocket server...&quot;</span><span class="p">)</span>
+</code></pre></div>
+<h3 id="depurar-conexiones-websocket">Depurar Conexiones WebSocket<a class="headerlink" href="#depurar-conexiones-websocket" title="Permanent link">&para;</a></h3>
+<p>Use la consola del navegador o herramientas WebSocket:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-18-1" name="__codelineno-18-1" href="#__codelineno-18-1"></a><span class="kd">const</span><span class="w"> </span><span class="nx">ws</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="ow">new</span><span class="w"> </span><span class="nx">WebSocket</span><span class="p">(</span><span class="s1">&#39;ws://localhost:3000&#39;</span><span class="p">);</span>
+<a id="__codelineno-18-2" name="__codelineno-18-2" href="#__codelineno-18-2"></a><span class="nx">ws</span><span class="p">.</span><span class="nx">onopen</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Connected&#39;</span><span class="p">);</span>
+<a id="__codelineno-18-3" name="__codelineno-18-3" href="#__codelineno-18-3"></a><span class="nx">ws</span><span class="p">.</span><span class="nx">onmessage</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="nx">event</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Received:&#39;</span><span class="p">,</span><span class="w"> </span><span class="nx">event</span><span class="p">.</span><span class="nx">data</span><span class="p">);</span>
+<a id="__codelineno-18-4" name="__codelineno-18-4" href="#__codelineno-18-4"></a><span class="nx">ws</span><span class="p">.</span><span class="nx">onerror</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="nx">error</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">console</span><span class="p">.</span><span class="nx">error</span><span class="p">(</span><span class="s1">&#39;Error:&#39;</span><span class="p">,</span><span class="w"> </span><span class="nx">error</span><span class="p">);</span>
+</code></pre></div>
+<h2 id="proceso-de-lanzamiento">Proceso de Lanzamiento<a class="headerlink" href="#proceso-de-lanzamiento" title="Permanent link">&para;</a></h2>
+<p>Los lanzamientos son manejados por los mantenedores del proyecto:</p>
+<ol>
+<li>Actualizar número de versión en <code>setup.cfg</code></li>
+<li>Actualizar CHANGELOG (si existe)</li>
+<li>Crear tag de git: <code>git tag v0.0.X</code></li>
+<li>Push tag: <code>git push origin v0.0.X</code></li>
+<li>GitHub Actions construye y publica automáticamente a PyPI</li>
+</ol>
+<h3 id="versionado-de-documentacion">Versionado de Documentación<a class="headerlink" href="#versionado-de-documentacion" title="Permanent link">&para;</a></h3>
+<p>d-back usa mike para el versionado de documentación, que se integra perfectamente con Material for MkDocs para proporcionar un selector de versiones en la documentación. La estrategia de versionado utiliza tres tipos de versiones:</p>
+<ul>
+<li><strong>Versiones estables</strong>: Creadas desde tags de git (por ejemplo, 0.0.14, 0.1.0, 1.0.0)</li>
+<li><strong>Prerelease 'latest'</strong>: Rastrea la rama main (listo para producción pero aún sin etiquetar)</li>
+<li><strong>Prerelease 'dev'</strong>: Rastrea la rama develop (desarrollo/pruebas)</li>
+</ul>
+<p>El selector de versiones aparece en la barra de navegación superior, permitiendo a los usuarios cambiar entre diferentes versiones de la documentación.</p>
+<h4 id="estrategia-de-versionado">Estrategia de Versionado<a class="headerlink" href="#estrategia-de-versionado" title="Permanent link">&para;</a></h4>
+<p><strong>1. Versiones Estables (desde tags)</strong></p>
+<p>Creadas cuando se etiqueta una nueva versión:</p>
+<ul>
+<li>El número de versión coincide con el tag de git sin el prefijo 'v'</li>
+<li>Estas versiones son permanentes e inmutables</li>
+<li>Ejemplo: El tag v0.0.15 crea la versión de documentación 0.0.15</li>
+<li>Comando: <code>mike deploy 0.0.15 --push</code></li>
+</ul>
+<p><strong>2. Prerelease Latest (rama main)</strong></p>
+<p>Representa el estado actual de la rama main:</p>
+<ul>
+<li>Alias: 'latest'</li>
+<li>Actualizado en cada push a main</li>
+<li>Esta es la versión predeterminada que ven los usuarios</li>
+<li>Comando: <code>mike deploy &lt;commit-sha&gt; latest --push --update-aliases</code></li>
+</ul>
+<p><strong>3. Prerelease Dev (rama develop)</strong></p>
+<p>Representa el estado actual de la rama develop:</p>
+<ul>
+<li>Alias: 'dev'</li>
+<li>Actualizado en cada push a develop</li>
+<li>Usado para probar cambios de documentación antes del lanzamiento</li>
+<li>Comando: <code>mike deploy &lt;commit-sha&gt; dev --push --update-aliases</code></li>
+</ul>
+<h4 id="pruebas-locales">Pruebas Locales<a class="headerlink" href="#pruebas-locales" title="Permanent link">&para;</a></h4>
+<p>Pruebe mike localmente antes de desplegar:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-19-1" name="__codelineno-19-1" href="#__codelineno-19-1"></a><span class="c1"># Instalar dependencias de documentación (incluye mike)</span>
+<a id="__codelineno-19-2" name="__codelineno-19-2" href="#__codelineno-19-2"></a>pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span>.<span class="o">[</span>docs<span class="o">]</span>
+<a id="__codelineno-19-3" name="__codelineno-19-3" href="#__codelineno-19-3"></a>
+<a id="__codelineno-19-4" name="__codelineno-19-4" href="#__codelineno-19-4"></a><span class="c1"># Desplegar una versión de prueba localmente (no hace push al remoto)</span>
+<a id="__codelineno-19-5" name="__codelineno-19-5" href="#__codelineno-19-5"></a>mike<span class="w"> </span>deploy<span class="w"> </span><span class="m">0</span>.0.14-test
+<a id="__codelineno-19-6" name="__codelineno-19-6" href="#__codelineno-19-6"></a>
+<a id="__codelineno-19-7" name="__codelineno-19-7" href="#__codelineno-19-7"></a><span class="c1"># Desplegar con un alias</span>
+<a id="__codelineno-19-8" name="__codelineno-19-8" href="#__codelineno-19-8"></a>mike<span class="w"> </span>deploy<span class="w"> </span><span class="m">0</span>.0.15-test<span class="w"> </span>latest<span class="w"> </span>--update-aliases
+<a id="__codelineno-19-9" name="__codelineno-19-9" href="#__codelineno-19-9"></a>
+<a id="__codelineno-19-10" name="__codelineno-19-10" href="#__codelineno-19-10"></a><span class="c1"># Establecer la versión predeterminada (lo que los usuarios ven al visitar los docs)</span>
+<a id="__codelineno-19-11" name="__codelineno-19-11" href="#__codelineno-19-11"></a>mike<span class="w"> </span>set-default<span class="w"> </span>latest
+<a id="__codelineno-19-12" name="__codelineno-19-12" href="#__codelineno-19-12"></a>
+<a id="__codelineno-19-13" name="__codelineno-19-13" href="#__codelineno-19-13"></a><span class="c1"># Listar todas las versiones desplegadas</span>
+<a id="__codelineno-19-14" name="__codelineno-19-14" href="#__codelineno-19-14"></a>mike<span class="w"> </span>list
+<a id="__codelineno-19-15" name="__codelineno-19-15" href="#__codelineno-19-15"></a>
+<a id="__codelineno-19-16" name="__codelineno-19-16" href="#__codelineno-19-16"></a><span class="c1"># Servir la documentación versionada localmente</span>
+<a id="__codelineno-19-17" name="__codelineno-19-17" href="#__codelineno-19-17"></a>mike<span class="w"> </span>serve
+<a id="__codelineno-19-18" name="__codelineno-19-18" href="#__codelineno-19-18"></a><span class="c1"># Visite http://localhost:8000 para probar</span>
+<a id="__codelineno-19-19" name="__codelineno-19-19" href="#__codelineno-19-19"></a><span class="c1"># Use el selector de versiones en la navegación superior para cambiar entre versiones</span>
+<a id="__codelineno-19-20" name="__codelineno-19-20" href="#__codelineno-19-20"></a>
+<a id="__codelineno-19-21" name="__codelineno-19-21" href="#__codelineno-19-21"></a><span class="c1"># Eliminar una versión de prueba</span>
+<a id="__codelineno-19-22" name="__codelineno-19-22" href="#__codelineno-19-22"></a>mike<span class="w"> </span>delete<span class="w"> </span><span class="m">0</span>.0.14-test
+</code></pre></div>
+<p><strong>Notas importantes para pruebas locales:</strong></p>
+<ul>
+<li>Mike crea una rama <code>gh-pages</code> localmente para almacenar la documentación versionada</li>
+<li>Use nombres de versión de prueba (por ejemplo, 0.0.14-test) para evitar conflictos con versiones de producción</li>
+<li>La bandera <code>--push</code> se omite durante las pruebas locales para prevenir despliegues accidentales</li>
+<li>Siempre pruebe la funcionalidad del selector de versiones antes de desplegar</li>
+<li>Verifique que los tres idiomas (English, Spanish, German) funcionen correctamente en cada versión</li>
+</ul>
+<h4 id="alias-de-versiones">Alias de Versiones<a class="headerlink" href="#alias-de-versiones" title="Permanent link">&para;</a></h4>
+<p>Los alias son nombres simbólicos que apuntan a versiones específicas:</p>
+<ul>
+<li>Alias comunes: 'latest' (rama main), 'dev' (rama develop), 'stable' (última versión estable)</li>
+<li>Los alias pueden actualizarse para apuntar a diferentes versiones</li>
+<li>Ejemplo: Después de lanzar 0.1.0, actualice el alias 'stable': <code>mike deploy 0.1.0 stable --update-aliases</code></li>
+<li>La bandera <code>--update-aliases</code> actualiza alias existentes en lugar de crear duplicados</li>
+</ul>
+<h4 id="flujo-de-trabajo-de-despliegue">Flujo de Trabajo de Despliegue<a class="headerlink" href="#flujo-de-trabajo-de-despliegue" title="Permanent link">&para;</a></h4>
+<p>Proceso de despliegue manual (para pruebas locales o cuando sea necesario):</p>
+<p><strong>Para lanzamientos estables:</strong>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-20-1" name="__codelineno-20-1" href="#__codelineno-20-1"></a><span class="c1"># Después de crear un tag de git (por ejemplo, v0.0.15)</span>
+<a id="__codelineno-20-2" name="__codelineno-20-2" href="#__codelineno-20-2"></a>mike<span class="w"> </span>deploy<span class="w"> </span><span class="m">0</span>.0.15<span class="w"> </span>stable<span class="w"> </span>--push<span class="w"> </span>--update-aliases
+<a id="__codelineno-20-3" name="__codelineno-20-3" href="#__codelineno-20-3"></a>mike<span class="w"> </span>set-default<span class="w"> </span>stable<span class="w"> </span>--push
+</code></pre></div></p>
+<p><strong>Para actualizaciones de la rama main:</strong>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-21-1" name="__codelineno-21-1" href="#__codelineno-21-1"></a><span class="c1"># Después de fusionar a main</span>
+<a id="__codelineno-21-2" name="__codelineno-21-2" href="#__codelineno-21-2"></a>mike<span class="w"> </span>deploy<span class="w"> </span>&lt;commit-sha&gt;<span class="w"> </span>latest<span class="w"> </span>--push<span class="w"> </span>--update-aliases
+</code></pre></div></p>
+<p><strong>Para actualizaciones de la rama develop:</strong>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-22-1" name="__codelineno-22-1" href="#__codelineno-22-1"></a><span class="c1"># Después de fusionar a develop</span>
+<a id="__codelineno-22-2" name="__codelineno-22-2" href="#__codelineno-22-2"></a>mike<span class="w"> </span>deploy<span class="w"> </span>&lt;commit-sha&gt;<span class="w"> </span>dev<span class="w"> </span>--push<span class="w"> </span>--update-aliases
+</code></pre></div></p>
+<p><strong>Nota:</strong> Estos comandos son para despliegue manual. El despliegue automatizado mediante GitHub Actions es el enfoque recomendado para producción (vea "Despliegue Automatizado con GitHub Actions" más abajo).</p>
+<h4 id="despliegue-automatizado-con-github-actions">Despliegue Automatizado con GitHub Actions<a class="headerlink" href="#despliegue-automatizado-con-github-actions" title="Permanent link">&para;</a></h4>
+<p>El despliegue de la documentación está automatizado mediante GitHub Actions. El workflow está definido en <code>.github/workflows/docs.yml</code> y maneja todos los despliegues de producción.</p>
+<p><strong>Descripción General:</strong></p>
+<ul>
+<li>La documentación se despliega automáticamente en pushes a main, develop y creación de tags</li>
+<li>El workflow gestiona el versionado con mike y despliega a GitHub Pages</li>
+<li>El despliegue manual usando mike localmente sigue disponible para pruebas</li>
+<li>Los tres idiomas (inglés, español, alemán) se construyen y despliegan juntos</li>
+</ul>
+<p><strong>Activadores Automáticos:</strong></p>
+<ol>
+<li><strong>Creación de tag (v*)</strong>: Crea una versión estable</li>
+<li>Ejemplo: Tag <code>v0.0.15</code> despliega versión <code>0.0.15</code> con alias <code>stable</code></li>
+<li>Las versiones estables son permanentes e inmutables</li>
+<li>Se establece como la versión predeterminada que ven los usuarios</li>
+<li>Comando ejecutado: <code>mike deploy 0.0.15 stable --push --update-aliases</code></li>
+<li>
+<p>Comando ejecutado: <code>mike set-default stable --push</code></p>
+</li>
+<li>
+<p><strong>Push a main</strong>: Despliega prerelease 'latest'</p>
+</li>
+<li>Representa el estado actual listo para producción</li>
+<li>No se establece como predeterminado (los lanzamientos estables permanecen como predeterminados)</li>
+<li>Usa el identificador de versión estable 'edge'</li>
+<li>
+<p>Comando ejecutado: <code>mike deploy edge latest --push --update-aliases</code></p>
+</li>
+<li>
+<p><strong>Push a develop</strong>: Despliega prerelease 'dev'</p>
+</li>
+<li>Representa el estado actual de desarrollo</li>
+<li>Se usa para probar cambios de documentación antes del lanzamiento</li>
+<li>No se establece como predeterminado (dev es solo para pruebas)</li>
+<li>Usa el identificador de versión estable 'development'</li>
+<li>
+<p>Comando ejecutado: <code>mike deploy development dev --push --update-aliases</code></p>
+</li>
+<li>
+<p><strong>Activación manual</strong>: Disponible mediante <code>workflow_dispatch</code> en la interfaz de GitHub Actions</p>
+</li>
+<li>Útil para pruebas o re-despliegue de documentación</li>
+<li>Acceso mediante: Repositorio → pestaña Actions → workflow Documentation → Run workflow</li>
+</ol>
+<p><strong>Proceso del Workflow:</strong></p>
+<ol>
+<li><strong>Checkout repository</strong>: Obtiene el historial completo de git (requerido para que mike acceda a la rama gh-pages)</li>
+<li><strong>Set up Python 3.11</strong>: Instala Python con caché de pip para construcciones más rápidas</li>
+<li><strong>Install dependencies</strong>: Ejecuta <code>pip install -e .[docs]</code> para instalar mkdocs-material, mkdocs-static-i18n, mkdocstrings y mike desde setup.cfg</li>
+<li><strong>Configure git</strong>: Configura el usuario de git para commits automatizados a la rama gh-pages</li>
+<li><strong>Determine version</strong>: Analiza el tipo de activador (tag, main o develop) para decidir la estrategia de despliegue</li>
+<li><strong>Deploy with mike</strong>: Ejecuta el comando mike apropiado para desplegar documentación versionada a la rama gh-pages</li>
+<li><strong>GitHub Pages sirve documentación actualizada</strong>: Los cambios aparecen en 1-2 minutos en https://nntin.github.io/d-back/</li>
+</ol>
+<p><strong>Estrategia de Versiones:</strong></p>
+<ul>
+<li><strong>Versiones estables</strong> (desde tags): Permanentes, inmutables, representan lanzamientos oficiales; siempre se establecen como predeterminadas</li>
+<li><strong>Alias 'latest'</strong>: Actualizado en cada push a la rama main; disponible en el selector de versión pero no se establece como predeterminado</li>
+<li><strong>Alias 'dev'</strong>: Actualizado en cada push a la rama develop, solo para pruebas (nunca se establece como predeterminado)</li>
+<li>El selector de versión en la navegación de la documentación muestra todas las versiones disponibles</li>
+</ul>
+<p><strong>Monitoreo de Despliegues:</strong></p>
+<ul>
+<li><strong>Ver ejecuciones de workflow</strong>: Repositorio → pestaña Actions → workflow Documentation</li>
+<li><strong>Verificar estado de despliegue</strong>: Ver el badge Documentation Status en README.md</li>
+<li><strong>Logs de workflow</strong>: Información detallada de despliegue disponible en cada ejecución de workflow</li>
+<li><strong>Despliegues fallidos</strong>: Los mensajes de error aparecen en los logs de workflow con información para solución de problemas</li>
+</ul>
+<p><strong>Configuración de GitHub Pages:</strong></p>
+<p>Configuración inicial (solo se necesita una vez):</p>
+<ol>
+<li>Ir a: Repository Settings → Pages</li>
+<li>Establecer Source: Deploy from a branch</li>
+<li>Establecer Branch: <code>gh-pages</code> (creado automáticamente por la primera ejecución del workflow)</li>
+<li>Hacer clic en Save</li>
+<li>La documentación estará disponible en: https://nntin.github.io/d-back/</li>
+<li>Los cambios aparecen en 1-2 minutos después de completarse el workflow</li>
+</ol>
+<p><strong>Despliegue Manual (si es necesario):</strong></p>
+<p>El workflow automatizado maneja la mayoría de escenarios de despliegue. El despliegue manual puede ser necesario para:</p>
+<ul>
+<li>Probar cambios de documentación localmente antes de hacer push</li>
+<li>Solucionar problemas de despliegue que requieran troubleshooting local</li>
+<li>Desplegar desde una rama local para propósitos de prueba</li>
+</ul>
+<p>Use los comandos mike documentados en la subsección "Flujo de Trabajo de Despliegue" arriba para despliegue manual.</p>
+<p><strong>Solución de Problemas del Workflow:</strong></p>
+<p><strong>Problema:</strong> El workflow falla en git push a gh-pages
+- <strong>Solución</strong>: Verifique que Actions tenga permisos de escritura
+  - Ir a: Settings → Actions → General → Workflow permissions
+  - Seleccionar: "Read and write permissions"
+  - Hacer clic en Save</p>
+<p><strong>Problema:</strong> La versión desplegada no aparece en el selector de versión
+- <strong>Solución</strong>: Verifique que la condición del activador coincidió con la rama o tag esperado
+- <strong>Solución</strong>: Revise los logs de workflow para confirmar que el despliegue se completó exitosamente
+- <strong>Solución</strong>: Asegúrese de que al menos dos versiones estén desplegadas para que aparezca el selector</p>
+<p><strong>Problema:</strong> Contenido antiguo aparece en versión recién desplegada
+- <strong>Solución</strong>: Limpie la caché del navegador y recargue
+- <strong>Solución</strong>: Verifique que el workflow se completó exitosamente en la pestaña Actions
+- <strong>Solución</strong>: Verifique que se desplegó la versión correcta revisando los logs de workflow</p>
+<p><strong>Problema:</strong> La rama gh-pages no se creó
+- <strong>Solución</strong>: Revise los logs de workflow para errores durante el primer despliegue
+- <strong>Solución</strong>: Verifique que Actions tenga permisos de escritura (vea el primer problema arriba)
+- <strong>Solución</strong>: Active manualmente el workflow mediante workflow_dispatch para reintentar</p>
+<h4 id="mejores-practicas">Mejores Prácticas<a class="headerlink" href="#mejores-practicas" title="Permanent link">&para;</a></h4>
+<ul>
+<li>Siempre pruebe localmente con <code>mike serve</code> antes de desplegar</li>
+<li>Use versionado semántico para lanzamientos estables (MAJOR.MINOR.PATCH)</li>
+<li>Mantenga 'latest' como la versión predeterminada para los usuarios</li>
+<li>Documente cambios importantes en notas de lanzamiento específicas de versión</li>
+<li>Mantenga al menos las últimas 3 versiones estables como referencia</li>
+<li>Elimine versiones muy antiguas para mantener la lista de versiones manejable: <code>mike delete 0.0.1 --push</code></li>
+<li>Verifique que el soporte multilingüe funcione en todas las versiones desplegadas</li>
+</ul>
+<h4 id="solucion-de-problemas_1">Solución de Problemas<a class="headerlink" href="#solucion-de-problemas_1" title="Permanent link">&para;</a></h4>
+<p><strong>Problema:</strong> El selector de versiones no aparece
+- Solución: Verifique que <code>extra.version.provider: mike</code> esté configurado en mkdocs.yml (ya configurado en línea 137)
+- Solución: Asegúrese de que al menos dos versiones estén desplegadas
+- Solución: Verifique que el tema Material esté configurado correctamente</p>
+<p><strong>Problema:</strong> Las versiones no se despliegan
+- Solución: Asegúrese de que mike esté instalado: <code>pip install -e .[docs]</code>
+- Solución: Verifique que la rama gh-pages exista
+- Solución: Verifique que el remoto de git esté configurado correctamente</p>
+<p><strong>Problema:</strong> Conflictos entre selector de idioma y selector de versión
+- Solución: Ambos selectores deberían funcionar juntos; verifique la configuración de mkdocs-static-i18n
+- Solución: Pruebe con <code>mike serve</code> para asegurar que ambos selectores aparezcan</p>
+<p><strong>Problema:</strong> Contenido antiguo aparece en nueva versión
+- Solución: Use <code>mike deploy --update-aliases</code> para actualizar alias
+- Solución: Limpie la caché del navegador
+- Solución: Reconstruya con <code>mkdocs build --clean</code> antes de desplegar</p>
+<h4 id="recursos_1">Recursos<a class="headerlink" href="#recursos_1" title="Permanent link">&para;</a></h4>
+<ul>
+<li>Mike documentation: https://github.com/jimporter/mike</li>
+<li>Material for MkDocs versioning: https://squidfunk.github.io/mkdocs-material/setup/setting-up-versioning/</li>
+<li>Semantic Versioning: https://semver.org/</li>
+</ul>
+<p><strong>Nota:</strong> El despliegue de la documentación está completamente automatizado mediante GitHub Actions. Vea la sección "Despliegue Automatizado con GitHub Actions" arriba para detalles sobre cómo el workflow despliega la documentación en pushes a ramas y creación de tags.</p>
+<h2 id="mejoras-futuras">Mejoras Futuras<a class="headerlink" href="#mejoras-futuras" title="Permanent link">&para;</a></h2>
+<p>Áreas donde agradecemos contribuciones:</p>
+<ul>
+<li><strong>Soporte Redis</strong>: Cacheo y pub/sub distribuido</li>
+<li><strong>Métricas y Monitoreo</strong>: Prometheus/Grafana integration</li>
+<li><strong>Autenticación mejorada</strong>: Más proveedores OAuth2</li>
+<li><strong>Gestión de sesiones</strong>: Persistencia y renovación de sesiones</li>
+<li><strong>Pruebas de carga</strong>: Pruebas de rendimiento y benchmark</li>
+<li><strong>Internacionalización</strong>: Mensajes de error multilenguaje</li>
+</ul>
+<h2 id="obtener-ayuda">Obtener Ayuda<a class="headerlink" href="#obtener-ayuda" title="Permanent link">&para;</a></h2>
+<p>¿Necesita ayuda con desarrollo?</p>
+<ul>
+<li><strong>GitHub Issues</strong>: Reportar bugs o solicitar características</li>
+<li><strong>GitHub Discussions</strong>: Hacer preguntas o discutir ideas</li>
+<li><strong>Documentación</strong>: Revisar <a href="../user-guide/index.md">User Guide</a> y <a href="../api-reference.md">API Reference</a></li>
+<li><strong>Código fuente</strong>: Leer el código en <a href="https://github.com/NNTin/d-back">GitHub</a></li>
+</ul>
+<h2 id="licencia">Licencia<a class="headerlink" href="#licencia" title="Permanent link">&para;</a></h2>
+<p>d-back está licenciado bajo la Licencia MIT. Consulte el archivo LICENSE para detalles.</p>
+<h2 id="que-sigue">¿Qué Sigue?<a class="headerlink" href="#que-sigue" title="Permanent link">&para;</a></h2>
+<ul>
+<li><strong><a href="../user-guide/index.md">Guía del Usuario</a></strong>: Aprender cómo usar d-back</li>
+<li><strong><a href="../api-reference.md">Referencia de API</a></strong>: Documentación detallada de la API</li>
+<li><strong><a href="../getting-started.md">Primeros Pasos</a></strong>: Instalar y ejecutar d-back</li>
+</ul>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Volver al principio
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      Copyright &copy; 2025 Tin Nguyen
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        
+<div class="md-social">
+  
+    
+    
+    
+    
+    <a href="https://github.com/NNTin/d-back" target="_blank" rel="noopener" title="d-back on GitHub" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+    </a>
+  
+    
+    
+    
+    
+    <a href="https://pypi.org/project/d-back/" target="_blank" rel="noopener" title="d-back on PyPI" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.8 200.5c-7.7-30.9-22.3-54.2-53.4-54.2h-40.1v47.4c0 36.8-31.2 67.8-66.8 67.8H172.7c-29.2 0-53.4 25-53.4 54.3v101.8c0 29 25.2 46 53.4 54.3 33.8 9.9 66.3 11.7 106.8 0 26.9-7.8 53.4-23.5 53.4-54.3v-40.7H226.2v-13.6h160.2c31.1 0 42.6-21.7 53.4-54.2 11.2-33.5 10.7-65.7 0-108.6M286.2 444.7a20.4 20.4 0 1 1 0-40.7 20.4 20.4 0 1 1 0 40.7M167.8 248.1h106.8c29.7 0 53.4-24.5 53.4-54.3V91.9c0-29-24.4-50.7-53.4-55.6-35.8-5.9-74.7-5.6-106.8.1-45.2 8-53.4 24.7-53.4 55.6v40.7h106.9v13.6h-147c-31.1 0-58.3 18.7-66.8 54.2-9.8 40.7-10.2 66.1 0 108.6 7.6 31.6 25.7 54.2 56.8 54.2H101v-48.8c0-35.3 30.5-66.4 66.8-66.4m-6.6-183.4a20.4 20.4 0 1 1 0 40.8 20.4 20.4 0 1 1 0-40.8"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.tabs", "navigation.sections", "navigation.expand", "navigation.top", "search.suggest", "search.highlight", "content.code.copy", "content.code.annotate"], "search": "../../assets/javascripts/workers/search.973d3a69.min.js", "tags": null, "translations": {"clipboard.copied": "Copiado al portapapeles", "clipboard.copy": "Copiar al portapapeles", "search.result.more.one": "1 m\u00e1s en esta p\u00e1gina", "search.result.more.other": "# m\u00e1s en esta p\u00e1gina", "search.result.none": "No se encontraron documentos", "search.result.one": "1 documento encontrado", "search.result.other": "# documentos encontrados", "search.result.placeholder": "Teclee para comenzar b\u00fasqueda", "search.result.term.missing": "Falta", "select.version": "Seleccionar versi\u00f3n"}, "version": {"provider": "mike"}}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.f55a23d4.min.js"></script>
+      
+    
+  </body>
+</html>

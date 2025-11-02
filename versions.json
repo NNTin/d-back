@@ -14,10 +14,15 @@
     ]
   },
   {
-    "version": "0.0.16",
-    "title": "0.0.16",
+    "version": "0.0.17",
+    "title": "0.0.17",
     "aliases": [
       "stable"
     ]
+  },
+  {
+    "version": "0.0.16",
+    "title": "0.0.16",
+    "aliases": []
   }
 ]
