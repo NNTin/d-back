@@ -900,6 +900,13 @@ class WebSocketServer:
             Exception: Sends error message to client on failure
         """
         server_id = data["data"].get("server", "default")
+        
+        # Normalize incoming server_id: coerce to string, strip whitespace, treat empty/None as 'default'
+        if server_id is None or (isinstance(server_id, str) and not server_id.strip()):
+            server_id = "default"
+        else:
+            server_id = str(server_id).strip()
+        
         password = data["data"].get("password", None)  # Legacy password support
         discord_token = data["data"].get("discordToken", None)  # OAuth2 token
         discord_user = data["data"].get("discordUser", None)    # OAuth2 user info
@@ -920,20 +927,43 @@ class WebSocketServer:
         server_info = None
         discord_server_id = None
         
-        print(f"[DEBUG] Looking for server with ID: {server_id}")
+        # Before the loop: Log search criteria and available data
+        print(f"[DEBUG] Looking for server with ID: '{server_id}' (type: {type(server_id).__name__})")
+        print(f"[DEBUG] Search type: {'DEFAULT SERVER LOOKUP' if server_id == 'default' else 'EXACT ID MATCH'}")
+        print(f"[DEBUG] Total servers available: {len(server_data)}")
         print(f"[DEBUG] Available servers: {server_data}")
         
         # Look for exact server ID match or default server
         for discord_id, server in server_data.items():
-            print(f"[DEBUG] Checking server {discord_id}: {server}")
-            if server["id"] == server_id or (server.get("default") and server_id == "default"):
+            # Inside the loop: Detailed logging for each server check
+            server_id_value = server.get("id", "MISSING")
+            default_flag = server.get("default", False)
+            exact_match = server_id_value == server_id
+            default_match = default_flag and server_id == "default"
+            
+            print(f"[DEBUG] Checking server discord_id='{discord_id}':")
+            print(f"  - server['id']='{server_id_value}' (type: {type(server_id_value).__name__})")
+            print(f"  - server.get('default')={default_flag}")
+            print(f"  - Exact match (server['id'] == server_id): {exact_match}")
+            print(f"  - Default match (default={default_flag} AND server_id=='default'): {default_match}")
+            print(f"  - Overall condition result: {exact_match or default_match}")
+            
+            if server_id_value == server_id or (server.get("default") and server_id == "default"):
                 server_info = server
                 discord_server_id = discord_id
-                print(f"[DEBUG] Found matching server: {server_info} with Discord ID: {discord_server_id}")
+                match_reason = "EXACT ID MATCH" if exact_match else "DEFAULT SERVER MATCH"
+                print(f"[DEBUG] ✓ MATCH FOUND via {match_reason}: {server_info} with Discord ID: {discord_server_id}")
                 break
         
+        # After the loop: Enhanced error logging if no match found
         if not server_info:
-            print(f"[ERROR] Unknown server: {server_id}")
+            available_ids = [s.get("id", "MISSING") for s in server_data.values()]
+            default_servers = [s.get("id", "MISSING") for s in server_data.values() if s.get("default")]
+            print(f"[ERROR] Unknown server: '{server_id}'")
+            print(f"[ERROR] Requested server_id: '{server_id}' (type: {type(server_id).__name__})")
+            print(f"[ERROR] Available server IDs in data: {available_ids}")
+            print(f"[ERROR] Servers with default=True: {default_servers if default_servers else 'NONE'}")
+            print(f"[ERROR] Total servers checked: {len(server_data)}")
             await websocket.send(json.dumps({
                 "type": "error", 
                 "data": {"message": "Sorry, couldn't connect to that Discord server."}
@@ -1002,7 +1032,8 @@ class WebSocketServer:
         
         response_data = {
             "users": user_data,
-            "request": request_data
+            "request": request_data,
+            "serverName": server_info['name']
         }
         
         # Include client ID if available
