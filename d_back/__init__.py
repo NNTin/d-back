@@ -43,7 +43,7 @@ For more information, see the documentation at:
 https://github.com/nntin/d-back
 """
 
-__version__ = "0.0.16"
+__version__ = "0.0.17"
 
 from d_back.server import WebSocketServer
 from d_back.mock.data import MockDataProvider
