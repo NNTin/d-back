@@ -31,6 +31,8 @@ concurrency:
 jobs:
   deploy-docs:
     runs-on: ubuntu-latest
+    outputs:
+      deployed-version: ${{ steps.set-version.outputs.version }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -63,6 +65,7 @@ jobs:
               if [[ -n "${{ github.event.inputs.version }}" ]]; then
                 VERSION="${{ github.event.inputs.version }}"
                 echo "Deploying stable version: $VERSION"
+                echo "DEPLOYED_VERSION=Stable ($VERSION)" >> $GITHUB_ENV
                 mike deploy $VERSION stable --push --update-aliases
                 mike set-default stable --push
               else
@@ -71,23 +74,32 @@ jobs:
               fi
             elif [[ "$TARGET" == "latest" ]]; then
               echo "Deploying latest prerelease"
+              echo "DEPLOYED_VERSION=Latest (edge)" >> $GITHUB_ENV
               mike deploy edge latest --push --update-aliases
             elif [[ "$TARGET" == "dev" ]]; then
               echo "Deploying dev prerelease"
+              echo "DEPLOYED_VERSION=Dev (development)" >> $GITHUB_ENV
               mike deploy development dev --push --update-aliases
             fi
           elif [[ $GITHUB_REF == refs/tags/v* ]]; then
             VERSION=${GITHUB_REF#refs/tags/v}
             echo "Deploying stable version: $VERSION"
+            echo "DEPLOYED_VERSION=Stable ($VERSION)" >> $GITHUB_ENV
             mike deploy $VERSION stable --push --update-aliases
             mike set-default stable --push
           elif [[ $GITHUB_REF == refs/heads/main ]]; then
             echo "Deploying latest prerelease from main"
+            echo "DEPLOYED_VERSION=Latest (edge)" >> $GITHUB_ENV
             mike deploy edge latest --push --update-aliases
           elif [[ $GITHUB_REF == refs/heads/develop ]]; then
             echo "Deploying dev prerelease from develop"
+            echo "DEPLOYED_VERSION=Dev (development)" >> $GITHUB_ENV
             mike deploy development dev --push --update-aliases
           fi
+
+      - name: Set version output
+        id: set-version
+        run: echo "version=$DEPLOYED_VERSION" >> $GITHUB_OUTPUT
 
   docs-summary:
     uses: nntin/d-flows/.github/workflows/step-summary.yml@v0
@@ -105,7 +117,7 @@ jobs:
         ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.version != '' && format('**Version**: `{0}`', github.event.inputs.version) || '' }}
         ${{ github.event_name == 'push' && format('**Branch**: `{0}`', github.ref) || '' }}
         
-        **Documentation Version Deployed**: ${{ startsWith(github.ref, 'refs/tags/v') && format('Stable ({0})', replace(github.ref, 'refs/tags/v', '')) || github.event_name == 'workflow_dispatch' && github.event.inputs.target == 'stable' && format('Stable ({0})', github.event.inputs.version) || github.event_name == 'workflow_dispatch' && github.event.inputs.target == 'latest' && 'Latest (edge)' || github.event_name == 'workflow_dispatch' && github.event.inputs.target == 'dev' && 'Dev (development)' || github.ref == 'refs/heads/main' && 'Latest (edge)' || 'Dev (development)' }}
+        **Documentation Version Deployed**: ${{ needs.deploy-docs.outputs.deployed-version || 'Unknown' }}
         
         [View Full Workflow Run](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
       overwrite: true
