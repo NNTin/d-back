@@ -90,7 +90,7 @@ jobs:
           fi
 
   docs-summary:
-    uses: nntin/d-flows/.github/workflows/step-summary.yml@main
+    uses: nntin/d-flows/.github/workflows/step-summary.yml@v0
     needs: deploy-docs
     if: always()
     with:

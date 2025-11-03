@@ -15,6 +15,8 @@ jobs:
   deploy:
     name: Deploy d_back to VPS
     runs-on: ubuntu-latest
+    outputs:
+      deployed_version: ${{ steps.extract_version.outputs.stdout }}
     
     steps:
       - name: Checkout code
@@ -137,17 +139,65 @@ jobs:
             
             echo "✅ Deployment verification completed successfully!"
 
-      - name: Deployment Summary
-        if: always()
-        run: |
-          echo "## Deployment Summary 📋" >> $GITHUB_STEP_SUMMARY
-          echo "- **Version Deployed**: ${{ github.event.inputs.version }}" >> $GITHUB_STEP_SUMMARY
-          echo "- **VPS Host**: ${{ secrets.VPS_HOST }}" >> $GITHUB_STEP_SUMMARY
-          echo "- **Deployment Status**: ${{ job.status }}" >> $GITHUB_STEP_SUMMARY
-          echo "- **Services Restarted**: d_back, nginx" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          if [ "${{ job.status }}" = "success" ]; then
-            echo "✅ Deployment completed successfully!" >> $GITHUB_STEP_SUMMARY
-          else
-            echo "❌ Deployment failed. Check the logs above for details." >> $GITHUB_STEP_SUMMARY
-          fi
+      - name: Extract Deployed Version
+        id: extract_version
+        uses: appleboy/ssh-action@v1.2.1
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USERNAME || 'root' }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          port: ${{ secrets.VPS_PORT || 22 }}
+          capture_stdout: true
+          script: |
+            # Activate the virtual environment
+            source ~/dbackenv/bin/activate
+            
+            # Extract and print version
+            python -c "import d_back; print(d_back.__version__)"
+
+  notify-deployment:
+    uses: nntin/d-flows/.github/workflows/discord-notify.yml@v0
+    needs: deploy
+    if: always()
+    secrets:
+      webhook_url: ${{ secrets.DISCORD_WEBHOOK_URL }}
+    with:
+      message_type: "embed"
+      title: ${{ needs.deploy.result == 'success' && '✅ d_back Deployed Successfully' || '❌ d_back Deployment Failed' }}
+      description: ${{ needs.deploy.result == 'success' && 'd_back has been successfully deployed to the VPS and all services are running.' || 'The deployment workflow encountered errors. Please check the workflow run for details.' }}
+      color: ${{ needs.deploy.result == 'success' && '3066993' || '15158332' }}
+      fields: >-
+        [
+          {"name": "Repository", "value": "${{ github.repository }}", "inline": true},
+          {"name": "Version", "value": "${{ needs.deploy.outputs.deployed_version || 'unknown' }}", "inline": true},
+          {"name": "Status", "value": "${{ needs.deploy.result }}", "inline": true},
+          {"name": "Event Type", "value": "${{ github.event_name == 'repository_dispatch' && 'Auto Deploy (from publish)' || 'Manual Deploy' }}", "inline": true},
+          {"name": "Triggered By", "value": "@${{ github.actor }}", "inline": true},
+          {"name": "Services", "value": "d_back, nginx", "inline": true},
+          {"name": "Workflow Run", "value": "[View Details](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})", "inline": false}
+        ]
+
+  deployment-summary:
+    uses: nntin/d-flows/.github/workflows/step-summary.yml@v0
+    needs: deploy
+    if: always()
+    with:
+      title: "Deployment Summary"
+      markdown: |
+        ### Deployment Results
+        
+        - ${{ needs.deploy.result == 'success' && '✅' || '❌' }} Deployment Status: ${{ needs.deploy.result }}
+        
+        ### Deployment Details
+        
+        **Version Deployed**: `${{ needs.deploy.outputs.deployed_version || 'unknown' }}`
+        **Event Type**: ${{ github.event_name == 'repository_dispatch' && 'Repository Dispatch (Auto Deploy)' || 'Workflow Dispatch (Manual Deploy)' }}
+        **Triggered By**: @${{ github.actor }}
+        **Services Restarted**: d_back, nginx
+        
+        ### Service Status
+        
+        ${{ needs.deploy.result == 'success' && 'All services are running and verified successfully.' || 'Deployment failed. Please check the logs above for details.' }}
+        
+        [View Full Workflow Run](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
+      overwrite: true

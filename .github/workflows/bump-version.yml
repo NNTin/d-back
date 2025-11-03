@@ -86,7 +86,7 @@ jobs:
               }
             })
   version-summary:
-    uses: nntin/d-flows/.github/workflows/step-summary.yml@main
+    uses: nntin/d-flows/.github/workflows/step-summary.yml@v0
     needs: [bump-version, trigger-publish, trigger-docs]
     if: always()
     with:

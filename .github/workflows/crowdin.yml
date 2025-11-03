@@ -75,7 +75,7 @@ jobs:
           head: crowdin-translations
 
   notify-pr-creation:
-    uses: nntin/d-flows/.github/workflows/discord-notify.yml@main
+    uses: nntin/d-flows/.github/workflows/discord-notify.yml@v0
     needs: crowdin-sync
     if: always() && github.event_name == 'workflow_dispatch' && needs['crowdin-sync'].outputs.pr_number != ''
     secrets:
@@ -98,7 +98,7 @@ jobs:
         ]
 
   sync-summary:
-    uses: nntin/d-flows/.github/workflows/step-summary.yml@main
+    uses: nntin/d-flows/.github/workflows/step-summary.yml@v0
     needs: crowdin-sync
     if: always()
     with:

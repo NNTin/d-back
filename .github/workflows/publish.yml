@@ -90,7 +90,7 @@ jobs:
             }
 
   publish-summary:
-    uses: nntin/d-flows/.github/workflows/step-summary.yml@main
+    uses: nntin/d-flows/.github/workflows/step-summary.yml@v0
     needs: build-and-publish
     if: always()
     with:

@@ -444,7 +444,7 @@ jobs:
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
 
   test-summary:
-    uses: nntin/d-flows/.github/workflows/step-summary.yml@main
+    uses: nntin/d-flows/.github/workflows/step-summary.yml@v0
     needs: [test-push, test-pr, allure-report]
     if: always()
     with:
