@@ -85,3 +85,25 @@ jobs:
                 version: version
               }
             })
+  version-summary:
+    uses: nntin/d-flows/.github/workflows/step-summary.yml@main
+    needs: [bump-version, trigger-publish, trigger-docs]
+    if: always()
+    with:
+      title: "Version Bump Summary"
+      markdown: |
+        ### Version Bump Results
+        
+        - **Bump Version Job**: ${{ needs.bump-version.result == 'success' && '✅ Passed' || '❌ Failed' }}
+        - **Trigger Publish Job**: ${{ needs['trigger-publish'].result == 'success' && '✅ Passed' || '❌ Failed' }}
+        - **Trigger Docs Job**: ${{ needs['trigger-docs'].result == 'success' && '✅ Passed' || '❌ Failed' }}
+        
+        **New Version Tag**: `${{ needs.bump-version.outputs.new_tag }}`
+        **Version Part Bumped**: `${{ github.event.inputs.part }}`
+        
+        **Triggered Workflows**:
+        - PyPI Publication workflow
+        - Documentation deployment workflow (stable)
+        
+        [View Full Workflow Run](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
+      overwrite: true

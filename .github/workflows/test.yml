@@ -442,3 +442,22 @@ jobs:
         env:
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+
+  test-summary:
+    uses: nntin/d-flows/.github/workflows/step-summary.yml@main
+    needs: [test-push, test-pr, allure-report]
+    if: always()
+    with:
+      title: "Test Execution Summary"
+      markdown: |
+        ### Test Results
+        
+        - **Test Push Job**: ${{ needs['test-push'].result == 'success' && '✅ Passed' || needs['test-push'].result == 'skipped' && '⏭️ Skipped' || '❌ Failed' }}
+        - **Test PR Job**: ${{ needs['test-pr'].result == 'success' && '✅ Passed' || needs['test-pr'].result == 'skipped' && '⏭️ Skipped' || '❌ Failed' }}
+        - **Allure Report Job**: ${{ needs['allure-report'].result == 'success' && '✅ Passed' || needs['allure-report'].result == 'skipped' && '⏭️ Skipped' || '❌ Failed' }}
+        
+        **Event Type**: `${{ github.event_name }}`
+        **Branch**: `${{ github.ref }}`
+        
+        [View Full Workflow Run](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
+      overwrite: true
