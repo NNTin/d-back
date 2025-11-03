@@ -88,3 +88,23 @@ jobs:
               
               console.log('✅ Deployment triggered successfully via repository dispatch!');
             }
+
+  publish-summary:
+    uses: nntin/d-flows/.github/workflows/step-summary.yml@v0
+    needs: build-and-publish
+    if: always()
+    with:
+      title: "PyPI Publication Summary"
+      markdown: |
+        ### Publication Results
+        
+        - **Build and Publish Job**: ${{ needs['build-and-publish'].result == 'success' && '✅ Passed' || '❌ Failed' }}
+        
+        **Tag Published**: `${{ github.event.inputs.tag }}`
+        
+        **PyPI Package**: The package is now available via `pip install d-back`
+        
+        **Deployment Trigger**: Deployment workflow has been triggered automatically
+        
+        [View Full Workflow Run](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
+      overwrite: true

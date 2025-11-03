@@ -21,6 +21,10 @@ concurrency:
 jobs:
   crowdin-sync:
     runs-on: ubuntu-latest
+    outputs:
+      pr_number: ${{ steps.find_pr.outputs.number }}
+      pr_url: ${{ steps.find_pr.outputs.pull-request-url }}
+      pr_branch: crowdin-translations
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -39,6 +43,7 @@ jobs:
           CROWDIN_PERSONAL_TOKEN: ${{ secrets.CROWDIN_PERSONAL_TOKEN }}
 
       - name: Download translations from Crowdin
+        id: crowdin
         if: github.event_name == 'workflow_dispatch'
         uses: crowdin/github-action@v2
         with:
@@ -59,3 +64,57 @@ jobs:
           CROWDIN_PROJECT_ID: ${{ secrets.CROWDIN_PROJECT_ID }}
           CROWDIN_PERSONAL_TOKEN: ${{ secrets.CROWDIN_PERSONAL_TOKEN }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Find created PR
+        id: find_pr
+        if: github.event_name == 'workflow_dispatch'
+        uses: peter-evans/find-pull-request@v3
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          base: main
+          head: crowdin-translations
+
+  notify-pr-creation:
+    uses: nntin/d-flows/.github/workflows/discord-notify.yml@v0
+    needs: crowdin-sync
+    if: always() && github.event_name == 'workflow_dispatch' && needs['crowdin-sync'].outputs.pr_number != ''
+    secrets:
+      webhook_url: ${{ secrets.DISCORD_WEBHOOK_URL }}
+    with:
+      message_type: "embed"
+      title: ${{ needs['crowdin-sync'].result == 'success' && needs['crowdin-sync'].outputs.pr_number != '' && '✅ Crowdin Translations PR Created' || '⚠️ Crowdin Sync Completed with Issues' }}
+      description: ${{ needs['crowdin-sync'].result == 'success' && needs['crowdin-sync'].outputs.pr_number != '' && 'A new pull request has been created with updated translations from Crowdin. Please review the changes before merging.' || 'The Crowdin sync workflow completed but encountered issues. Please check the workflow run for details.' }}
+      color: ${{ needs['crowdin-sync'].result == 'success' && needs['crowdin-sync'].outputs.pr_number != '' && '3066993' || '16776960' }}
+      fields: >-
+        [
+          {"name": "Repository", "value": "${{ github.repository }}", "inline": true},
+          {"name": "PR Number", "value": "#${{ needs['crowdin-sync'].outputs.pr_number }}", "inline": true},
+          {"name": "PR Title", "value": "docs: update translations from Crowdin", "inline": false},
+          {"name": "Base Branch", "value": "main", "inline": true},
+          {"name": "Head Branch", "value": "${{ needs['crowdin-sync'].outputs.pr_branch }}", "inline": true},
+          {"name": "Triggered By", "value": "@${{ github.actor }}", "inline": true},
+          {"name": "PR Link", "value": "${{ needs['crowdin-sync'].outputs.pr_url }}", "inline": false},
+          {"name": "Workflow Run", "value": "[View Details](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})", "inline": false}
+        ]
+
+  sync-summary:
+    uses: nntin/d-flows/.github/workflows/step-summary.yml@v0
+    needs: crowdin-sync
+    if: always()
+    with:
+      title: "Crowdin Sync Summary"
+      markdown: |
+        ### Sync Results
+        
+        - ${{ needs['crowdin-sync'].result == 'success' && '✅' || '❌' }} Crowdin Sync: ${{ needs['crowdin-sync'].result }}
+        
+        ### Operation Details
+        
+        **Event**: ${{ github.event_name == 'push' && 'Push (Upload Sources)' || 'Manual Dispatch (Download Translations & Create PR)' }}
+        **Branch**: `${{ github.ref_name }}`
+        **Triggered by**: @${{ github.actor }}
+        
+        ${{ needs['crowdin-sync'].outputs.pr_number != '' && format('### Pull Request Created\n\nA new PR has been created with translations from Crowdin:\n- **PR Number**: #{0}\n- **Branch**: `{1}` → `main`\n- **Link**: {2}', needs['crowdin-sync'].outputs.pr_number, needs['crowdin-sync'].outputs.pr_branch, needs['crowdin-sync'].outputs.pr_url) || '' }}
+        
+        [View Full Workflow Run](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
+      overwrite: true
