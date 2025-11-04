@@ -37,7 +37,7 @@ test = [
 dev = [
     "black>=22.0.0",
     "build>=0.8.0",
-    "@test"
+    "d_back @ file://./?subdirectory=d_back&extras=test"
 ]
 
 [dependency-groups]
@@ -65,7 +65,7 @@ test = [
 dev = [
     "black>=22.0.0",
     "build>=0.8.0",
-    "@test"
+    "d_back @ file://./?subdirectory=d_back&extras=test"
 ]
 
 [project.scripts]
