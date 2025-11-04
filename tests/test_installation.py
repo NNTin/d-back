@@ -168,7 +168,7 @@ class TestUvInstallation:
     @pytest.mark.installation
     @pytest.mark.timeout(600)
     def test_uv_sync_development_installation(self, temp_install_dir, project_root):
-        """Verify that uv sync correctly installs all dependencies for development."""
+        """Verify that uv sync --group dev correctly installs all dependencies for development."""
         setup_allure_installation_info("test_uv_sync_development_installation")
         
         # Copy project files to temp directory (excluding .venv, __pycache__, .git)
@@ -183,9 +183,9 @@ class TestUvInstallation:
             elif item.is_dir():
                 shutil.copytree(item, project_copy / item.name, ignore=shutil.ignore_patterns("__pycache__", "*.pyc"))
         
-        # Run uv sync
+        # Run uv sync with dev group
         returncode, stdout, stderr = run_command(
-            ["uv", "sync"],
+            ["uv", "sync", "--group", "dev"],
             cwd=str(project_copy)
         )
         
@@ -831,7 +831,7 @@ print(ep.value if ep else 'NOT_FOUND')"],
         
         # Uninstall the package
         returncode, stdout, stderr = run_command(
-            ["uv", "pip", "uninstall", "--python", get_venv_python(venv_path), "d_back"],
+            ["uv", "pip", "uninstall", "-y", "--python", get_venv_python(venv_path), "d_back"],
             cwd=str(temp_install_dir)
         )
         assert returncode == 0, f"Uninstall failed: {stderr}"
