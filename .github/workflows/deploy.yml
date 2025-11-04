@@ -172,6 +172,7 @@ jobs:
           RAW_VERSION="${{ needs.deploy.outputs.deployed_version || 'unknown' }}"
           CLEAN_VERSION=$(echo "$RAW_VERSION" | head -n 1 | tr -d '\r' | xargs)
           
+          # Build JSON fields with readable formatting
           FIELDS=$(jq -n \
             --arg repo "${{ github.repository }}" \
             --arg version "$CLEAN_VERSION" \
@@ -188,7 +189,12 @@ jobs:
               {"name": "Services", "value": "d_back, nginx", "inline": true},
               {"name": "Workflow Run", "value": ("[View Details](" + $run_url + ")"), "inline": false}
             ]')
-          echo "fields=$FIELDS" >> $GITHUB_OUTPUT
+          
+          # Use delimiter to safely output the multiline JSON
+          delimiter="$(openssl rand -hex 8)"
+          echo "fields<<${delimiter}" >> $GITHUB_OUTPUT
+          echo "$FIELDS" >> $GITHUB_OUTPUT
+          echo "${delimiter}" >> $GITHUB_OUTPUT
 
   notify-deployment:
     uses: nntin/d-flows/.github/workflows/discord-notify.yml@v0
