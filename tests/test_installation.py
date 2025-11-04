@@ -404,7 +404,7 @@ class TestUvInstallation:
         
         # Install the wheel
         returncode, stdout, stderr = run_command(
-            ["uv", "pip", "install", str(wheel_path)],
+            ["uv", "pip", "install", "--python", get_venv_python(venv_path), str(wheel_path)],
             cwd=str(temp_install_dir),
         )
         
@@ -482,7 +482,7 @@ class TestUvInstallation:
         venv_path = create_temp_venv(temp_install_dir)
         
         returncode, stdout, stderr = run_command(
-            ["uv", "pip", "install", str(wheel_path)],
+            ["uv", "pip", "install", "--python", get_venv_python(venv_path), str(wheel_path)],
             cwd=str(temp_install_dir)
         )
         assert returncode == 0, f"uv pip install failed: {stderr}"
@@ -587,7 +587,7 @@ class TestUvInstallation:
         wheel_path = wheel_files[0]
         
         returncode, stdout, stderr = run_command(
-            ["uv", "pip", "install", str(wheel_path)],
+            ["uv", "pip", "install", "--python", get_venv_python(venv_path), str(wheel_path)],
             cwd=str(temp_install_dir)
         )
         assert returncode == 0, f"uv pip install failed: {stderr}"
@@ -691,7 +691,7 @@ class TestUvInstallation:
         wheel_path = wheel_files[0]
         
         returncode, stdout, stderr = run_command(
-            ["uv", "pip", "install", str(wheel_path)],
+            ["uv", "pip", "install", "--python", get_venv_python(venv_path), str(wheel_path)],
             cwd=str(temp_install_dir)
         )
         assert returncode == 0, f"uv pip install failed: {stderr}"
@@ -779,7 +779,7 @@ class TestUvInstallation:
         
         # Initial installation
         returncode, stdout, stderr = run_command(
-            ["uv", "pip", "install", str(wheel_path)],
+            ["uv", "pip", "install", "--python", get_venv_python(venv_path), str(wheel_path)],
             cwd=str(temp_install_dir)
         )
         assert returncode == 0, f"Initial install failed: {stderr}"
@@ -798,7 +798,7 @@ class TestUvInstallation:
         
         # Force reinstall the same version
         returncode, stdout, stderr = run_command(
-            ["uv", "pip", "install", "--force-reinstall", str(wheel_path)],
+            ["uv", "pip", "install", "--force-reinstall", "--python", get_venv_python(venv_path), str(wheel_path)],
             cwd=str(temp_install_dir)
         )
         assert returncode == 0, f"Force reinstall failed: {stderr}"
@@ -827,7 +827,7 @@ class TestUvInstallation:
         
         # Uninstall the package
         returncode, stdout, stderr = run_command(
-            ["uv", "pip", "uninstall", "d_back"],
+            ["uv", "pip", "uninstall", "--python", get_venv_python(venv_path), "d_back"],
             cwd=str(temp_install_dir)
         )
         assert returncode == 0, f"Uninstall failed: {stderr}"
@@ -843,7 +843,7 @@ class TestUvInstallation:
         
         # Reinstall and verify it works again
         returncode, stdout, stderr = run_command(
-            ["uv", "pip", "install", str(wheel_path)],
+            ["uv", "pip", "install", "--python", get_venv_python(venv_path), str(wheel_path)],
             cwd=str(temp_install_dir)
         )
         assert returncode == 0, f"Final reinstall failed: {stderr}"
