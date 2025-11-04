@@ -96,6 +96,7 @@ markers = [
     "slow: marks tests as slow (deselect with '-m \"not slow\"')",
     "integration: marks tests as integration tests",
     "timeout: marks tests that may need longer timeout",
+    "installation: marks tests as installation tests (can be run separately with '-m installation')",
 ]
 asyncio_mode = "auto"
 log_cli = true
