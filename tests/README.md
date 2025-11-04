@@ -20,7 +20,19 @@ This directory contains comprehensive tests for the d_back WebSocket server, cov
    - Invalid message handling
    - Binary message support
 
-3. **`helpers/mock_websocket_client.py`** - Mock client for testing
+3. **`test_browser_integration.py`** - Tests browser integration functionality
+
+4. **`test_installation.py`** - Tests installation and packaging workflow including:
+   - Development installation with `uv sync`
+   - Dependency group installation (test, dev, docs)
+   - Package building with `uv build`
+   - Wheel installation with `uv pip install`
+   - CLI entry point functionality
+   - Production installation scenario
+   - Package metadata verification
+   - Reinstallation and upgrade scenarios
+
+5. **`helpers/mock_websocket_client.py`** - Mock client for testing
 
 ## Running Tests
 
@@ -40,6 +52,17 @@ Run specific test file:
 ```bash
 pytest tests/test_http_server.py -v
 pytest tests/test_websocket_server.py -v
+pytest tests/test_installation.py -v
+```
+
+Run only installation tests:
+```bash
+pytest -m installation
+```
+
+Run all tests except installation tests:
+```bash
+pytest -m "not installation"
 ```
 
 Run with coverage:
@@ -47,7 +70,31 @@ Run with coverage:
 pytest tests/ --cov=d_back --cov-report=html
 ```
 
-### Option 2: Simple test runner (No dependencies)
+### Option 2: Installation Tests (Standalone)
+
+The installation tests can be run independently to validate the uv-based installation workflow:
+
+```bash
+python tests/test_installation.py
+```
+
+These tests validate:
+- Development installation with `uv sync`
+- Dependency group installation (test, dev, docs)
+- Package building with `uv build`
+- Wheel installation with `uv pip install`
+- CLI entry point functionality
+- Production installation scenario
+- Package metadata verification
+- Reinstallation and upgrade scenarios
+
+**Requirements**: `uv` must be installed and available in PATH.
+
+**Isolation**: These tests run in isolated temporary directories and virtual environments, so they don't affect the development environment.
+
+**Duration**: Installation tests are slower than functional tests (marked with `@pytest.mark.slow`) due to building and installing packages.
+
+### Option 3: Simple test runner (No dependencies)
 
 For environments without pytest, use the simple test runner:
 ```bash
@@ -60,7 +107,7 @@ This runner:
 - Provides basic test functionality verification
 - Works with the existing mock client
 
-### Option 3: Manual testing
+### Option 4: Manual testing
 
 Start the server:
 ```bash
@@ -76,6 +123,24 @@ python helpers/mock_websocket_client.py
 Check HTTP endpoints in browser:
 - http://localhost:3000/ - Main page
 - http://localhost:3000/api/version - Version API
+
+## Test Types
+
+The test suite is organized into two main categories:
+
+### Functional Tests
+- **`test_websocket_server.py`**: Tests runtime WebSocket behavior
+- **`test_browser_integration.py`**: Tests browser integration functionality
+- **Purpose**: Validate that the application works correctly during runtime
+- **Speed**: Fast (typically under 10 seconds)
+- **Environment**: Uses the current development environment
+
+### Installation Tests
+- **`test_installation.py`**: Tests installation and packaging workflow
+- **Purpose**: Validate that the package can be built and installed correctly
+- **Speed**: Slower (marked with `@pytest.mark.slow`) due to building and installing packages
+- **Environment**: Uses isolated temporary directories and virtual environments
+- **CI Integration**: Should be run in CI to verify package can be built and installed before publishing
 
 ## Test Configuration
 
@@ -96,6 +161,10 @@ The tests are configured via `pyproject.toml` with settings for:
 - pytest-asyncio >= 0.21.0
 - aiohttp >= 3.8.0
 - packaging >= 21.0
+
+### Installation test requirements:
+- uv (must be available in PATH)
+- All dependencies are handled by uv during testing
 
 ## Test Coverage
 
@@ -123,6 +192,16 @@ The tests cover:
 - ✅ HTTP and WebSocket on same port
 - ✅ Existing mock client compatibility
 - ✅ Server startup/shutdown
+
+### Installation & Packaging:
+- ✅ Development installation (`uv sync`)
+- ✅ Dependency group installation (test, dev, docs)
+- ✅ Package building (`uv build`)
+- ✅ Wheel installation (`uv pip install`)
+- ✅ CLI entry point functionality
+- ✅ Production installation scenario
+- ✅ Package metadata verification
+- ✅ Reinstallation and upgrade workflows
 
 ## Debugging Failed Tests
 

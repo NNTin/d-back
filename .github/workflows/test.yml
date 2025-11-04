@@ -1,5 +1,9 @@
 name: Test
 
+# This workflow uses uv for dependency management and testing across Python versions
+# Matrix strategy tests Python 3.8-3.13 with websockets versions 10-15
+# Allure results are stored in: allure-results/py{python-version}-websockets{websockets-version}/
+
 on:
   push:
     branches: [ main, master, develop, feature/*, fix/* ]
@@ -19,49 +23,44 @@ jobs:
           # Each Python version with its latest supported websockets version
           - python-version: "3.8"
             websockets-version: "13"
-            tox-env: "py38-websockets13"
+            websockets-constraint: ">=13.0,<14.0"
           - python-version: "3.9"
             websockets-version: "13"
-            tox-env: "py39-websockets13"
+            websockets-constraint: ">=13.0,<14.0"
           - python-version: "3.10"
             websockets-version: "15"
-            tox-env: "py310-websockets15"
+            websockets-constraint: ">=15.0,<16.0"
           - python-version: "3.11"
             websockets-version: "15"
-            tox-env: "py311-websockets15"
+            websockets-constraint: ">=15.0,<16.0"
           - python-version: "3.12"
             websockets-version: "15"
-            tox-env: "py312-websockets15"
+            websockets-constraint: ">=15.0,<16.0"
           - python-version: "3.13"
             websockets-version: "15"
-            tox-env: "py313-websockets15"
+            websockets-constraint: ">=15.0,<16.0"
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v5
-        with:
-          python-version: ${{ matrix.python-version }}
-          allow-prereleases: true
+      - name: Set up uv
+        uses: astral-sh/setup-uv@v5
 
-      - name: Install dependencies
+      - name: Run tests with uv
         run: |
-          python -m pip install --upgrade pip
-          pip install tox
-
-      - name: Run tests with tox
-        run: |
-          tox -e ${{ matrix.tox-env }}
+          uv run --python ${{ matrix.python-version }} -g test --with "websockets${{ matrix.websockets-constraint }}" pytest -m "not integration" --alluredir=allure-results/py${{ matrix.python-version }}-websockets${{ matrix.websockets-version }} tests
+        env:
+          WEBSOCKETS_VERSION: ${{ matrix.websockets-version }}
+          PYTHON_VERSION: ${{ matrix.python-version }}
+          TEST_ENV_NAME: py${{ matrix.python-version }}-websockets${{ matrix.websockets-version }}
 
       - name: Upload coverage reports (if available)
         if: always()
         continue-on-error: true
         run: |
           if [ -f .coverage ]; then
-            pip install coverage
-            coverage report
+            uvx coverage report
           fi
 
   # Full test matrix for pull requests
@@ -76,162 +75,160 @@ jobs:
           # Python 3.8 with websockets 10-13
           - python-version: "3.8"
             websockets-version: "10"
-            tox-env: "py38-websockets10"
+            websockets-constraint: ">=10.0,<11.0"
           - python-version: "3.8"
             websockets-version: "11"
-            tox-env: "py38-websockets11"
+            websockets-constraint: ">=11.0,<12.0"
           - python-version: "3.8"
             websockets-version: "12"
-            tox-env: "py38-websockets12"
+            websockets-constraint: ">=12.0,<13.0"
           - python-version: "3.8"
             websockets-version: "13"
-            tox-env: "py38-websockets13"
+            websockets-constraint: ">=13.0,<14.0"
           
           # Python 3.9 with websockets 10-13
           - python-version: "3.9"
             websockets-version: "10"
-            tox-env: "py39-websockets10"
+            websockets-constraint: ">=10.0,<11.0"
           - python-version: "3.9"
             websockets-version: "11"
-            tox-env: "py39-websockets11"
+            websockets-constraint: ">=11.0,<12.0"
           - python-version: "3.9"
             websockets-version: "12"
-            tox-env: "py39-websockets12"
+            websockets-constraint: ">=12.0,<13.0"
           - python-version: "3.9"
             websockets-version: "13"
-            tox-env: "py39-websockets13"
+            websockets-constraint: ">=13.0,<14.0"
           
           # Python 3.10 with websockets 10-15
           - python-version: "3.10"
             websockets-version: "10"
-            tox-env: "py310-websockets10"
+            websockets-constraint: ">=10.0,<11.0"
           - python-version: "3.10"
             websockets-version: "11"
-            tox-env: "py310-websockets11"
+            websockets-constraint: ">=11.0,<12.0"
           - python-version: "3.10"
             websockets-version: "12"
-            tox-env: "py310-websockets12"
+            websockets-constraint: ">=12.0,<13.0"
           - python-version: "3.10"
             websockets-version: "13"
-            tox-env: "py310-websockets13"
+            websockets-constraint: ">=13.0,<14.0"
           - python-version: "3.10"
             websockets-version: "14"
-            tox-env: "py310-websockets14"
+            websockets-constraint: ">=14.0,<15.0"
           - python-version: "3.10"
             websockets-version: "15"
-            tox-env: "py310-websockets15"
+            websockets-constraint: ">=15.0,<16.0"
           
           # Python 3.11 with websockets 10-15
           - python-version: "3.11"
             websockets-version: "10"
-            tox-env: "py311-websockets10"
+            websockets-constraint: ">=10.0,<11.0"
           - python-version: "3.11"
             websockets-version: "11"
-            tox-env: "py311-websockets11"
+            websockets-constraint: ">=11.0,<12.0"
           - python-version: "3.11"
             websockets-version: "12"
-            tox-env: "py311-websockets12"
+            websockets-constraint: ">=12.0,<13.0"
           - python-version: "3.11"
             websockets-version: "13"
-            tox-env: "py311-websockets13"
+            websockets-constraint: ">=13.0,<14.0"
           - python-version: "3.11"
             websockets-version: "14"
-            tox-env: "py311-websockets14"
+            websockets-constraint: ">=14.0,<15.0"
           - python-version: "3.11"
             websockets-version: "15"
-            tox-env: "py311-websockets15"
+            websockets-constraint: ">=15.0,<16.0"
           
           # Python 3.12 with websockets 10-15
           - python-version: "3.12"
             websockets-version: "10"
-            tox-env: "py312-websockets10"
+            websockets-constraint: ">=10.0,<11.0"
           - python-version: "3.12"
             websockets-version: "11"
-            tox-env: "py312-websockets11"
+            websockets-constraint: ">=11.0,<12.0"
           - python-version: "3.12"
             websockets-version: "12"
-            tox-env: "py312-websockets12"
+            websockets-constraint: ">=12.0,<13.0"
           - python-version: "3.12"
             websockets-version: "13"
-            tox-env: "py312-websockets13"
+            websockets-constraint: ">=13.0,<14.0"
           - python-version: "3.12"
             websockets-version: "14"
-            tox-env: "py312-websockets14"
+            websockets-constraint: ">=14.0,<15.0"
           - python-version: "3.12"
             websockets-version: "15"
-            tox-env: "py312-websockets15"
+            websockets-constraint: ">=15.0,<16.0"
           
           # Python 3.13 with websockets 10-15
           - python-version: "3.13"
             websockets-version: "10"
-            tox-env: "py313-websockets10"
+            websockets-constraint: ">=10.0,<11.0"
           - python-version: "3.13"
             websockets-version: "11"
-            tox-env: "py313-websockets11"
+            websockets-constraint: ">=11.0,<12.0"
           - python-version: "3.13"
             websockets-version: "12"
-            tox-env: "py313-websockets12"
+            websockets-constraint: ">=12.0,<13.0"
           - python-version: "3.13"
             websockets-version: "13"
-            tox-env: "py313-websockets13"
+            websockets-constraint: ">=13.0,<14.0"
           - python-version: "3.13"
             websockets-version: "14"
-            tox-env: "py313-websockets14"
+            websockets-constraint: ">=14.0,<15.0"
           - python-version: "3.13"
             websockets-version: "15"
-            tox-env: "py313-websockets15"
+            websockets-constraint: ">=15.0,<16.0"
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v5
-        with:
-          python-version: ${{ matrix.python-version }}
-          allow-prereleases: true
+      - name: Set up uv
+        uses: astral-sh/setup-uv@v5
 
       - name: Install Chrome
         uses: browser-actions/setup-chrome@v1
         with:
           chrome-version: stable
 
-      - name: Install dependencies
+      - name: Run tests with uv
         run: |
-          python -m pip install --upgrade pip
-          pip install tox
-
-      - name: Run tests with tox
-        run: |
-          echo "=== Running tests with tox ==="
+          echo "=== Running tests with uv ==="
           echo "Current working directory: $(pwd)"
-          echo "Tox environment: ${{ matrix.tox-env }}"
-          tox -e ${{ matrix.tox-env }}
-          echo "Tox completed with exit code: $?"
+          echo "Python version: ${{ matrix.python-version }}"
+          echo "Websockets version: ${{ matrix.websockets-version }}"
+          echo "Test environment: py${{ matrix.python-version }}-websockets${{ matrix.websockets-version }}"
+          uv run --python ${{ matrix.python-version }} -g test --with "websockets${{ matrix.websockets-constraint }}" pytest --alluredir=allure-results/py${{ matrix.python-version }}-websockets${{ matrix.websockets-version }} tests
+          echo "Tests completed with exit code: $?"
+        env:
+          WEBSOCKETS_VERSION: ${{ matrix.websockets-version }}
+          PYTHON_VERSION: ${{ matrix.python-version }}
+          TEST_ENV_NAME: py${{ matrix.python-version }}-websockets${{ matrix.websockets-version }}
 
       - name: Debug - After test execution
         run: |
           echo "=== After Test Execution Debug ==="
           echo "Current working directory: $(pwd)"
-          echo "Tox environment: ${{ matrix.tox-env }}"
-          echo "Expected allure results path: allure-results/${{ matrix.tox-env }}/"
+          echo "Test environment: py${{ matrix.python-version }}-websockets${{ matrix.websockets-version }}"
+          echo "Expected allure results path: allure-results/py${{ matrix.python-version }}-websockets${{ matrix.websockets-version }}/"
           echo "Looking for allure-results directories:"
           find . -name "allure-results" -type d 2>/dev/null || echo "No allure-results directories found"
           echo "Contents of allure-results base directory:"
           ls -la allure-results/ 2>/dev/null || echo "No allure-results base directory"
-          echo "Contents of expected tox env directory:"
-          ls -la allure-results/${{ matrix.tox-env }}/ 2>/dev/null || echo "No allure-results/${{ matrix.tox-env }} directory"
+          echo "Contents of expected test env directory:"
+          ls -la allure-results/py${{ matrix.python-version }}-websockets${{ matrix.websockets-version }}/ 2>/dev/null || echo "No allure-results/py${{ matrix.python-version }}-websockets${{ matrix.websockets-version }} directory"
           echo "JSON files generated in expected directory:"
-          find allure-results/${{ matrix.tox-env }}/ -name "*.json" 2>/dev/null | head -10 || echo "No JSON files in allure-results/${{ matrix.tox-env }}"
+          find allure-results/py${{ matrix.python-version }}-websockets${{ matrix.websockets-version }}/ -name "*.json" 2>/dev/null | head -10 || echo "No JSON files in allure-results/py${{ matrix.python-version }}-websockets${{ matrix.websockets-version }}"
           echo "XML files generated in expected directory:"
-          find allure-results/${{ matrix.tox-env }}/ -name "*.xml" 2>/dev/null | head -10 || echo "No XML files in allure-results/${{ matrix.tox-env }}"
+          find allure-results/py${{ matrix.python-version }}-websockets${{ matrix.websockets-version }}/ -name "*.xml" 2>/dev/null | head -10 || echo "No XML files in allure-results/py${{ matrix.python-version }}-websockets${{ matrix.websockets-version }}"
 
       - name: Upload allure results
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: allure-results-${{ matrix.tox-env }}
-          path: allure-results/${{ matrix.tox-env }}/
+          name: allure-results-py${{ matrix.python-version }}-websockets${{ matrix.websockets-version }}
+          path: allure-results/py${{ matrix.python-version }}-websockets${{ matrix.websockets-version }}/
           retention-days: 7
 
       - name: Debug - After artifact upload
@@ -239,26 +236,25 @@ jobs:
         run: |
           echo "=== After Artifact Upload Debug ==="
           echo "Current working directory: $(pwd)"
-          echo "Artifact name: allure-results-${{ matrix.tox-env }}"
-          echo "Path being uploaded: allure-results/${{ matrix.tox-env }}/"
-          if [ -d "allure-results/${{ matrix.tox-env }}" ]; then
-            echo "Final check of allure-results/${{ matrix.tox-env }} before upload:"
-            find allure-results/${{ matrix.tox-env }}/ -type f | head -10
+          echo "Artifact name: allure-results-py${{ matrix.python-version }}-websockets${{ matrix.websockets-version }}"
+          echo "Path being uploaded: allure-results/py${{ matrix.python-version }}-websockets${{ matrix.websockets-version }}/"
+          if [ -d "allure-results/py${{ matrix.python-version }}-websockets${{ matrix.websockets-version }}" ]; then
+            echo "Final check of allure-results/py${{ matrix.python-version }}-websockets${{ matrix.websockets-version }} before upload:"
+            find allure-results/py${{ matrix.python-version }}-websockets${{ matrix.websockets-version }}/ -type f | head -10
             echo "Total files being uploaded:"
-            find allure-results/${{ matrix.tox-env }}/ -type f | wc -l
+            find allure-results/py${{ matrix.python-version }}-websockets${{ matrix.websockets-version }}/ -type f | wc -l
           else
-            echo "WARNING: allure-results/${{ matrix.tox-env }} directory does not exist for upload!"
-            echo "Available allure-results subdirectories:"
-            ls -la allure-results/ 2>/dev/null || echo "No allure-results directory at all!"
+            echo "WARNING: allure-results/py${{ matrix.python-version }}-websockets${{ matrix.websockets-version }} directory does not exist for upload!"
           fi
+          echo "Available allure-results subdirectories:"
+          ls -la allure-results/ 2>/dev/null || echo "No allure-results directory at all!"
 
       - name: Upload coverage reports (if available)
         if: always()
         continue-on-error: true
         run: |
           if [ -f .coverage ]; then
-            pip install coverage
-            coverage report
+            uvx coverage report
           fi
 
   # Generate and deploy allure report

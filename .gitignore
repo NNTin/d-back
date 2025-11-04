@@ -60,6 +60,10 @@ coverage.xml
 
 # virtualenv
 /.venv*/
+.venv/
+
+# uv
+# Note: uv.lock should be committed to version control for reproducible builds
 
 
 /allure-results/
