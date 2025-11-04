@@ -37,7 +37,7 @@ test = [
 dev = [
     "black>=22.0.0",
     "build>=0.8.0",
-    "d_back[test]"
+    ".[test]"
 ]
 
 [dependency-groups]
@@ -65,7 +65,7 @@ test = [
 dev = [
     "black>=22.0.0",
     "build>=0.8.0",
-    "d_back[test]"
+    ".[test]"
 ]
 
 [project.scripts]
