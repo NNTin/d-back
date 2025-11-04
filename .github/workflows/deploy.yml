@@ -155,9 +155,40 @@ jobs:
             # Extract and print version
             python -c "import d_back; print(d_back.__version__)"
 
+  build-discord-fields:
+    runs-on: ubuntu-latest
+    needs: deploy
+    if: always()
+    outputs:
+      discord_fields: ${{ steps.discord_fields.outputs.fields }}
+    
+    steps:
+      - name: Build Discord Fields
+        id: discord_fields
+        run: |
+          STATUS="${{ needs.deploy.result }}"
+          
+          FIELDS=$(jq -n \
+            --arg repo "${{ github.repository }}" \
+            --arg version "${{ needs.deploy.outputs.deployed_version || 'unknown' }}" \
+            --arg status "$STATUS" \
+            --arg event "${{ github.event_name == 'repository_dispatch' && 'Auto Deploy (from publish)' || 'Manual Deploy' }}" \
+            --arg actor "${{ github.actor }}" \
+            --arg run_url "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+            '[
+              {"name": "Repository", "value": $repo, "inline": true},
+              {"name": "Version", "value": $version, "inline": true},
+              {"name": "Status", "value": $status, "inline": true},
+              {"name": "Event Type", "value": $event, "inline": true},
+              {"name": "Triggered By", "value": ("@" + $actor), "inline": true},
+              {"name": "Services", "value": "d_back, nginx", "inline": true},
+              {"name": "Workflow Run", "value": ("[View Details](" + $run_url + ")"), "inline": false}
+            ]')
+          echo "fields=$FIELDS" >> $GITHUB_OUTPUT
+
   notify-deployment:
     uses: nntin/d-flows/.github/workflows/discord-notify.yml@v0
-    needs: deploy
+    needs: [deploy, build-discord-fields]
     if: always()
     secrets:
       webhook_url: ${{ secrets.DISCORD_WEBHOOK_URL }}
@@ -166,16 +197,7 @@ jobs:
       title: ${{ needs.deploy.result == 'success' && '✅ d_back Deployed Successfully' || '❌ d_back Deployment Failed' }}
       description: ${{ needs.deploy.result == 'success' && 'd_back has been successfully deployed to the VPS and all services are running.' || 'The deployment workflow encountered errors. Please check the workflow run for details.' }}
       color: ${{ needs.deploy.result == 'success' && '3066993' || '15158332' }}
-      fields: |-
-        [
-          {"name": "Repository", "value": "${{ github.repository }}", "inline": true},
-          {"name": "Version", "value": "${{ needs.deploy.outputs.deployed_version || 'unknown' }}", "inline": true},
-          {"name": "Status", "value": "${{ needs.deploy.result }}", "inline": true},
-          {"name": "Event Type", "value": "${{ github.event_name == 'repository_dispatch' && 'Auto Deploy (from publish)' || 'Manual Deploy' }}", "inline": true},
-          {"name": "Triggered By", "value": "@${{ github.actor }}", "inline": true},
-          {"name": "Services", "value": "d_back, nginx", "inline": true},
-          {"name": "Workflow Run", "value": "[View Details](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})", "inline": false}
-        ]
+      fields: ${{ needs.build-discord-fields.outputs.discord_fields }}
 
   deployment-summary:
     uses: nntin/d-flows/.github/workflows/step-summary.yml@v0
