@@ -74,9 +74,47 @@ jobs:
           base: main
           head: crowdin-translations
 
+  build-discord-fields:
+    runs-on: ubuntu-latest
+    needs: crowdin-sync
+    if: always() && github.event_name == 'workflow_dispatch' && needs['crowdin-sync'].outputs.pr_number != ''
+    outputs:
+      discord_fields: ${{ steps.discord_fields.outputs.fields }}
+    
+    steps:
+      - name: Build Discord Fields
+        id: discord_fields
+        run: |
+          STATUS="${{ needs['crowdin-sync'].result }}"
+          
+          # Build JSON fields with readable formatting
+          FIELDS=$(jq -n \
+            --arg repo "${{ github.repository }}" \
+            --arg pr_number "${{ needs['crowdin-sync'].outputs.pr_number }}" \
+            --arg pr_branch "${{ needs['crowdin-sync'].outputs.pr_branch }}" \
+            --arg actor "${{ github.actor }}" \
+            --arg pr_url "${{ needs['crowdin-sync'].outputs.pr_url }}" \
+            --arg run_url "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+            '[
+              {"name": "Repository", "value": $repo, "inline": true},
+              {"name": "PR Number", "value": ("#" + $pr_number), "inline": true},
+              {"name": "PR Title", "value": "docs: update translations from Crowdin", "inline": false},
+              {"name": "Base Branch", "value": "main", "inline": true},
+              {"name": "Head Branch", "value": $pr_branch, "inline": true},
+              {"name": "Triggered By", "value": ("@" + $actor), "inline": true},
+              {"name": "PR Link", "value": $pr_url, "inline": false},
+              {"name": "Workflow Run", "value": ("[View Details](" + $run_url + ")"), "inline": false}
+            ]')
+          
+          # Use delimiter to safely output the multiline JSON
+          delimiter="$(openssl rand -hex 8)"
+          echo "fields<<${delimiter}" >> $GITHUB_OUTPUT
+          echo "$FIELDS" >> $GITHUB_OUTPUT
+          echo "${delimiter}" >> $GITHUB_OUTPUT
+
   notify-pr-creation:
     uses: nntin/d-flows/.github/workflows/discord-notify.yml@v0
-    needs: crowdin-sync
+    needs: [crowdin-sync, build-discord-fields]
     if: always() && github.event_name == 'workflow_dispatch' && needs['crowdin-sync'].outputs.pr_number != ''
     secrets:
       webhook_url: ${{ secrets.DISCORD_WEBHOOK_URL }}
@@ -85,21 +123,11 @@ jobs:
       title: ${{ needs['crowdin-sync'].result == 'success' && needs['crowdin-sync'].outputs.pr_number != '' && '✅ Crowdin Translations PR Created' || '⚠️ Crowdin Sync Completed with Issues' }}
       description: ${{ needs['crowdin-sync'].result == 'success' && needs['crowdin-sync'].outputs.pr_number != '' && 'A new pull request has been created with updated translations from Crowdin. Please review the changes before merging.' || 'The Crowdin sync workflow completed but encountered issues. Please check the workflow run for details.' }}
       color: ${{ needs['crowdin-sync'].result == 'success' && needs['crowdin-sync'].outputs.pr_number != '' && '3066993' || '16776960' }}
-      fields: >-
-        [
-          {"name": "Repository", "value": "${{ github.repository }}", "inline": true},
-          {"name": "PR Number", "value": "#${{ needs['crowdin-sync'].outputs.pr_number }}", "inline": true},
-          {"name": "PR Title", "value": "docs: update translations from Crowdin", "inline": false},
-          {"name": "Base Branch", "value": "main", "inline": true},
-          {"name": "Head Branch", "value": "${{ needs['crowdin-sync'].outputs.pr_branch }}", "inline": true},
-          {"name": "Triggered By", "value": "@${{ github.actor }}", "inline": true},
-          {"name": "PR Link", "value": "${{ needs['crowdin-sync'].outputs.pr_url }}", "inline": false},
-          {"name": "Workflow Run", "value": "[View Details](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})", "inline": false}
-        ]
+      fields: ${{ needs.build-discord-fields.outputs.discord_fields }}
 
   sync-summary:
     uses: nntin/d-flows/.github/workflows/step-summary.yml@v0
-    needs: crowdin-sync
+    needs: [crowdin-sync, build-discord-fields, notify-pr-creation]
     if: always()
     with:
       title: "Crowdin Sync Summary"
