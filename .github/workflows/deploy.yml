@@ -168,9 +168,13 @@ jobs:
         run: |
           STATUS="${{ needs.deploy.result }}"
           
+          # Clean the version string - extract only the first line and remove any extra whitespace
+          RAW_VERSION="${{ needs.deploy.outputs.deployed_version || 'unknown' }}"
+          CLEAN_VERSION=$(echo "$RAW_VERSION" | head -n 1 | tr -d '\r' | xargs)
+          
           FIELDS=$(jq -n \
             --arg repo "${{ github.repository }}" \
-            --arg version "${{ needs.deploy.outputs.deployed_version || 'unknown' }}" \
+            --arg version "$CLEAN_VERSION" \
             --arg status "$STATUS" \
             --arg event "${{ github.event_name == 'repository_dispatch' && 'Auto Deploy (from publish)' || 'Manual Deploy' }}" \
             --arg actor "${{ github.actor }}" \
