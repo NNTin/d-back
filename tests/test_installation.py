@@ -899,13 +899,13 @@ def main():
     failed = 0
     
     try:
-        for test_name, test_method in test_methods:
+        for i, (test_name, test_method) in enumerate(test_methods, 1):
             print(f"Running: {test_name}")
             print("-" * 40)
             
             try:
                 # Create unique temp dir for each test
-                test_temp_dir = temp_dir / f"test_{len(test_name)}"
+                test_temp_dir = temp_dir / f"test_{i:02d}"
                 test_temp_dir.mkdir(exist_ok=True)
                 
                 test_method(test_temp_dir, project_root)
