@@ -166,7 +166,7 @@ jobs:
       title: ${{ needs.deploy.result == 'success' && '✅ d_back Deployed Successfully' || '❌ d_back Deployment Failed' }}
       description: ${{ needs.deploy.result == 'success' && 'd_back has been successfully deployed to the VPS and all services are running.' || 'The deployment workflow encountered errors. Please check the workflow run for details.' }}
       color: ${{ needs.deploy.result == 'success' && '3066993' || '15158332' }}
-      fields: >-
+      fields: |-
         [
           {"name": "Repository", "value": "${{ github.repository }}", "inline": true},
           {"name": "Version", "value": "${{ needs.deploy.outputs.deployed_version || 'unknown' }}", "inline": true},
