@@ -731,7 +731,10 @@ class TestUvInstallation:
         
         # Get entry points
         result = subprocess.run(
-            [venv_python, "-c", "import importlib.metadata; eps = importlib.metadata.entry_points(group='console_scripts'); d_back_ep = [ep for ep in eps if ep.name == 'd_back']; print(f'{d_back_ep[0].value}' if d_back_ep else 'NOT_FOUND')"],
+            [venv_python, "-c", "import importlib.metadata; eps = importlib.metadata.entry_points(); ep = None; \
+if hasattr(eps, 'select'): sel = eps.select(group='console_scripts', name='d_back'); ep = next(iter(sel), None); \
+else: eps_map = getattr(eps, 'get', lambda k, d=None: None); group = eps_map('console_scripts', []); ep = next((e for e in group if e.name=='d_back'), None); \
+print(ep.value if ep else 'NOT_FOUND')"],
             capture_output=True,
             text=True,
             env=env
@@ -739,6 +742,7 @@ class TestUvInstallation:
         assert result.returncode == 0, f"Failed to get entry points: {result.stderr}"
         entry_point = result.stdout.strip()
         
+        assert entry_point != "NOT_FOUND", "d_back entry point not found"
         assert entry_point == "d_back.server:main_sync", f"Entry point incorrect: {entry_point}"
         
         if ALLURE_AVAILABLE:
